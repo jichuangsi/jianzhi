@@ -1,0 +1,73 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center {
+    margin-bottom: 1rem;
+}
+.list {
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 0.3rem;
+    line-height: 0.56rem;
+    padding: 0.1rem 0.2rem;
+    display: flex;
+    justify-content: space-between;
+}
+.list input {
+    width: 70%;
+    font-size: 0.34rem;
+}
+.text {
+    font-size: 0.24rem;
+    line-height: 0.34rem;
+    color: #A04E52;
+}
+.img_box {
+    width: 90%;
+    margin: 0.2rem auto;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.28rem;
+    text-align: center;
+}
+.img_box .left_img {
+    width: 48%;
+}
+.img_box .left_img .img {
+    position: relative;
+    margin-bottom: 0.2rem;
+}
+.img_box .left_img img {
+    width: 100%;
+}
+.img_box .left_img .img input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0rem;
+    left: 0rem;
+    opacity: 0;
+}
+.btn {
+    width: 90%;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    color: #fff;
+    background-color: #3399ff;
+    font-size: 0.24rem;
+    margin: 0 auto;
+    border-radius: 0.05rem;
+}

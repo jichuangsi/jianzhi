@@ -1,0 +1,51 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center {
+    margin-bottom: 1rem;
+}
+.center_box {
+    border-bottom: 1px solid #ddd;
+    padding: 0.2rem 0.3rem;
+}
+.center_box .title {
+    font-size: 0.36rem;
+    line-height: 0.56rem
+}
+.center_box div {
+    font-size: 0.24rem;
+    line-height: 0.56rem;
+}
+.center_box .ipt {
+    margin-top: 0.6rem;
+    display: flex;
+    justify-content: space-between;
+}
+.center_box .ipt input {
+    width: 80%;
+}
+.btn {
+    width: 100%;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    color: #fff;
+    background-color: #3399ff;
+    font-size: 0.24rem;
+    position: fixed;
+    bottom: 0rem;
+    left: 0rem;
+}

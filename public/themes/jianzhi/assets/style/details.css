@@ -1,0 +1,143 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center {
+    margin-bottom: 1rem;
+}
+.state {
+    font-size: 0.24rem;
+    line-height: 0.46rem;
+    border-bottom: 1px solid #f2f2f2;
+    display: flex;
+    padding: 0rem 0.2rem;
+}
+.state div {
+    flex: 1;
+}
+.state div:last-child {
+    color: #fd6404;
+    text-align: right;
+}
+.text_box {
+    font-size: 0.24rem;
+    line-height: 0.46rem;
+    border-bottom: 1px solid #f2f2f2;
+    padding: 0.2rem;
+}
+.text_box .title span{
+    float: right;
+}
+.text_box .money {
+    color: #fd6404;
+}
+.text_box .jn {
+    display: flex;
+}
+.text_box .jn .yq {
+    white-space: nowrap;
+}
+.text_box .jn .jn_box {
+    display: flex;
+    flex-wrap: wrap;
+}
+.text_box .jn span {
+    padding: 0.05rem 0.1rem;
+    color: #3399ff;
+    border: 1px solid #3399ff;
+    border-radius: 0.05rem;
+    margin-right: 0.1rem;
+    margin-bottom: 0.1rem;
+}
+.text_title {
+    font-size: 0.34rem;
+}
+.btn {
+    width: 100%;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    color: #fff;
+    background-color: #3399ff;
+    font-size: 0.24rem;
+    position: fixed;
+    bottom: 0rem;
+    left: 0rem;
+}
+.xybj {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0rem;
+    left: 0rem;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+}
+.xybox {
+    position: absolute;
+    width: 80%;
+    height: 70%;
+    top: 50%;
+    left: 50%;
+    background-color: #fff;
+    transform: translate(-50%,-50%);
+    border: 1px solid #ddd;
+    overflow: hidden;
+    padding: 0.2rem;
+}
+.xybox .none {
+    text-align: right;
+    font-size: 0.46rem;
+    margin-right: 0.2rem;
+}
+.xybox iframe {
+    display: block;
+    width: 90%;
+    height: 90%;
+    margin: 0 auto;
+    display: none;
+}
+.xybox .xy_title {
+    font-size: 0.3rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+.xybox .xy_text {
+    font-size: 0.3rem;
+    line-height: 0.46rem;
+    margin-bottom: 0.1rem;
+}
+.xybox .blue {
+    color: #3399ff;
+}
+.xybox .xy_btn {
+    width: 100%;
+    display: flex;
+    position: absolute;
+    bottom: 0rem;
+    left: 0rem;
+    height: 1rem;
+}
+.xybox .xy_btn span {
+    flex: 1;
+    border: 1px solid #ddd;
+    line-height: 1rem;
+    text-align: center;
+    font-size: 0.28rem;
+}
+.xybox .xy_btn span:last-child {
+    color: #fff;
+    background-color: #3399ff;
+}

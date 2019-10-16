@@ -1,0 +1,116 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center {
+    margin-bottom: 1rem;
+}
+.center .center_top {
+    height: 0.8rem;
+    display: flex;
+    align-items: center;
+    padding-left: 0.2rem;
+    font-size: 0.34rem;
+    border-bottom: 1px solid #ddd;
+}
+.center .center_box {
+    width: 100%;
+}
+.center .center_box .center_kong {
+    display: none;
+}
+.center .center_box .center_kong img {
+    width: 60%;
+    display: block;
+    margin: 0.4rem auto;
+}
+.center .center_box .center_list {
+
+}
+.center .center_box .center_list .list_box {
+    font-size: 0.24rem;
+}
+.center .center_box .center_list .list_box .list_box_top{
+    padding: 0.2rem;
+    padding-top: 0.4rem;
+    display: flex;
+}
+.center .center_box .center_list .list_box_title {
+    padding: 0.1rem 0.2rem;
+    line-height: 0.55rem;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
+.center .center_box .center_list .list_box_title span {
+    padding: 0rem 0.1rem;
+    height: 0.46rem;
+    line-height: 0.46rem;
+    color: #fff;
+    background-color: #fd6404;
+    border-radius: 0.05rem;
+}
+.center .center_box .center_list .list_box .list_box_top .img {
+    width: 16%;
+}
+.center .center_box .center_list .list_box .list_box_top .img img {
+    width: 100%;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box {
+    flex: 1;
+    margin-left: 0.2rem;
+    position: relative;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .title {
+    font-size: 0.24rem;
+    line-height: 0.4rem;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .text {
+    font-size: 0.24rem;
+    line-height: 0.4rem;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .jn {
+    color: #fd6404;
+    margin-top: 0.2rem;
+    display: flex;
+    white-space: nowrap;
+} 
+.center .center_box .center_list .list_box .list_box_top .text_box .jn div {
+    display: flex;
+    flex-wrap: wrap;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .jn span {
+    padding: 0.05rem 0.1rem;
+    border-radius: 0.05rem;
+    border: 1px solid #ddd;
+    color: #333;
+    margin-right: 0.1rem;
+    margin-bottom: 0.1rem;
+}
+.center .center_box .center_list .list_box .list_box_bottom{
+    padding: 0.2rem 0.2rem;
+    border: 1px solid #ddd;
+    line-height: 0.34rem;
+    position: relative;
+}
+.center .center_box .center_list .list_box .list_box_bottom .btn {
+    padding: 0.1rem 0.2rem;
+    color: #fd6404;
+    border-radius: 0.05rem;
+    border: 1px solid #fd6404;
+    position: absolute;
+    right: 0.2rem;
+    bottom: 0.2rem;
+}

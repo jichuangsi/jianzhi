@@ -1,0 +1,27 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center img {
+    width: 40%;
+    display: block;
+    margin: 0.4rem auto;
+}
+.center div {
+    color: #3399ff;
+    font-size: 0.34rem;
+    line-height: 0.56rem;
+    text-align: center;
+}

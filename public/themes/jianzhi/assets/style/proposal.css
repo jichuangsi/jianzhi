@@ -1,0 +1,85 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center {
+    margin-bottom: 1rem;
+    padding: 0rem 0.2rem;
+}
+.center div {
+    font-size: 0.3rem;
+    margin-top: 0.3rem;
+}
+.center textarea {
+    width: 100%;
+    display: block;
+    margin: 0.2rem auto;
+    border: none;
+    outline: none;
+}
+.center .text em {
+    float: right;
+    font-size: 0.24rem;
+}
+.center .text em span {
+    color: #f16a6a;
+}
+.center .img_box .img {
+    display: flex;
+}
+.center .img_box .zs_img {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 1px solid #ddd;
+    font-size: 0.6rem;
+    line-height: 1.2rem;
+    margin-right: 0.2rem;
+    text-align: center;
+    position: relative;
+    display: none;
+}
+.center .img_box .zs_img img {
+    width: 100%;
+    height: 100%;
+}
+.center .img_box .add{
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 1px solid #ddd;
+    font-size: 0.6rem;
+    line-height: 1.2rem;
+    text-align: center;
+    position: relative;
+}
+.center .img_box .add input {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    opacity: 0;
+}
+.btn {
+    width: 100%;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    color: #fff;
+    background-color: #3399ff;
+    font-size: 0.24rem;
+    position: fixed;
+    bottom: 0rem;
+    left: 0rem;
+}

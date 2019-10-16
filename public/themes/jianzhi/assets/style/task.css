@@ -1,0 +1,186 @@
+.top_nav {
+    width: 100%;
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+.top_nav div {
+    flex: 1;
+    height: 100%;
+    font-size: 0.24rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}
+.top_nav div span {
+    width: 100%;
+    display: inline-block;
+    border-right: 1px solid #ddd;
+}
+.top_nav .top_nav_check {
+    color: #3399ff;
+    border-bottom: 1px solid #3399ff;
+}
+.center {
+    margin-bottom: 1rem;
+}
+.center .center_box {
+    width: 100%;
+}
+.center .center_box .center_kong {
+    display: none;
+}
+.center .center_box .center_kong img {
+    width: 60%;
+    display: block;
+    margin: 0.4rem auto;
+}
+.center .center_box .center_list {
+
+}
+.center .center_box .center_list .list_box_title {
+    padding: 0.1rem 0.2rem;
+    line-height: 0.55rem;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
+.center .center_box .center_list .list_box_title span {
+    padding: 0rem 0.1rem;
+    height: 0.46rem;
+    line-height: 0.46rem;
+    color: #fff;
+    background-color: #fd6404;
+    border-radius: 0.05rem;
+}
+.center .center_box .center_list .list_box {
+    font-size: 0.24rem;
+}
+.center .center_box .center_list .list_box .list_box_top{
+    padding: 0.2rem;
+    padding-top: 0.4rem;
+    display: flex;
+}
+.center .center_box .center_list .list_box .list_box_top .img {
+    width: 16%;
+}
+.center .center_box .center_list .list_box .list_box_top .img img {
+    width: 100%;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box {
+    flex: 1;
+    margin-left: 0.2rem;
+    position: relative;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .title {
+    font-size: 0.3rem;
+    line-height: 0.4rem;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .text {
+    font-size: 0.24rem;
+    line-height: 0.34rem;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .money {
+    font-size: 0.3rem;
+    line-height: 0.4rem;
+    color: #fd6404;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .money span{
+    float: right;
+    color: #333;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .state {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    padding: 0.1rem 0.2rem;
+    background-color: #fd6404;
+    color: #fff;
+    border-radius: 0.05rem;
+}
+.center .center_box .center_list .list_box .list_box_bottom{
+    padding: 0.5rem 0.2rem;
+    border: 1px solid #ddd;
+    line-height: 0.34rem;
+    position: relative;
+}
+.center .center_box .center_list .list_box .list_box_bottom .qxbtn {
+    padding: 0.1rem 0.2rem;
+    color: #fd6404;
+    border-radius: 0.05rem;
+    border: 1px solid #fd6404;
+    position: absolute;
+    right: 0.2rem;
+    bottom: 0.2rem;
+}
+.foot {
+    width: 100%;
+    height: 1rem;
+    font-size: 0.24rem;
+    position: fixed;
+    bottom: 0rem;
+    left: 0rem;
+    border-top: 1px solid #ddd;
+    display: flex;
+    background-color: #f2f2f2;
+}
+.foot div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.foot .iconfont {
+    margin-bottom: 0.1rem;
+    font-size: 0.4rem;
+}
+.foot .foot_check {
+    color: #3399ff;
+}
+.qx_bj {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 0rem;
+    left: 0rem;
+    display: none;
+}
+.qx_box {
+    width: 80%;
+    background-color: #fff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 0.3rem;
+}
+.qx_box .qx_title {
+    font-size: 0.34rem;
+    text-align: center;
+    margin-top: 0.4rem;
+}
+.qx_box .qx_text {
+    padding: 0.2rem;
+    font-weight: 600;
+}
+.qx_box .qx_btn {
+    width: 100%;
+    height: 0.6rem;
+    line-height: 0.6rem;
+    text-align: center;
+    display: flex;
+    margin-top: 1rem;
+}
+.qx_box .qx_btn div {
+    flex: 1;
+    height: 100%;
+    border: 1px solid #ddd;
+    font-size: 0.28rem;
+}
+.qx_box .qx_btn .qx_right_btn {
+    background-color: #fd6404;
+    color: #fff;
+}

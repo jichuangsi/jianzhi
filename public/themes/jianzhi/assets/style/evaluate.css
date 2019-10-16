@@ -1,0 +1,80 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center .center_box {
+    width: 100%;
+}
+.center .center_box .center_kong {
+    display: none;
+}
+.center .center_box .center_kong img {
+    width: 60%;
+    display: block;
+    margin: 0.4rem auto;
+}
+.center .center_box .center_list {
+
+}
+.center .center_box .center_list .list_box {
+    font-size: 0.24rem;
+}
+.center .center_box .center_list .list_box .list_box_top{
+    padding: 0.2rem;
+    padding-top: 0.4rem;
+    display: flex;
+}
+.center .center_box .center_list .list_box .list_box_top .img {
+    width: 16%;
+}
+.center .center_box .center_list .list_box .list_box_top .img img {
+    width: 100%;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box {
+    flex: 1;
+    margin-left: 0.2rem;
+    position: relative;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .title {
+    font-size: 0.3rem;
+    line-height: 0.4rem;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .text {
+    font-size: 0.24rem;
+    line-height: 0.34rem;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .money {
+    font-size: 0.3rem;
+    line-height: 0.4rem;
+    color: #fd6404;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .money span{
+    float: right;
+    color: #333;
+}
+.center .center_box .center_list .list_box .list_box_top .text_box .state {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    padding: 0.1rem 0.2rem;
+    background-color: #fd6404;
+    color: #fff;
+    border-radius: 0.05rem;
+}
+.center .center_box .center_list .list_box .list_box_bottom{
+    padding: 0.2rem 0.2rem;
+    border: 1px solid #ddd;
+    line-height: 0.34rem;
+}

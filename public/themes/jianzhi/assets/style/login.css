@@ -1,0 +1,48 @@
+.logo {
+    margin-top: 1.5rem;
+}
+.logo img {
+    width: 4rem;
+    display: block;
+    margin: 0 auto;
+}
+.ipt {
+    width: 90%;
+    height: 1rem;
+    margin: 0rem 0.2rem;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+}
+.ipt span {
+    width: 0.26rem;
+    height: 0.3rem;
+    display: block;
+}
+.ipt input {
+    flex: 1;
+    padding: 0rem 0.4rem;
+}
+.btn {
+    width: 80%;
+    height: 0.64rem;
+    background-color: #3399ff;
+    border-radius: 0.1rem;
+    font-size: 0.36rem;
+    color: #fff;
+    text-align: center;
+    line-height: 0.64rem;
+    letter-spacing: 4px;
+    font-weight: 500;
+    margin: 0.5rem auto;
+    margin-top: 1.35rem;
+    display: block;
+}
+.tishi {
+    font-size: 0.24rem;
+    text-align: center;
+    margin-bottom: 0.6rem;
+}
+.tishi a {
+    color: #3399ff
+}
