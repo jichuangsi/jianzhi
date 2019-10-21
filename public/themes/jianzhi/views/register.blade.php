@@ -91,7 +91,7 @@
         if($("input[name='password']").val() == $("input[name='confirmPassword']").val()){
             return true;
         }else{
-            alert("密码不一致");
+        	popUpMessage("密码不一致");
             return false;
         }
     }
@@ -136,11 +136,16 @@
         },500)
     }
     function jn_btn(){
+    	if($('.jn_check').length>15){
+    		popUpMessage('一个用户最多只能有15个标签！');
+       		return;
+        }  
+        
         $('.jnbox').css('bottom','100%');
         setTimeout(function(){
             $('.jnbj').css('display','none');
         },500)
-        var a = ''
+        var a = ''   
         for(let i =0;i<$('.jn_check').length;i++){
             a+=$('.jn_check').eq(i).attr('data-id') + ','
         }

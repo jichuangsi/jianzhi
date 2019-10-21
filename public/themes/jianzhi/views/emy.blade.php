@@ -3,12 +3,27 @@
             <div>
                 <div class="title">
                     企业名称：
+                    @if(isset($company_name))
+                    	{{ $company_name }}
+                    @else
+                    	未认证
+                    @endif
                 </div>
                 <div class="text">
                     联系人：
+                    @if(isset($contactor))
+                    	{{ $contactor }}
+                    @else
+                    	未认证
+                    @endif
                 </div>
                 <div class="text">
                     地址：
+                    @if(isset($address))
+                    	{{ $address }}
+                    @else
+                    	未认证
+                    @endif
                 </div>
             </div>
             <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
@@ -56,4 +71,4 @@
             window.location.href = '{!! url("jz/logout") !!}';
         }
     </script>
-    {!! Theme::asset()->container('specific-css')->usepath()->add('my-style','style/enterprise_my.css') !!}
+    {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_my-style','style/enterprise_my.css') !!}

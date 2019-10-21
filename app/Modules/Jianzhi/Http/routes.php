@@ -39,11 +39,29 @@ Route::group(['prefix' => 'jz'], function () {
     Route::get('/task/{id}','jzTaskController@getTaskdetail')->where('id', '[0-9]+');
     Route::get('/task/fileDownload/{id}','jzTaskController@fileDownload')->where('id', '[0-9]+');
     Route::post('/task/ajaxTasks','jzTaskController@ajaxTasks');  
-    Route::get('/task/agreement', 'jzTaskController@getTaskAgreement');
+    Route::get('/task/contract', 'jzTaskController@getTaskContract');
     Route::post('/task/ajaxCreateNewWork','jzTaskController@ajaxCreateNewWork');
     Route::get('/task/ajaxMyTasks','jzTaskController@ajaxMyTasks'); 
     Route::get('/task/ajaxCancelMyWork','jzTaskController@ajaxCancelMyWork'); 
     Route::post('/task/ajaxAssignTask','jzTaskController@ajaxAssignTask');
+    Route::get('/task/workDelivery/{id}','jzTaskController@workDelivery')->where('id', '[0-9]+');
+    Route::post('/task/createDeliver','jzTaskController@createDeliver');    
+    Route::get('/task/approveDelivery/{id}','jzTaskController@approveDelivery')->where('id', '[0-9]+');
+    Route::post('/task/createApproval','jzTaskController@createApproval');
+    Route::post('/task/ajaxSettleTask','jzTaskController@ajaxSettleTask');
+    
+    //用户信息相关路由
+    Route::post('/user/infoUpdate','jzUserCenterController@infoUpdate');
+    Route::post('/user/einfoUpdate','jzUserCenterController@einfoUpdate');
+    //个人实名认证路由
+    Route::post('/user/realnameAuth', 'jzUserCenterController@createRealnameAuth');
+    Route::get('/user/reAuth', 'jzUserCenterController@reAuth');
+    //个人技能路由
+    Route::post('/user/ajaxSaveSkills','jzUserCenterController@ajaxSaveSkills');
+    //反馈建议路由
+    Route::post('/user/createFeedback','jzUserCenterController@createFeedback');
+    //企业实名认证路由
+    Route::post('/user/enterpriseAuth', 'jzUserCenterController@createEnterpriseAuth');
     
 });
 

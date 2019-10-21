@@ -14,7 +14,7 @@ class WorkAttachmentModel extends Model
 {
     protected $table = 'work_attachment';
     public  $timestamps = false;  
-    public $fillable = ['task_id','work_id','attachment_id','type','created_at'];
+    public $fillable = ['task_id','work_id','attachment_id','type','created_at','id'];
 
     
     static function createOne($task_id,$work_id,$attachment_id)
@@ -35,7 +35,7 @@ class WorkAttachmentModel extends Model
             }
         }else{
             $type = AttachmentModel::where('id',$attachment_id)->lists('type');
-            $model = new TaskAttatchmentModel;
+            $model = new WorkAttachmentModel;
             $model->task_id = $task_id;
             $model->work_id = $work_id;
             $model->type = $type[0];
@@ -54,8 +54,8 @@ class WorkAttachmentModel extends Model
     {
         $attachment_data = Self::where('attachment_id',$attachment_id)->first();
         
-        $task_data = TaskModel::findById($attachment_data['task_id']);
-        if($task_data['uid']==$uid)
+        $work_data = WorkModel::findById($attachment_data['work_id']);
+        if($work_data['uid']==$uid)
         {
             return true;
         }

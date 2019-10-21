@@ -128,5 +128,5 @@
         }
     </script>
     {!! Theme::asset()->container('specific-css')->usepath()->add('mescroll-style','libs/mescroll.css') !!}
-    {!! Theme::asset()->container('specific-css')->usepath()->add('task-style','style/enterprise_task.css') !!}
+    {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_task-style','style/enterprise_task.css') !!}
     {!! Theme::asset()->container('specific-js')->usepath()->add('mescroll-js','libs/mescroll.js') !!}

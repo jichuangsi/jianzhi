@@ -1,6 +1,6 @@
 	<div class="top">
         	任务详情
-        <div class="out iconfont icon-fanhui" onclick="window.history.back(-1);"></div>
+        <div class="out iconfont icon-fanhui" onclick="backToList()"></div>
     </div>
     <div class="center">
         <div class="state">
@@ -63,11 +63,60 @@
             
             </div>
         </div>
+        @if(isset($works))
+         @foreach($works as $v)
+         	
+         					@if($v['status']>=2)                          		
+                        		<div class="textbox">
+									<div>完成时间：@if(isset($v['delivered_at'])) {{ date('Y年m月d日 H:i',strtotime($v['delivered_at'])) }} @endif</div>
+									<div>验收说明：@if(isset($v['desc'])) {{ $v['desc'] }} @endif</div>
+									<div>验收材料	({{ count($v['attachments']) }})：
+									@if(isset($v['attachments']))                   	
+												@foreach($v['attachments'] as $v1)
+													<li><a href="{{ URL('jz/task/fileDownload',['id'=>$v1['id']]) }}" target="#">{{ $v1['name'] }}</a>
+													</li>
+												@endforeach
+									@endif
+									</div>
+                        		</div>
+                        	@endif
+                        	
+                        		@if($v['status']>=3)
+                            		@if(isset($v['comments']))
+                            		<div class="textbox">
+                            			<div>验收时间：@if(isset($v['checked_at'])) {{ date('Y年m月d日 H:i',strtotime($v['checked_at'])) }} @endif</div>
+                            			雇主评价：
+                            			@foreach($v['comments'] as $v2)                            				
+                            					<div>{{ $v2['nickname'] }} ({{ date('Y年m月d日 H:i',strtotime($v['created_at'])) }})：{{ $v2['comment'] }}</div>
+                            			@endforeach
+                            			</div>
+                            		@endif
+                            	@endif
+                            	
+                            	@if($v['status']==5)
+                            		@if(isset($v['settle_at']))
+                            			<div class="textbox">
+                            				<div>结算时间：{{ date('Y年m月d日 H:i',strtotime($v['settle_at'])) }} </div>
+                            			</div>
+                            		@endif
+                            	@endif
+         	
+         	
+         	
+         @endforeach
+        @endif
     </div>
-    <div class="btn" onclick="xy()">
-        报名任务
-    </div>
-    
+    @if($detail['status']==3)
+    	@if(isset($works))
+    		<div class="btn">
+               	 已报名
+            </div>
+    	@else
+    		<div class="btn" onclick="xy()">
+               	 报名任务
+            </div>    	
+    	@endif    
+    @endif
     <div class="xybj">
             <div class="xybox">
                 <div class="none" onclick="$('.xybj').css('display','none');">x</div>
@@ -78,7 +127,7 @@
                         <span onclick="createWork(0)">暂不确定</span>
                         <span onclick="createWork(1)">立即确定</span>
                     </div>
-                <iframe src="{!! url('jz/task/agreement') !!}" frameborder="0"></iframe>
+                <iframe src="{!! url('jz/task/contract') !!}" frameborder="0"></iframe>
             </div>
         </div>
         <script>
@@ -98,12 +147,15 @@
                     console.log(status);
     				if(status==='success'&&ret.data&&!ret.errMsg){
     					$('.xybj').css('display','none');
-    					window.location.href = '{!! url("jz/task") !!}';
+    					backToList();
         			}else{
-            			if(ret.errMsg) alert(ret.errMsg);
+            			if(ret.errMsg) popUpMessage(ret.errMsg);
             		}
                 });
             }
+            function backToList(){
+            	window.location.href = "{!! url('jz/task') !!}";
+            }
         </script>
     
-    {!! Theme::asset()->container('specific-css')->usepath()->add('index-style','style/details.css') !!}
+    {!! Theme::asset()->container('specific-css')->usepath()->add('details-style','style/details.css') !!}

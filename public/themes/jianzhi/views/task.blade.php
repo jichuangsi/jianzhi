@@ -1,9 +1,9 @@
 	<div class="top_nav">
-        <div class="top_nav_check"  data-id="3"><span>已报名</span></div>
-        <div data-id="4"><span>进行中</span></div>
-        <div data-id="5"><span>待验收</span></div>
-        <div data-id="6"><span>待结算</span></div>
-        <div data-id="7"><span>已结算</span></div>
+        <div class="top_nav_check"  data-id="0"><span>已报名</span></div>
+        <div data-id="1"><span>进行中</span></div>
+        <div data-id="2"><span>待验收</span></div>
+        <div data-id="3"><span>待结算</span></div>
+        <div data-id="5"><span>已结算</span></div>
     </div>
     <div class="center">
         <div class="center_box mescroll" id="mescroll">
@@ -141,8 +141,22 @@
 				var html = '';
 				switch(curPageData[i].work_status)
 				{
-					case 0: tStatus = '已报名待审核'; wAction = '取消报名'; wActionData = 'c'; break;
-					case 1: tStatus = '已派单进行中'; wAction = '提交验收'; wActionData = 's'; break;
+					case 0: {
+						if(curPageData[i].status>3){
+							tStatus = '报名失败';
+						}else{
+							tStatus = '已报名待审核'; wAction = '取消报名'; wActionData = 'c';
+						}	
+					}
+					break;
+					case 1: {
+						if(curPageData[i].status===3){
+							tStatus = '报名通过待开始';
+						}else{
+							tStatus = '已派单进行中'; wAction = '提交验收'; wActionData = 's'; 
+						}
+					}
+					break;
 					case 2: tStatus = '已提交待验收'; break;
 					case 3: tStatus = '已验收待结算'; break;
 					case 5: tStatus = '已结算'; break;
@@ -182,7 +196,7 @@
 				var html = '';
 				html += '<div class="list_box" onclick="taskDetail('+curPageData[i].id+')">';
 				html += '<div class="list_box_title">报名时间：'+wStartDate+' <span>'+tStatus+'</span></div>';
-				html += '<div class="list_box_top"><div class="img"><img src="'+curPageData[i].avatar+'" alt=""></div>';
+				html += '<div class="list_box_top"><div class="img"><img src="/'+curPageData[i].avatar+'" alt=""></div>';
 				html += '<div class="text_box"><div class="title">'+curPageData[i].title+'</div><div class="text">任务类型：'+tType+'</div><div class="money">预算：'+curPageData[i].bounty+' 元</div></div></div>';
 				html += '<div class="list_box_bottom"><div>服务时间：'+tDuration+'</div><div>服务地点：'+tDistrict+'</div>';
 				if(wAction) html +='<div class="qxbtn" data-id="'+wActionData+'" onclick="takeWorkAction(event,'+curPageData[i].id+')">'+wAction+'</div>';
@@ -200,15 +214,16 @@
         	$('.qx_bj').css('display','block')
             event.stopPropagation()
         }) */
-        function takeWorkAction(event,taskIds){
+        function takeWorkAction(event,taskId){
         	event.stopPropagation()
         	var action = $('.qxbtn').attr('data-id');
 			console.log(action);
 			if(action === 'c'){
-				$('.qx_bj').attr('data-id', taskIds);
+				$('.qx_bj').attr('data-id', taskId);
 				$('.qx_bj').css('display','block')
 			}else if(action === 's'){
-				
+				var url = '/jz/task/workDelivery/'+taskId;
+	            window.location.href = url;
 			}
         }
         function cancelWork(){
@@ -223,10 +238,10 @@
 						$('.center_list').empty();
 			            mescroll.resetUpScroll();
 					}else{
-						if(ret.errMsg) alert(ret.errMsg);
+						if(ret.errMsg) popUpMessage(ret.errMsg);
 					}
 				}else{
-					alert("取消报名失败");
+					popUpMessage("取消报名失败");
 				}
             });
         }

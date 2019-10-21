@@ -14,7 +14,8 @@ class EnterpriseAuthModel extends Model
     
     protected $fillable = [
        'id', 'uid', 'company_name', 'cate_id','employee_num','business_license','begin_at',
-        'website','province','city','area','address','status','auth_time','created_at','updated_at'
+        'website','province','city','area','address','status','auth_time','created_at','updated_at','contactor',
+        'contactor_mobile','phone','tax_code','bank','account'
     ];
 
 
@@ -31,6 +32,15 @@ class EnterpriseAuthModel extends Model
 
 
     
+    static function getEnterpriseAuthStatus2($uid)
+    {
+        $companyInfo = EnterpriseAuthModel::where('uid', $uid)->first();
+        if ($companyInfo) {
+            return $companyInfo->status;
+        }
+        return -1;
+    }
+
     static function getEnterpriseAuthStatus($uid)
     {
         $companyInfo = EnterpriseAuthModel::where('uid', $uid)->first();
@@ -39,7 +49,6 @@ class EnterpriseAuthModel extends Model
         }
         return null;
     }
-
     
     static function getEnterpriseInfo($id)
     {
@@ -95,10 +104,17 @@ class EnterpriseAuthModel extends Model
 
     }
 
-
+    static function getEnterpriseInfoByUid($uid)
+    {
+        
+        $companyInfo = EnterpriseAuthModel::where('uid', $uid)->orderBy('created_at','desc')->first();        
+        
+        return $companyInfo;
+        
+    }
 
     
-    static function createEnterpriseAuth($companyInfo, $authRecordInfo,$fileId)
+    static function createEnterpriseAuth($companyInfo, $authRecordInfo,$fileId='')
     {
         $status = DB::transaction(function () use ($companyInfo, $authRecordInfo,$fileId) {
             $authRecordInfo['auth_id'] = DB::table('enterprise_auth')->insertGetId($companyInfo);
@@ -135,6 +151,13 @@ class EnterpriseAuthModel extends Model
         return is_null($status) ? true : $status;
     }
 
+    static function removeEnterpriseAuth2($uid)
+    {
+        $status = DB::transaction(function () use($uid){
+            EnterpriseAuthModel::where('uid', $uid)->delete();
+        });
+            return is_null($status) ? true : $status;
+    }
     
     static function EnterpriseAuthPass($id)
     {
@@ -209,6 +232,14 @@ class EnterpriseAuthModel extends Model
                 ->update(array('status' => 2));
         });
 
+        return is_null($status) ? true : $status;
+    }
+    
+    static public function updateEnterpriseInfo($companyInfo, $uid){
+        $status = DB::transaction(function () use ($companyInfo, $uid) {
+            self::where('uid', $uid)->update($companyInfo);            
+        });
+            
         return is_null($status) ? true : $status;
     }
 

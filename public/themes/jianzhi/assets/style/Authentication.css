@@ -33,6 +33,7 @@
     font-size: 0.24rem;
     line-height: 0.34rem;
     color: #A04E52;
+    padding: 0rem 0.2rem;
 }
 .img_box {
     width: 90%;
@@ -51,6 +52,7 @@
 }
 .img_box .left_img img {
     width: 100%;
+    height: 2.16rem;
 }
 .img_box .left_img .img input {
     position: absolute;
@@ -70,4 +72,5 @@
     font-size: 0.24rem;
     margin: 0 auto;
     border-radius: 0.05rem;
+    display: block;
 }

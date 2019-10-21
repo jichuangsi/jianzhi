@@ -1,0 +1,33 @@
+.gritter-item-wrapper.gritter-info {
+    background-color: #fff;
+    /* border: 1px solid #000000; */
+    color:#515151;
+    border-radius: 10px;
+	position:fixed;
+	top:50%;
+	left:50%;
+	transform:translate(-50%, -50%);
+	overflow: hidden;
+}
+.gritter-item-wrapper.gritter-info .gritter-without-image {
+    padding:36px 10px;
+ 	color:#fff;
+ 	background-color:#515151;
+}
+.gritter-item-wrapper.gritter-info .gritter-without-image p{
+	font-size: 0.2rem;
+    text-align: center;
+    margin-bottom: 0;
+}
+.gritter-item-wrapper.gritter-info .gritter-close {
+    text-align: right;
+    position: absolute;
+    cursor: pointer;    
+}
+.gritter-item-wrapper.gritter-info .gritter-close:hover {
+    color:orange!important;
+}
+
+.gritter-center {
+    z-index: 1000;
+}

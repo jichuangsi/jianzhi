@@ -200,14 +200,14 @@ class UserCenterController extends BasicUserCenterController
     public function infoUpdate(UserInfoRequest $request)
     {
         $data = $request->except('_token');
-
+        
         $result = UserDetailModel::where('uid', $this->user['id'])->update($data);
 
         if (!$result) {
             return redirect()->back()->with(['error' => '修改失败！']);
         }
 
-        return redirect()->back()->with(['massage' => '修改成功！']);
+        return redirect()->back()->with(['message' => '修改成功！']);
     }
 
     /**

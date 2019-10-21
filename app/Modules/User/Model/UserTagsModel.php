@@ -24,6 +24,15 @@ class UserTagsModel extends Model
         return $data;
     }
 
+    static function myTag2($uid)
+    {
+        $data = UserTagsModel::select('a.id as tag_id', 'a.cate_id as cate_id')
+        ->leftjoin('skill_tags as a','tag_user.tag_id', '=', 'a.id')
+        ->where('tag_user.uid', '=', $uid)
+        ->get()
+        ->toArray();
+        return $data;
+    }
     
     static function updateTag($tag_id,$uid)
     {

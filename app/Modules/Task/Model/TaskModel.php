@@ -123,47 +123,39 @@ class TaskModel extends Model
             $query = $query->whereIn('task.id', $data['ids']);
         }
         //状态筛选
-        if (isset($data['status']) && $data['status'] != 0) {
-            switch ($data['status']) {
-                case 2://审核中
-                    $status = [2];
-                    break;
-                case 3://招募中
-                    $status = [3];
-                    break;
-                case 4://工作中
-                    $status = [4];
-                    break;
-                case 5://待验收
-                    $status = [5,6,7];
-                    break;
-                case 6://已验收
-                    $status = [8];
-                    break;
-                case 7://已结算
-                    $status = [9,10];
-                    break;
-                case 8://维权
-                    $status = [11];
-                    break;
-                    /* case 1:
-                     $status = [3,4,6];
-                     break;
-                     case 2:
-                     $status = [5];
-                     break;
-                     case 3:
-                     $status = [7];
-                     break;
-                     case 4:
-                     $status = [8,9,10];
-                     break;
-                     case 5:
-                     $status = [2, 11];
-                     break; */
+        if(isset($data['status'])){
+            if(is_array($data['status'])){
+                $query->whereIn('task.status', $data['status']);
+            }else{
+                if ($data['status'] != 0) {
+                    switch ($data['status']) {
+                        case 2://审核中
+                            $status = [2];
+                            break;
+                        case 3://招募中
+                            $status = [3];
+                            break;
+                        case 4://工作中
+                            $status = [4];
+                            break;
+                        case 5://待验收
+                            $status = [5,6,7];
+                            break;
+                        case 6://已验收
+                            $status = [8];
+                            break;
+                        case 7://已结算
+                            $status = [9,10];
+                            break;
+                        case 8://维权
+                            $status = [11];
+                            break;
+                    }
+                    $query->whereIn('task.status', $status);
+                }
             }
-            $query->whereIn('task.status', $status);
         }
+        
         //时间段筛选
         if (isset($data['time'])) {
             switch ($data['time']) {

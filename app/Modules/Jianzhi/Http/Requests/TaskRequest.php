@@ -55,7 +55,7 @@ class TaskRequest extends TaskBasicRequest
     		    'skill.required' => '请选择任务所需技能',
     		    'address.required' => '请填入任务服务地址',	    
 				'bounty.required' => '请填写任务预算',
-				'bounty.numeric'=>'赏金必须是数值',
+				'bounty.numeric'=>'任务预算必须是数值',
 				'worker_num.required' => '请填写由几人完成',				
 				'title.required' => '请填写标题',
 				'desc.required'=>'需求详情不能为空',				

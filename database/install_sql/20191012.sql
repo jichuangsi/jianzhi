@@ -1,7 +1,5 @@
---20191012
 alter table `kppw_users` add `type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '用户类型 1-个人 2-企业';
 
---20191014
 alter table `kppw_task_type` add `pid` int(11) NOT NULL COMMENT '父级任务类型ID';
 alter table `kppw_task_type` add `path` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '任务类型路径';
 alter table `kppw_task_type` add `sort` smallint(6) NOT NULL DEFAULT '0' COMMENT '排序，指的是任务类型在本级的排序';
@@ -45,8 +43,6 @@ CREATE TABLE IF NOT EXISTS `kppw_tag_task` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---20191014
 alter table `kppw_task` add `address` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT '任务服务地址';
 
---20191016
 alter table `kppw_work` add `agreement` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态 0表示不同意协议 1表示同意协议';

@@ -106,6 +106,8 @@
     display: flex;
     border-bottom: 1px solid #ddd;
     position: relative;
+    flex-wrap: wrap;
+    padding-bottom: 0.8rem;    
 }
 .center .center_box .center_list .list_box_title {
     padding: 0.1rem 0.2rem;
@@ -183,3 +185,14 @@
         margin-right: 0.1rem;
         margin-bottom: 0.1rem;
     }
+.textbox {
+	width: 100%;
+	font-size: 0.24rem;
+	line-height: 0.46rem;
+	border-top:1px solid #ddd;
+	margin-bottom: 0.2rem;
+	padding-top:0.1rem;
+}
+.textbox div {
+	word-break:break-all;
+}

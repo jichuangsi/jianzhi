@@ -1,0 +1,42 @@
+.top {
+    font-size: 0.28rem;
+    height: 0.8rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    line-height: 0.8rem;
+}
+.top div {
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    line-height: 0.8rem;
+    padding-left: 0.2rem;
+    font-size: 0.36rem;
+}
+.center {
+    margin-bottom: 1rem;
+}
+.center img {
+    width: 60%;
+    display: block;
+    margin: 0.4rem auto;
+}
+.center .text {
+    text-align: center;
+    margin: 0.4rem auto;
+    font-size: 0.28rem;
+    line-height: 0.36rem;
+    padding: 0rem 0.7rem;
+}
+.btn {
+    width: 90%;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    color: #fff;
+    background-color: #3399ff;
+    font-size: 0.24rem;
+    margin: 0 auto;
+    border-radius: 0.05rem;
+}

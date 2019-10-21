@@ -225,7 +225,7 @@
     <script>
     var today=new Date()
     var date = new Array(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours(), today.getMinutes());
-    var demo=$("#taskform").Validform({
+    var taskform=$("#taskform").Validform({
         tiptype:3,
         label:".label",
         showAllError:true,
@@ -242,13 +242,13 @@
 		console.log(begintime);
 		console.log(endtime);
 		if(begintime>=endtime){
-			alert("结束时间应迟于开始时间！");
+			popUpMessage("结束时间应迟于开始时间！");
 			return false;
 		}else if(begintime<today.getTime()){
-			alert("开始时间不能在今天之前！");
+			popUpMessage("开始时间不能在今天之前！");
 			return false;
 		}else if(endtime<today.getTime()){
-			alert("结束时间不能在今天之前！");
+			popUpMessage("结束时间不能在今天之前！");
 			return false;
 		}else{
 			return true;
@@ -322,7 +322,7 @@
             };
             
         }else{
-        	alert('最多上传三张')
+        	popUpMessage('最多上传三张')
         }
     }
     function delimg(val){
@@ -470,6 +470,7 @@
     	上传文件
     */
     function uploadFile(){
+    	$("body").mLoading({text:"上传中"});//显示loading组件
     	var headers = { "_token": "{{ csrf_token() }}"};
     	// 开始上传
         $.ajaxFileUpload({
@@ -496,6 +497,9 @@
             error: function (data, status, e) {
                 // 失败
             	console.log(e);
+            },
+            complete: function(){
+            	$("body").mLoading("hide");//隐藏loading组件
             }
         });
     }
@@ -512,9 +516,11 @@
         });
     }
     </script>
-    {!! Theme::asset()->container('specific-css')->usepath()->add('index-style','style/enterprise_index.css') !!}
+    {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_index-style','style/enterprise_index.css') !!}
     {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}
     {!! Theme::asset()->container('specific-js')->usePath()->add('validform-js', 'plugins/jquery/validform/js/Validform_v5.3.2_min.js') !!}
     {!! Theme::asset()->container('specific-css')->usePath()->add('dateTime-css', 'libs/dateTime.css') !!}
     {!! Theme::asset()->container('specific-js')->usePath()->add('dateTime-js', 'libs/dateTime.min.js') !!}
     {!! Theme::asset()->container('specific-js')->usePath()->add('ajaxFileUpload-js', 'libs/jquery.ajaxFileUpload.js') !!}
+    {!! Theme::asset()->container('specific-js')->usePath()->add('mloading-js', 'libs/jquery.mloading.js') !!}
+    {!! Theme::asset()->container('specific-css')->usePath()->add('mloading-css', 'libs/jquery.mloading.css') !!}

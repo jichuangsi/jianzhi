@@ -1,6 +1,6 @@
 	<div class="top">
         帮助中心
-        <div class="out iconfont icon-fanhui" onclick="window.history.back(-1);"></div>
+        <div class="out iconfont icon-fanhui" onclick="backToMy();"></div>
     </div>
     <div class="center">
         <div class="list">
@@ -26,5 +26,9 @@
                 $(this).find('span').addClass('icon-jiantou9').removeClass('icon-changyongtubiao-xianxingdaochu-zhuanqu-1')
             }
         })
+        
+        function backToMy(){
+        	window.location.href = "{!! url('jz/my') !!}";
+        }
     </script>
-    {!! Theme::asset()->container('specific-css')->usepath()->add('my-style','style/help.css') !!}
+    {!! Theme::asset()->container('specific-css')->usepath()->add('help-style','style/help.css') !!}

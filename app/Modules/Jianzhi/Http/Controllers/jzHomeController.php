@@ -7,7 +7,10 @@ use Auth;
 use App\Modules\Task\Model\TaskCateModel;
 use App\Modules\Task\Model\TaskTypeModel;
 use App\Modules\Task\Model\TaskModel;
+use App\Modules\User\Model\UserTagsModel;
 use App\Modules\User\Model\DistrictModel;
+use App\Modules\User\Model\UserDetailModel;
+use App\Modules\User\Model\EnterpriseAuthModel;
 /* use App\Modules\Manage\Model\AgreementModel;
 use App\Modules\Manage\Model\ConfigModel;
 use App\Modules\User\Http\Requests\LoginRequest;
@@ -97,8 +100,29 @@ class jzHomeController extends HomeController
         
         if($this->user->type===2){
             $path = 'emy';
+            
+            $authStatus = EnterpriseAuthModel::getEnterpriseAuthStatus2($this->user['id']);
+            if($authStatus==1){
+                $enterpriseInfo  = EnterpriseAuthModel::getEnterpriseInfoByUid($this->user['id']);
+                
+                $data = [
+                    'company_name' => $enterpriseInfo['company_name'],
+                    'contactor' => $enterpriseInfo['contactor'],
+                    'address' => $enterpriseInfo['address'],
+                ];
+            }
         }else{
             $path = 'my';
+            
+            $detail = UserDetailModel::findByUid($this->user->id);
+            $nickname = $this->user['name'];
+            $skills = UserTagsModel::getTagsByUserId($this->user->id);
+            
+            $data = [
+                'avatar' => $detail['avatar'],
+                'nickname' => $nickname,
+                'skills' => $skills
+            ];
         }
         return $this->theme->scope($path,$data)->render();
     }

@@ -1,47 +1,128 @@
 	<div class="top">
         企业认证
-        <div class="out iconfont icon-fanhui" onclick="window.history.back(-1);"></div>
+        <div class="out iconfont icon-fanhui" onclick="backToMy();"></div>
     </div>
+    <form action="/jz/user/enterpriseAuth" method="post" id="authform" enctype="multipart/form-data">
+    {!! csrf_field() !!}
     <div class="center">
         <div class="list">
-            企业名称<input type="text" placeholder="请输入企业名称">
+            <span>
+            		企业名称
+            		@if($errors->first('company_name'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('company_name') !!}</p>
+        			@endif
+            </span><input type="text" placeholder="请输入企业名称" name="company_name" id="company_name" onkeydown='clearError(this)'>
         </div>
         <div class="list">
-            联系人<input type="text" placeholder="请输入联系人">
+            <span>
+            	法人
+            		@if($errors->first('owner'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('owner') !!}</p>
+        			@endif
+            </span><input type="text" placeholder="请输入法人"  name="owner" id="owner" onkeydown='clearError(this)'>
         </div>
         <div class="list">
-            联系电话<input type="text" placeholder="请输入联系人电话">
+            <span>
+            	联系人
+            		@if($errors->first('contactor'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor') !!}</p>
+        			@endif
+            </span><input type="text" placeholder="请输入联系人"  name="contactor" id="contactor" onkeydown='clearError(this)'>
+        </div>
+        <div class="list">
+            <span>联系电话
+            		@if($errors->first('contactor_mobile'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor_mobile') !!}</p>
+        			@endif            
+            </span><input type="text" placeholder="请输入联系人电话" name="contactor_mobile" id="contactor_mobile" onkeydown='clearError(this)'>
         </div>
         <div class="title">开票信息</div>
         <div class="list">
-            开户行<input type="text" placeholder="请输入企业开户行">
+            <span>
+            	开户行
+            		@if($errors->first('bank'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('bank') !!}</p>
+        			@endif
+            </span><input type="text" placeholder="请输入企业开户行" name="bank" id="bank" onkeydown='clearError(this)'>
         </div>
         <div class="list">
-            账户<input type="text" placeholder="请输入企业账户">
+            <span>
+            	账户
+            		@if($errors->first('account'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('account') !!}</p>
+        			@endif
+            </span><input type="text" placeholder="请输入企业账户" name="account" id="account" onkeydown='clearError(this)'>
         </div>
         <div class="list">
-            纳税人识别码<input type="text" placeholder="请输入纳税人识别码">
+            	<span>
+            		纳税人识别码
+            			@if($errors->first('tax_code'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('tax_code') !!}</p>
+            			@endif
+            	</span><input type="text" placeholder="请输入纳税人识别码" name="tax_code" id="tax_code" onkeydown='clearError(this)'>
         </div>
         <div class="list">
-            电话<input type="text" placeholder="请输入企业电话">
+            	<span>
+            		电话
+            			@if($errors->first('phone'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('phone') !!}</p>
+            			@endif            		
+            	</span><input type="text" placeholder="请输入企业电话" name="phone" id="phone" onkeydown='clearError(this)'>
         </div>
         <div class="list">
-            地址<input type="text" placeholder="请输入营业执照地址">
+            <span>
+            	地址
+            			@if($errors->first('address'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('address') !!}</p>
+            			@endif 
+            </span><input type="text" placeholder="请输入营业执照地址" name="address" id="address" onkeydown='clearError(this)'>
         </div>
         <div class="img">
-                营业执照副本
+                <span>
+                	营业执照副本
+                	@if($errors->first('business_license'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('business_license') !!}</p>
+        			@endif
+                </span>
                 <div class="img_file">
                     <img src="/themes/jianzhi/assets/images/fm.jpg" alt="">
-                    <input type="file">
+                    <input type="file" name="business_license" id="business_license"  onchange="zzfile()">
                 </div>
             </div>
             <div class="text">
-                    请将营业照副本放在平面拍摄，避免歪斜以及反光，以免造成审核不通过，谢谢！请上传不小于多少M得不大于多少M得照片
+                    请将营业照副本放在平面拍摄，避免歪斜以及反光，以免造成审核不通过，谢谢！请上传不小于1M得不大于5M的照片
             </div>
     </div>
-    <div class="btn">
-        提交认证
-    </div>
+    <button class="btn" type="submit">提交认证</button>
+    </form>
     <script>
+    var authform=$("#authform").Validform({
+        tiptype:3,
+        label:".label",
+        showAllError:true,
+        ajaxPost:false,
+        dataType:{
+            'positive':/^[1-9]\d*$/,
+        },
+    });
+    function backToMy(){
+    	window.location.href = "{!! url('jz/my') !!}";
+    }
+    function zzfile(){
+    	clearError($(".img_file"));
+    	var reads = new FileReader();
+    	var f = document.getElementById('business_license').files[0];
+    	reads.readAsDataURL(f);
+    	reads.onload = function(e) {
+        	console.log($('#business_license').siblings()[0])
+        	$('#business_license').siblings()[0].src = this.result;        	
+    	};
+    }
+    function clearError(obj){
+		//console.log(obj);
+		$(obj).parent().find('p').remove();
+    }
     </script>
-    {!! Theme::asset()->container('specific-css')->usepath()->add('my-style','style/enterprise_Authentication.css') !!}
+    {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_Authentication-style','style/enterprise_Authentication.css') !!}
+    {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}
+    {!! Theme::asset()->container('specific-js')->usePath()->add('validform-js', 'plugins/jquery/validform/js/Validform_v5.3.2_min.js') !!}

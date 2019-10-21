@@ -13,7 +13,7 @@ class WorkRequest extends FormRequest
 	public function rules()
 	{
 		$rules = [
-				//'desc'=>'required|str_length:5000',
+				'desc'=>'required|str_length:5000',
 		];
 
 		return $rules;
@@ -21,8 +21,8 @@ class WorkRequest extends FormRequest
 	public function messages()
 	{
 		return [
-				/* 'desc.required' => '稿件描述不能为空',
-				'desc.str_length'=> '字数超过限制', */
+				'desc.required' => '验收说明不能为空',
+				'desc.str_length'=> '字数超过限制',
 		];
 	}
 }

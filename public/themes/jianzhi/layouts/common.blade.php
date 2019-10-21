@@ -20,16 +20,26 @@
     <!-- Place favicon.ico in the root directory -->
     <link rel="stylesheet" href="/themes/jianzhi/assets/style/reset.css">
     <link rel="stylesheet" href="/themes/jianzhi/assets/font_pns0nx4ud0l/iconfont.css">
+    <script src="/themes/jianzhi/assets/libs/jquery.gritter.css"></script>
     {!! Theme::asset()->container('specific-css')->styles() !!}
-    {!! Theme::asset()->container('custom-css')->styles() !!}
     <script src="/themes/jianzhi/assets/libs/jquery.min.js"></script>
+    <script src="/themes/jianzhi/assets/libs/jquery.gritter.min.js"></script>
     <script src="/themes/jianzhi/assets/js/reset.js"></script>
     <script src="/themes/jianzhi/assets/js/tools.js"></script>
     {!! Theme::asset()->container('specific-js')->scripts() !!}
-	{!! Theme::asset()->container('custom-js')->scripts() !!}
 </head>
 <body>
 
-{!! Theme::content() !!}
+<header>
+    
+</header>
 
+	{!! Theme::content() !!}
+
+<footer>
+    {!! Theme::partial('footer') !!}
+</footer>
+	
+    {!! Theme::asset()->container('custom-css')->styles() !!}
+	{!! Theme::asset()->container('custom-js')->scripts() !!}
 </body>

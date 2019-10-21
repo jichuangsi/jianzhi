@@ -75,6 +75,7 @@
     position: fixed;
     bottom: 0rem;
     left: 0rem;
+    display: block;
 }
 .xybj {
     width: 100%;
@@ -140,4 +141,10 @@
 .xybox .xy_btn span:last-child {
     color: #fff;
     background-color: #3399ff;
+}
+.textbox{
+	font-size:0.24rem;
+	line-height:0.46rem;
+	border-bottom:1px solid #ddd;
+	padding:0.2rem;
 }

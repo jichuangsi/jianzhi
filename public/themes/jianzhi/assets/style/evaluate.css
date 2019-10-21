@@ -76,5 +76,9 @@
 .center .center_box .center_list .list_box .list_box_bottom{
     padding: 0.2rem 0.2rem;
     border: 1px solid #ddd;
+    border-bottom: 1.5px solid #000;
     line-height: 0.34rem;
+}
+.center .center_box .center_list .list_box .list_box_bottom div {
+	word-break:break-all;
 }

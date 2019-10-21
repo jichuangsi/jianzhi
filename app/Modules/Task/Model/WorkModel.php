@@ -21,6 +21,11 @@ class WorkModel extends Model
     public $fillable = ['desc','task_id','status','uid','bid_at','created_at', 'agreement'];
 
     
+    public function task()
+    {
+        return $this->hasOne('App\Modules\Task\Model\TaskModel','id','task_id');
+    }
+    
     public function childrenAttachment()
     {
         return $this->hasMany('App\Modules\Task\Model\WorkAttachmentModel', 'work_id', 'id');
@@ -35,9 +40,9 @@ class WorkModel extends Model
     static function getTasksByUidAndStatus($uid, $status)
     {
         if(is_array($uid)){
-            $task = WorkModel::select('task_id')->whereIn('uid', $uid)->where('status',$status)->groupby('task_id')->get()->toArray();
+            $task = WorkModel::select('task_id')->whereIn('uid', $uid)->whereIn('status',$status)->groupby('task_id')->get()->toArray();
         }else{
-            $task = WorkModel::where('uid',$uid)->where('status',$status)->select('task_id')->get()->toArray();
+            $task = WorkModel::where('uid',$uid)->whereIn('status',$status)->select('task_id')->get()->toArray();
         }
         return $task;
     }
@@ -91,15 +96,66 @@ class WorkModel extends Model
         return $data;
     }
     
-    static function findAll2($id)
+    static function findAll2($id,$data=array())
     {
         $query = Self::select('work.*','us.name as nickname','a.avatar','a.mobile')
-        ->where('work.task_id',$id)->where('work.status','<=',1)->where('forbidden',0);        
+        ->where('work.task_id',$id)->where('forbidden',0);        
+        
+        if(isset($data['work_type'])){
+            switch($data['work_type'])
+            {
+                case 1:
+                    $query->where('work.status','<=',1);
+                    break;
+                case 2:
+                    $query->where('work.status','>=',1);
+                    break;
+            }
+        }        
         
         $data = $query        
                 ->join('user_detail as a','a.uid','=','work.uid')
                 ->join('users as us','us.id','=','work.uid')
                 ->get()->toArray();
+        return $data;
+    }
+    
+    static function findMyWork($uid, $data=array())
+    {
+                $query = Self::select('work.*')
+                        ->where('work.uid',$uid)
+                        ->where('forbidden',0);
+        
+                if(isset($data['task_id'])){
+                    if(is_array($data['task_id'])){
+                        $query->whereIn('task_id', $data['task_id']);
+                    }else{
+                        $query->where('task_id', $data['task_id']);
+                    }
+                }        
+                
+                if(isset($data['work_type'])){
+                    switch($data['work_type'])
+                    {
+                        case 1:
+                            $query->where('work.status','<=',1);
+                            break;
+                        case 2:
+                            $query->where('work.status','>=',1);
+                            break;
+                    }
+                }
+                
+                $data = $query->get()->toArray();
+                return $data;
+    }
+    
+    static function findMyWork2($uid, $data=array())
+    {
+        $query = self::select('work.*')->where('uid',$uid)->where('forbidden',0);        
+        
+        $data = $query->with('task')->with('childrenComment')->get()->toArray();        
+        
         return $data;
     }
 
@@ -114,7 +170,11 @@ class WorkModel extends Model
         return $data;
     }
 
-    
+    /**
+     * 个人报名任务
+     * @param $data
+     * @return boolean
+     */
     public function workCreate($data)
     {
         $status = DB::transaction(function() use($data){
@@ -214,6 +274,11 @@ class WorkModel extends Model
         return is_null($status)?true:false;
     }
 
+    /**
+     * 企业任务分单
+     * @param $data
+     * @return boolean
+     */
     public function winBid2($data)
     {
         $status = DB::transaction(function() use($data){
@@ -305,30 +370,45 @@ class WorkModel extends Model
         return $data;
     }
     
+    /**
+     * 个人交付任务
+     * @param $data
+     * @return boolean
+     */
     static public function delivery($data)
     {
         $status = DB::transaction(function() use($data){
             
-            $result = WorkModel::create($data);
+            //$result = WorkModel::create($data);
+            
+            $result = Self::where('task_id',$data['task_id'])->where('uid',$data['uid'])->where('status','=',1)->first();
 
-            if(isset($data['file_id'])){
-                $file_able_ids = AttachmentModel::select('attachment.id','attachment.type')->whereIn('id',$data['file_id'])->get()->toArray();
+            if($result&&$result['id']){
                 
-                foreach($file_able_ids as $v){
-                    $work_attachment = [
-                        'task_id'=>$data['task_id'],
-                        'work_id'=>$result['id'],
-                        'attachment_id'=>$v['id'],
-                        'type'=>$v['type'],
-                        'created_at'=>date('Y-m-d H:i:s',time()),
-                    ];
-                    WorkAttachmentModel::create($work_attachment);
+                if(isset($data['file_id'])){
+                    if(is_string($data['file_id'])){
+                        $data['file_id'] = explode(",", $data['file_id']);
+                    }
+                    $file_able_ids = AttachmentModel::select('attachment.id','attachment.type')->whereIn('id',$data['file_id'])->get()->toArray();
+                    
+                    foreach($file_able_ids as $v){
+                        $work_attachment = [
+                            'task_id'=>$data['task_id'],
+                            'work_id'=>$result['id'],
+                            'attachment_id'=>$v['id'],
+                            'type'=>$v['type'],
+                            'created_at'=>date('Y-m-d H:i:s',time()),
+                        ];
+                        WorkAttachmentModel::create($work_attachment);
+                    }
                 }
-            }
-
-
-
-
+                
+                Self::where('id', $result['id'])->update(['status' => 2, 'desc' => $data['desc'], 'delivered_at' => date('Y-m-d H:i:s', time())]);      
+                
+                if(($data['delivery_num'] + 1)=== $data['worker_num']){
+                    TaskModel::where('id',$data['task_id'])->update(['status'=>7, 'checked_at'=>date('Y-m-d H:i:s',time()),'updated_at'=>date('Y-m-d H:i:s',time())]);
+                }
+            }            
 
         });
 
@@ -384,7 +464,64 @@ class WorkModel extends Model
         }
         return is_null($status)?true:false;
     }
+    
+    /**
+     * 企业验收任务
+     * @param $data
+     * @return boolean
+     */
+    static public function workCheck2($data)
+    {
+        $status = DB::transaction(function() use($data) {
+            
+            Self::where('id', $data['work_id'])->update(['status' => 3, 'payment' => $data['payment'], 'checked_at' => date('Y-m-d H:i:s',time())]);
+            
+            //将数据存入数据库
+            $work_comment = [
+                'task_id'=>$data['task_id'],
+                'work_id'=>$data['work_id'],
+                'comment'=>$data['comment'],
+                'uid'=>$data['uid'],
+                'nickname'=>$data['nickname'],
+                'created_at'=>date('Y-m-d H:i:s',time()),
+            ];
+            $result = WorkCommentModel::create($work_comment);  
+            
+            
+            if(($data['win_check']+1)==$data['worker_num'])
+            {
+                TaskModel::where('id',$data['task_id'])->update(['status'=>8,'comment_at'=>date('Y-m-d H:i:s',time()),'updated_at'=>date('Y-m-d H:i:s',time())]);                       
+            }
+        });
+            
+        return is_null($status)?true:false;
+    }
+    
+    /**
+     * 企业结算任务
+     * @param $data
+     * @return boolean
+     */
+    static public function workSettle($data){
+        
+        $status = DB::transaction(function() use($data) {
+            
+            Self::where('id', $data['work_id'])->update(['status' => 5, 'settle_at' => date('Y-m-d H:i:s',time())]);
+            
+            if(($data['settle_num']+1)==$data['worker_num'])
+            {
+                TaskModel::where('id',$data['task_id'])->update(['status'=>9, 'updated_at'=>date('Y-m-d H:i:s',time())]);                
+            }
+        });
+            
+            return is_null($status)?true:false;
+    }
 
+    /**
+     * 个人取消报名任务
+     * @param $data
+     * @return boolean
+     */
     static public function cancelMyWork($data){
         $status = DB::transaction(function() use($data){
             
@@ -400,6 +537,19 @@ class WorkModel extends Model
         });
             
         return is_null($status)?true:false;
+    }
+    
+    /**
+     * 根据id查询交付
+     * @param $id
+     */
+    static function findById($id)
+    {
+        $data = self::select('work.*')
+        ->where('work.id', '=', $id)
+        ->first();
+        
+        return $data;
     }
 
 }

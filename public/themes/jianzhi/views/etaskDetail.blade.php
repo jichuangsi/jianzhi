@@ -1,6 +1,6 @@
 	<div class="top">
         {{ $detail['title'] }}
-        <div class="out iconfont icon-fanhui" onclick="window.history.back(-1);"></div>
+        <div class="out iconfont icon-fanhui" onclick="backToList()"></div>
     </div>
     <div class="center">
         <div class="state">
@@ -27,15 +27,22 @@
         </div>
         <div class="center_box">
             <div class="center_list">
+            	@if(isset($works))
             	 @foreach($works as $v)
                 <div class="list_box">
                     <div class="list_box_title">
                         	报名时间：{{ date('Y年m月d日 H:i',strtotime($v['created_at'])) }} 
                         	<span>
                         	@if($v['status']==0)
-                        	已报名
+                        	已报名待审核
                         	@elseif($v['status']==1)
-                        	已派单
+                        	已派单进行中
+                        	@elseif($v['status']==2)
+                        	已提交待验收
+                        	@elseif($v['status']==3)
+                        	已验收待结算
+                        	@elseif($v['status']==5)
+                        	已结算
                         	@else
                         	未知状态
                         	@endif
@@ -60,13 +67,52 @@
                         
                         	@if($v['status']==0)
                         	<div class="qxbtn" onclick="assignTask('{{ $detail['id'] }}', '{{ $v['id'] }}')">同意派单</div>                        	
-                        	@elseif($v['status']==1)
-                        	@else
+                        	@elseif($v['status']==2)
+                        	<div class="qxbtn" onclick="approveDelivery('{{ $detail['id'] }}', '{{ $v['id'] }}')">验收通过</div>
+                        	@elseif($v['status']==3)
+                        	<div class="qxbtn" onclick="settleTask('{{ $detail['id'] }}', '{{ $v['id'] }}')">结算</div>
+                        	@endif
                         	
-                        	@endif                        
+							@if($v['status']>=2)                          		
+                        		<div class="textbox">
+									<div>完成时间：@if(isset($v['delivered_at'])) {{ date('Y年m月d日 H:i',strtotime($v['delivered_at'])) }} @endif</div>
+									<div>验收说明：@if(isset($v['desc'])) {{ $v['desc'] }} @endif</div>
+									<div>验收材料	({{ count($v['attachments']) }})：
+									@if(isset($v['attachments']))                   	
+												@foreach($v['attachments'] as $v1)
+													<li><a href="{{ URL('jz/task/fileDownload',['id'=>$v1['id']]) }}" target="#">{{ $v1['name'] }}</a>
+													</li>
+												@endforeach
+									@endif
+									</div>
+                        		</div>
+                        	@endif
+                        	
+                        		@if($v['status']>=3)
+                            		@if(isset($v['comments']))
+                            		<div class="textbox">
+                            			<div>验收时间：@if(isset($v['checked_at'])) {{ date('Y年m月d日 H:i',strtotime($v['checked_at'])) }} @endif</div>
+                            			雇主评价：
+                            			@foreach($v['comments'] as $v2)                            				
+                            					<div>{{ $v2['nickname'] }} ({{ date('Y年m月d日 H:i',strtotime($v['created_at'])) }})：{{ $v2['comment'] }}</div>
+                            			@endforeach
+                            			</div>
+                            		@endif
+                            	@endif
+                            	
+                            	@if($v['status']==5)
+                            		@if(isset($v['settle_at']))
+                            			<div class="textbox">
+                            				<div>结算时间：{{ date('Y年m月d日 H:i',strtotime($v['settle_at'])) }} </div>
+                            			</div>
+                            		@endif
+                            	@endif
+                        		
+                        	                               	                 
                     </div>
                 </div>
                 @endforeach
+               @endif
             </div>
         </div>
         <div class="text_box">
@@ -82,10 +128,8 @@
             <div>任务附件({{ count($attatchment) }})：
             							@foreach($attatchment as $v)
                                                 <li>
-                                                    <div>
-                                                        <a href="{{ URL('jz/task/fileDownload',['id'=>$v['id']]) }}" target="#">
+                                                	<a href="{{ URL('jz/task/fileDownload',['id'=>$v['id']]) }}" target="#">
                                                         <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 1.2rem;height: 1.2rem;"></a>
-                                                    </div>
                                                 </li>
                                             @endforeach
             
@@ -101,9 +145,27 @@
 				if(status==='success'&&ret&&!ret.errMsg){
 					window.location.href = "/jz/task/"+task_id;
     			}else{
-        			if(ret.errMsg) alert(ret.errMsg);
+        			if(ret.errMsg) popUpMessage(ret.errMsg);
         		}
             });
 		}
+		function approveDelivery(task_id, work_id){
+			window.location.href = "/jz/task/approveDelivery/"+work_id;
+		}
+		function settleTask(task_id, work_id){
+			var data = {'_token': '{{ csrf_token() }}', 'task_id': task_id, 'work_id': work_id};
+			$.post('/jz/task/ajaxSettleTask',data,function(ret,status,xhr){
+        		console.log(ret);
+                console.log(status);
+				if(status==='success'&&ret&&!ret.errMsg){
+					window.location.href = "/jz/task/"+task_id;
+    			}else{
+        			if(ret.errMsg) popUpMessage(ret.errMsg);
+        		}
+            });
+		}
+		function backToList(){
+        	window.location.href = "{!! url('jz/task') !!}";
+        }
 	</script>
-    {!! Theme::asset()->container('specific-css')->usepath()->add('index-style','style/enterprise_details.css') !!}
+    {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_details-style','style/enterprise_details.css') !!}

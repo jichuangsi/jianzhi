@@ -1,11 +1,20 @@
 	<div class="top" onclick="window.location.href = '{!! url('jz/info') !!}'">
         <div class="user">
-            <img src="/themes/jianzhi/assets/images/下载.jpg" alt="">
-            <div>空白格</div>
+        	@if(isset($avatar))
+            <img src="{!! url($avatar) !!}" alt="">
+            @else
+            <img src="/themes/jianzhi/assets/images/default.jpg" alt="">
+            @endif
+            <div>{{ $nickname }}</div>
             <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
         </div>
         <div class="jn">
-            <span>app</span><span>小程序</span>
+        					@if(isset($skills))
+                                @foreach($skills as $v1)
+                                	<span>{{ $v1['tag_name'] }}</span>
+                                @endforeach
+                            @endif
+            <!-- <span>app</span><span>小程序</span> -->
         </div>
     </div>
     <div class="center">

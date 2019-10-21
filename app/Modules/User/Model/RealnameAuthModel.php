@@ -23,6 +23,15 @@ class RealnameAuthModel extends Model
         }
         return null;
     }
+    
+    static function getRealnameAuthStatus2($uid)
+    {
+        $realnameInfo = RealnameAuthModel::where('uid', $uid)->first();
+        if ($realnameInfo) {
+            return $realnameInfo->status;
+        }
+        return -1;
+    }
 
     public $transactionData;
 
@@ -45,6 +54,14 @@ class RealnameAuthModel extends Model
             AuthRecordModel::where('auth_code', 'realname')->where('uid', $user->id)->delete();
         });
         return is_null($status) ? true : $status;
+    }
+    
+    static public function removeRealnameAuth2($uid)
+    {
+        $status = DB::transaction(function () use($uid) {
+            RealnameAuthModel::where('uid', $uid)->delete();
+        });
+            return is_null($status) ? true : $status;
     }
 
     
