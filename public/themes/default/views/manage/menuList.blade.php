@@ -23,8 +23,9 @@
                                                         </label>
                                                     </th>
                                                     <th>菜单名</th>
+                                                    <th>图标样式</th>
                                                     <th>菜单路由</th>
-                                                    <th>所属模块</th>
+                                                    <th>所属模块</th>                                                    
                                                     <th>排序</th>
                                                     <th>操作</th>
                                                 </tr>
@@ -41,6 +42,10 @@
 
                                                             <td>
                                                                 {{ $menu_data['name'] }}
+                                                            </td>
+                                                            
+                                                            <td>
+                                                                {{ $menu_data['style'] }}
                                                             </td>
 
                                                             <td>
@@ -84,6 +89,10 @@
                                                                         <a href="/manage/menuList/{{ $v['id'] }}/{{ $v['level'] }}">|-{{ $v['name'] }}</a>
                                                                     </td>
 
+        															<td>
+                                                                        {{ $v['style'] }}
+                                                                    </td>
+
                                                                     <td>
                                                                         {{ $v['route'] }}
                                                                     </td>
@@ -121,6 +130,10 @@
 
                                                                             <td>
                                                                                 <a href="/manage/menuList/{{ $value['id'] }}/{{ $value['level'] }}">|-|-{{ $value['name'] }}</a>
+                                                                            </td>
+
+        																	<td>
+                                                                                {{ $value['style'] }}
                                                                             </td>
 
                                                                             <td>

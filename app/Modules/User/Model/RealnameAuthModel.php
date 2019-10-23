@@ -90,5 +90,28 @@ class RealnameAuthModel extends Model
         return is_null($status) ? true : $status;
     }
 
-
+    static function realnameAuthPassByUid($uid)
+    {
+        $status = DB::transaction(function () use ($uid) {
+            RealnameAuthModel::where('uid', $uid)->update(array('status' => 1, 'auth_time' => date('Y-m-d H:i:s')));
+            AuthRecordModel::where('uid', $uid)
+            ->where('auth_code', 'realname')->orderby('id', 'desc')->first()
+            ->update(array('status' => 1, 'auth_time' => date('Y-m-d H:i:s')));
+        });
+            
+            return is_null($status) ? true : $status;
+    }
+    
+    
+    static function realnameAuthDenyByUid($uid)
+    {
+        $status = DB::transaction(function () use ($uid) {
+            RealnameAuthModel::where('uid', $uid)->update(array('status' => 2));
+            AuthRecordModel::where('uid', $uid)
+            ->where('auth_code', 'realname')->orderby('id', 'desc')->first()
+            ->update(array('status' => 2));
+        });
+            
+            return is_null($status) ? true : $status;
+    }
 }

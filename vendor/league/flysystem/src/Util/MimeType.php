@@ -208,6 +208,7 @@ class MimeType
             'cdr'   => 'application/cdr',
             'wma'   => 'audio/x-ms-wma',
             'jar'   => 'application/java-archive',
+            'xlsm'  =>  'application/vnd.ms-excel',
         ];
     }
 }

@@ -109,6 +109,16 @@ class DistrictModel extends Model
         if (!empty($arrDistrictName))
             return $arrDistrictName->name;
     }
+    
+    static function getDistrictId($name)
+    {
+        
+        $arrDistrictId = DistrictModel::select('id')->where('name', 'like', '%'.$name.'%')->first();
+        if (!empty($arrDistrictId))
+            return $arrDistrictId->id;
+        else 
+            return NULL;
+    }
 
     
     static function refreshAreaCache()

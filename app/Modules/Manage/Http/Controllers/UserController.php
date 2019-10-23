@@ -12,9 +12,21 @@ use App\Modules\Manage\Model\Role;
 use App\Modules\Manage\Model\RoleUserModel;
 use App\Modules\User\Model\DistrictModel;
 use App\Modules\User\Model\UserModel;
+use App\Modules\User\Model\UserDetailModel;
+use App\Modules\User\Model\UserTagsModel;
+use App\Modules\Manage\Model\ConfigModel;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Modules\User\Model\RealnameAuthModel;
+use App\Modules\User\Model\EnterpriseAuthModel;
+use App\Modules\Task\Model\TaskCateModel;
+use Exception;
+use PHPExcel_IOFactory;
+use PHPExcel_Cell;
+use PHPExcel_Worksheet_Drawing;
+use PHPExcel_Worksheet_MemoryDrawing;
+use PHPExcel_Reader_Excel2007;
 
 class UserController extends ManageController
 {
@@ -35,8 +47,11 @@ class UserController extends ManageController
      */
     public function getUserList(Request $request)
     {
-        $list = UserModel::select('users.name', 'user_detail.created_at', 'user_detail.balance', 'users.id', 'users.last_login_time', 'users.status')
-            ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid');
+        $list = UserModel::select('users.name', 'user_detail.created_at', 'user_detail.balance', 'user_detail.card_number', 'user_detail.mobile', 
+                            'users.id', 'users.last_login_time', 'users.status', 'realname_auth.status as astatus', 'realname_auth.realname as realname')
+            ->where('users.type', 1)
+            ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
+            ->leftJoin('realname_auth', 'users.id', '=', 'realname_auth.uid');
 
         if ($request->get('uid')){
             $list = $list->where('users.id', $request->get('uid'));
@@ -53,19 +68,29 @@ class UserController extends ManageController
         if (intval($request->get('status'))){
             switch(intval($request->get('status'))){
                 case 1:
-                    $status = 0;
+                    $status = null;
                     break;
                 case 2:
+                    $status = 1;
+                    break;
+                case 3:
+                    $status = 0;
+                    break;
+                case 4:
                     $status = 2;
                     break;
                 case -1;
-                    $status = [0,1,2];
+                    //$status = [0,1,2];
+                    $status = -1;
                     break;
             }
             if(is_array($status)){
-                $list = $list->whereIn('users.status', $status);
+                //$list = $list->whereIn('users.status', $status);
+                $list = $list->whereIn('realname_auth.status', $status);                
             }else{
-                $list = $list->where('users.status', $status);
+                //$list = $list->where('users.status', $status);
+                if($status != -1)
+                    $list = $list->where('realname_auth.status', $status);    
             }
         }
         $order = $request->get('order') ? $request->get('order') : 'desc';
@@ -95,7 +120,7 @@ class UserController extends ManageController
             $list = $list->where($timeType,'<',$end);
         }
         $list = $list->paginate($paginate);
-
+        //dump($list);
         $data = [
             'status'=>$request->get('status'),
             'list' => $list,
@@ -125,6 +150,132 @@ class UserController extends ManageController
     }
 
     /**
+     * 普通企业列表
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function getEnterpriseList(Request $request)
+    {
+        $list = UserModel::select('users.name', //'user_detail.created_at', 'user_detail.balance', 'user_detail.card_number', 'user_detail.mobile',
+            'users.id', 'users.last_login_time', 'users.status', 'enterprise_auth.status as astatus', 'enterprise_auth.company_name as company_name'
+            , 'enterprise_auth.contactor as contactor', 'enterprise_auth.contactor_mobile as contactor_mobile'
+            , 'province.name as province_name','city.name as city_name','area.name as area_name', 'enterprise_auth.address as address')
+            ->where('users.type', 2)
+            //->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
+            ->leftJoin('enterprise_auth', 'users.id', '=', 'enterprise_auth.uid')
+            ->leftjoin('district as province','province.id','=','enterprise_auth.province')
+            ->leftjoin('district as city','city.id','=','enterprise_auth.city')
+            ->leftjoin('district as area','area.id','=','enterprise_auth.area');
+            
+            if ($request->get('uid')){
+                $list = $list->where('users.id', $request->get('uid'));
+            }
+            if ($request->get('username')){
+                $list = $list->where('users.name','like', '%'.$request->get('username').'%');
+            }
+            if ($request->get('company_name')){
+                $list = $list->where('enterprise_auth.company_name','like', '%'.$request->get('company_name').'%');
+            }
+            if ($request->get('email')){
+                $list = $list->where('users.email', $request->get('email'));
+            }
+            if ($request->get('contactor')){
+                $list = $list->where('enterprise_auth.contactor','like', '%'.$request->get('contactor').'%');
+            }
+            if ($request->get('contactor_mobile')){
+                $list = $list->where('enterprise_auth.contactor_mobile', $request->get('contactor_mobile'));
+            }
+            if (intval($request->get('status'))){
+                switch(intval($request->get('status'))){
+                    case 1:
+                        $status = null;
+                        break;
+                    case 2:
+                        $status = 1;
+                        break;
+                    case 3:
+                        $status = 0;
+                        break;
+                    case 4:
+                        $status = 2;
+                        break;
+                    case -1;
+                    //$status = [0,1,2];
+                    $status = -1;
+                    break;
+                }
+                if(is_array($status)){
+                    //$list = $list->whereIn('users.status', $status);
+                    $list = $list->whereIn('enterprise_auth.status', $status);
+                }else{
+                    //$list = $list->where('users.status', $status);
+                    if($status != -1)
+                        $list = $list->where('enterprise_auth.status', $status);
+                }
+            }
+            $order = $request->get('order') ? $request->get('order') : 'desc';
+            if ($request->get('by')){
+                switch ($request->get('by')){
+                    case 'id':
+                        $list = $list->orderBy('users.id', $order);
+                        break;
+                    case 'created_at':
+                        $list = $list->orderBy('users.created_at', $order);
+                        break;
+                }
+            } else {
+                $list = $list->orderBy('users.created_at', $order);
+            }
+            
+            $paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+            //时间筛选
+            $timeType = 'users.created_at';
+            if($request->get('start')){
+                $start = date('Y-m-d H:i:s',strtotime($request->get('start')));
+                $list = $list->where($timeType,'>',$start);
+                
+            }
+            if($request->get('end')){
+                $end = date('Y-m-d H:i:s',strtotime($request->get('end')));
+                $list = $list->where($timeType,'<',$end);
+            }
+            $list = $list->paginate($paginate);
+            
+            $data = [
+                'status'=>$request->get('status'),
+                'list' => $list,
+                'paginate' => $paginate,
+                'order' => $order,
+                'by' => $request->get('by'),
+                'uid' => $request->get('uid'),
+                'username' => $request->get('username'),
+                'email' => $request->get('email'),
+                'contactor_mobile' => $request->get('contactor_mobile'),
+                'company_name' => $request->get('company_name'),
+                'contactor' => $request->get('contactor')                
+            ];
+            $search = [
+                'status'=>$request->get('status'),
+                'paginate' => $paginate,
+                'order' => $order,
+                'by' => $request->get('by'),
+                'uid' => $request->get('uid'),
+                'username' => $request->get('username'),
+                'email' => $request->get('email'),
+                'contactor_mobile' => $request->get('contactor_mobile'),
+                'company_name' => $request->get('company_name'),
+                'contactor' => $request->get('contactor'),
+                'start' => $request->get('start'),
+                'end' => $request->get('end')
+            ];
+            $data['search'] = $search;
+            
+            return $this->theme->scope('manage.enterpriseList2', $data)->render();
+    }
+    
+    
+    /**
      * 处理用户
      *
      * @param $uid
@@ -145,6 +296,79 @@ class UserController extends ManageController
         if ($status)
             return back()->with(['message' => '操作成功']);
     }
+    
+    /**
+     * 添加普通企业视图
+     *
+     * @return mixed
+     */
+    public function getEnterpriseAdd()
+    {
+        $province = DistrictModel::findTree(0);
+        //技能标签
+        $taskCate = TaskCateModel::findAll();
+        $data = [
+            'province' => $province,
+            'taskCate' => $taskCate,
+        ];
+        return $this->theme->scope('manage.enterpriseAdd', $data)->render();
+    }
+    
+    /**
+     * 添加企业表单提交
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEnterpriseAdd(Request $request){
+        $business_license = $request->file('business_license');
+        
+        $enterpriseInfo = array();
+        $error = array();
+        $allowExtension = array('jpg', 'gif', 'jpeg', 'bmp', 'png');
+        if ($business_license) {
+            $uploadMsg = json_decode(\FileClass::uploadFile($business_license, 'user', $allowExtension));
+            if ($uploadMsg->code != 200) {
+                $error['business_license'] = $uploadMsg->message;
+            } else {
+                $enterpriseInfo['business_license'] = $uploadMsg->data->url;
+            }
+        }
+        
+        if (!empty($error)) {
+            return back()->withErrors($error)->withInput();
+        }
+        
+        $salt = \CommonClass::random(4);
+        $data = [
+            'name' => $request->get('name'),
+            'email' => $request->get('email'),
+            'tax_code' => $request->get('tax_code'),
+            'password' => UserModel::encryptPassword($request->get('password'), $salt),
+            'salt' => $salt,
+            'email_status' => 2,
+            'status' => 1,
+            'type' => 2,
+            'company_name' => $request->get('company_name'),
+            'bank' => $request->get('bank'),
+            'account' => $request->get('account'),
+            'province' => $request->get('province'),
+            'city' => $request->get('city'),
+            'area' => $request->get('area'),
+            'owner' => $request->get('owner'),
+            'phone' => $request->get('phone'),
+            'contactor' => $request->get('contactor'),
+            'contactor_mobile' => $request->get('contactor_mobile'),
+            'company_email' => $request->get('company_email'),
+            'address' => $request->get('address'),
+            'business_license' => $enterpriseInfo['business_license']
+        ];
+        $status = UserModel::addEnterprise($data);
+        if ($status)
+            return redirect('manage/enterpriseList')->with(['message' => '操作成功']);
+        else
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
+    }
 
     /**
      * 添加普通用户视图
@@ -154,8 +378,11 @@ class UserController extends ManageController
     public function getUserAdd()
     {
         $province = DistrictModel::findTree(0);
+        //技能标签
+        $taskCate = TaskCateModel::findAll();
         $data = [
-            'province' => $province
+            'province' => $province,
+            'taskCate' => $taskCate,
         ];
  		return $this->theme->scope('manage.userAdd', $data)->render();
     }
@@ -169,10 +396,42 @@ class UserController extends ManageController
     public function postUserAdd(Request $request)
     {
         //dd($request->all());
+        
+        $card_front_side = $request->file('card_front_side');
+        $card_back_dside = $request->file('card_back_dside');
+        
+        $realnameInfo = array();
+        $error = array();
+        $allowExtension = array('jpg', 'gif', 'jpeg', 'bmp', 'png');
+        if ($card_front_side) {
+            $uploadMsg = json_decode(\FileClass::uploadFile($card_front_side, 'user', $allowExtension));
+            if ($uploadMsg->code != 200) {
+                $error['card_front_side'] = $uploadMsg->message;
+            } else {
+                $realnameInfo['card_front_side'] = $uploadMsg->data->url;
+            }
+        }
+        if ($card_back_dside) {
+            $uploadMsg = json_decode(\FileClass::uploadFile($card_back_dside, 'user', $allowExtension));
+            if ($uploadMsg->code != 200) {
+                $error['card_back_dside'] = $uploadMsg->message;
+            } else {
+                $realnameInfo['card_back_dside'] = $uploadMsg->data->url;
+            }
+        }
+        
+        if (!empty($error)) {
+            return back()->withErrors($error)->withInput();
+        }    
+        
         $salt = \CommonClass::random(4);
         $data = [
             'name' => $request->get('name'),
             'realname' => $request->get('realname'),
+            'card_number' => $request->get('card_number'),
+            'email_status' => 2,
+            'status' => 1,
+            'type' => 1,
             'mobile' => $request->get('mobile'),
             'qq' => $request->get('qq'),
             'email' => $request->get('email'),
@@ -180,11 +439,16 @@ class UserController extends ManageController
             'city' => $request->get('city'),
             'area' => $request->get('area'),
             'password' => UserModel::encryptPassword($request->get('password'), $salt),
-            'salt' => $salt
+            'salt' => $salt,
+            'card_front_side' => $realnameInfo['card_front_side'],
+            'card_back_dside' => $realnameInfo['card_back_dside'],
+            'skill' => $request->get('skill'),
         ];
         $status = UserModel::addUser($data);
         if ($status)
             return redirect('manage/userList')->with(['message' => '操作成功']);
+        else 
+            return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
     }
 
     /**
@@ -208,6 +472,28 @@ class UserController extends ManageController
             'status' => $status
         );
         return json_encode($data);
+    }
+    
+    /**
+     * 检查用户名
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function checkUserName2($username){
+        $status = UserModel::where('name', $username)->first();
+        if (empty($status)){
+            $status = true;
+            $info = '';
+        } else {
+            $info = '用户名不可用';
+            $status = false;
+        }
+        $data = array(
+            'info' => $info,
+            'status' => $status
+        );
+        return $data;
     }
 
     /**
@@ -234,54 +520,509 @@ class UserController extends ManageController
         return json_encode($data);
     }
 
+    //个人用户导入视图
+    public function getUserImport(){
+        
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $data = [
+            'filesize' => $attachmentConfig['attachment']['size']
+        ];
+        
+        return $this->theme->scope('manage.userImport', $data)->render();
+    }
+    
+    //提交个人用户导入数据
+    public function postUserImport(Request $request){
+        
+        $data = $this->fileImport($request->file('usersfile'));
+        //dump($data);
+        $users = array();
+        foreach($data as $k => &$v){
+            if($k === 0 || empty($v[0]) || empty($v[2])) continue;
+            
+            $v['num'] = $k;
+            $v[2] = strval($v[2]);
+            
+            $usable = $this->checkUserName2($v[2]);
+            
+            if(!$usable['status']){
+                $v['msg'] = $usable['info'];
+                array_push($users, $v);
+                continue;
+            }
+            
+            $skillIds = '';
+            if(!empty($v[5])){
+                $skills = explode(',', $v[5]);
+                foreach($skills as $k1 => $v1){
+                    if($v1){
+                        $skill = explode('-', $v1);
+                        if($skill[0])  $skillIds .= $skill[0] . ',';
+                    }
+                }
+            }
+            
+            $astatus = '';
+            if(!empty($v[6])){
+                $aInfos = explode('-', $v[6]);
+                $astatus = $aInfos[0];
+            }
+            
+            if($astatus&&empty($v[7])&&empty($v[8])){
+                $v['msg'] = '必须同时附带身份证正反面照片，才可进入认证流程';
+                array_push($users, $v);
+                continue;
+            }
+            
+            $salt = \CommonClass::random(4);
+            $param = [
+                'name' => $v[2],
+                'email' => $this->genEMail($v[7]),
+                'realname' => $v[0],
+                'card_number' => $v[1],
+                'email_status' => 2,
+                'status' => 1,
+                'type' => 1,
+                'mobile' => $v[2],
+                'password' => UserModel::encryptPassword($v[2], $salt),
+                'salt' => $salt,
+                'card_front_side' => $astatus?$v[7]:'',
+                'card_back_dside' => $astatus?$v[8]:'',
+                'skill' => $skillIds,
+                'astatus' => $astatus,
+            ];
+            //dump($param);
+            $status = UserModel::addUser($param);  
+            
+            if($status){
+                $v['msg'] = '导入成功';
+            }else{
+                $v['msg'] = '导入失败';
+            }
+            
+            array_push($users, $v);
+        }
+        
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $result = [
+            'filesize' => $attachmentConfig['attachment']['size'],
+            'users' => $users,
+        ];
+        //dump($result);
+        return $this->theme->scope('manage.userImport', $result)->render();
+    }
+    
+    //企业用户导入视图
+    public function getEnterpriseImport(){
+        $data = array();
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $data = [
+            'filesize' => $attachmentConfig['attachment']['size']
+        ];        
+        return $this->theme->scope('manage.enterpriseImport', $data)->render();
+    }
+    
+    //企业用户导入数据
+    public function postEnterpriseImport(Request $request){
+        $data = $this->fileImport($request->file('enterprisesfile'));
+        //dump($data);
+        $enterprises = array();
+        
+        foreach($data as $k => &$v){
+            if($k === 0 || empty($v[0]) || empty($v[7])) continue;
+            
+            $v['num'] = $k;
+            $v[7] = strval($v[7]);
+            
+            $usable = $this->checkUserName2($v[7]);
+            
+            if(!$usable['status']){
+                $v['msg'] = $usable['info'];
+                array_push($enterprises, $v);
+                continue;
+            }
+            
+            $astatus = '';
+            if(!empty($v[9])){
+                $aInfos = explode('-', $v[9]);
+                $astatus = $aInfos[0];
+            }
+            
+            if($astatus&&empty($v[8])){
+                $v['msg'] = '必须同时附带营业执照副本照片，才可进入认证流程';
+                array_push($enterprises, $v);
+                continue;
+            }
+            
+            $city = '';
+            if(!empty($v[1])){
+                $city = DistrictModel::getDistrictId($v[1]);
+            }
+            
+            $salt = \CommonClass::random(4);
+            $param = [
+                'name' => $v[7],                
+                'password' => UserModel::encryptPassword($v[7], $salt),
+                'email' => $this->genEMail($v[7]),
+                'salt' => $salt,
+                'email_status' => 2,
+                'status' => 1,
+                'type' => 2,
+                'company_name' => $v[0],
+                'city' => $city?$city:'', 
+                'tax_code' => $v[2],
+                'owner' => $v[3],
+                'company_email' => $v[4],
+                'address' => $v[5],
+                'contactor' => $v[6],
+                'contactor_mobile' => $v[7],
+                'business_license' => $v[8],
+                'bank' => $v[10],
+                'account' => $v[11],  
+                'phone' => $v[12],
+                'astatus' => $astatus,
+            ];
+            //dump($param);
+            $status = UserModel::addEnterprise($param);
+            
+            if($status){
+                $v['msg'] = '导入成功';
+            }else{
+                $v['msg'] = '导入失败';
+            }
+            
+            array_push($enterprises, $v);
+        }
+        
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $result = [
+            'filesize' => $attachmentConfig['attachment']['size'],
+            'enterprises' => $enterprises,
+        ];
+        //dump($result);
+        return $this->theme->scope('manage.enterpriseImport', $result)->render();
+        
+    }
+    
+    private function genEMail($val){
+        return $val.'@'.$val.'.com';
+    }
+    
+    private function fileImport($file, $allowExtension = array()){        
+        $importdUrl = '';
+        $errMsg = '';
+        if ($file) {
+            $uploadMsg = json_decode(\FileClass::uploadFile($file, 'user', $allowExtension));
+            
+            if ($uploadMsg->code != 200) {
+                $errMsg = $uploadMsg->message;
+            } else {
+                $importdUrl = $uploadMsg->data->url;
+            }
+        }else{
+            return ['success'=>false, 'errMsg'=>'缺少必要参数！'];
+        }
+        
+        if (!empty($errMsg)) {
+            return ['success'=>false, 'errMsg'=>$error];
+        }
+        
+        try {
+            $inputFileType = PHPExcel_IOFactory::identify($importdUrl);
+            if('Excel5'===$inputFileType){
+                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+            }else if('Excel2007'===$inputFileType){
+                $objReader = new PHPExcel_Reader_Excel2007();
+            }  
+            if(!$objReader) return ['success'=>false, 'errMsg'=>'缺少必要参数！'];
+            $objPHPExcel = $objReader->load($importdUrl);
+        } catch(Exception $e) {
+            //die('加载文件发生错误："'.pathinfo($importdUrl,PATHINFO_BASENAME).'": '.$e->getMessage());
+            return ['success'=>false, '$errMsg'=>$e->getMessage()];
+        }
+        //$sheet = $objPHPExcel->getSheet(0);
+        $sheet = $objPHPExcel->getActiveSheet();
+        $data=$sheet->toArray();//该方法读取不到图片 图片需单独处理        
+        
+        
+        $imageFilePath= 'attachment' . DIRECTORY_SEPARATOR . 'user' . DIRECTORY_SEPARATOR . date('Y/m/d') . DIRECTORY_SEPARATOR;//图片在本地存储的路径
+        if (! file_exists ( $imageFilePath )) {
+            mkdir("$imageFilePath", 0777, true);
+        }
+        
+        $this->extractImageFromWorksheet($sheet, $imageFilePath, $data);
+        //dump($data);
+        
+        return $data;
+    }    
+    
+    
+    private function extractImageFromWorksheet($worksheet,$basePath,&$data){
+        
+        foreach ($worksheet->getDrawingCollection() as $drawing) {            
+            list($startColumn,$startRow)= PHPExcel_Cell::coordinateFromString($drawing->getCoordinates());//获取图片所在行和列
+            $startColumn = $this->ABC2decimal($startColumn);//由于图片所在位置的列号为字母，转化为数字
+            $imageFilefolder = $drawing->getCoordinates() .time(). mt_rand(10000, 99999);
+            //$xy=$drawing->getCoordinates();
+            $path = $basePath . $imageFilefolder . DIRECTORY_SEPARATOR;
+            if (! file_exists ( $path )) {
+                mkdir("$path", 0777, true);
+            }
+            
+            // for xlsx
+            if ($drawing instanceof PHPExcel_Worksheet_Drawing) {
+                $filename = $drawing->getPath();
+                //$imageFileName = $drawing->getIndexedFilename();
+                $path = $path . $drawing->getIndexedFilename();                
+                copy($filename, $path);
+                //$result[$xy] = $path;
+                $data[$startRow-1][$startColumn]=$path;//把图片插入到数组中
+                // for xls                
+            } else if ($drawing instanceof PHPExcel_Worksheet_MemoryDrawing) {
+                $image = $drawing->getImageResource();
+                $renderingFunction = $drawing->getRenderingFunction();
+                switch ($renderingFunction) {
+                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG:
+                        //$imageFileName = $drawing->getIndexedFilename();                        
+                        $path = $path . $drawing->getIndexedFilename();                        
+                        imagejpeg($image, $path);                        
+                        break;      
+                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_GIF:
+                        //$imageFileName = $drawing->getIndexedFilename();                        
+                        $path = $path . $drawing->getIndexedFilename();                        
+                        imagegif($image, $path);                        
+                        break;
+                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG:
+                        //$imageFileName = $drawing->getIndexedFilename();                        
+                        $path = $path . $drawing->getIndexedFilename();                        
+                        imagegif($image, $path);                        
+                        break;
+                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_DEFAULT:                        
+                        //$imageFileName = $drawing->getIndexedFilename();                        
+                        $path = $path . $drawing->getIndexedFilename();                        
+                        imagegif($image, $path);                        
+                        break;                        
+                }                
+                //$result[$xy] = $imageFileName;     
+                $data[$startRow-1][$startColumn]=$path;//把图片插入到数组中
+            }            
+        }              
+    }    
+    
+    private function ABC2decimal($abc){
+        $ten = 0;
+        $len = strlen($abc);
+        for($i=1;$i<=$len;$i++){
+            $char = substr($abc,0-$i,1);//反向获取单个字符
+            
+            $int = ord($char);
+            $ten += ($int-65)*pow(26,$i-1);
+        }
+        return $ten;
+    }
+    
     /**
-     * 编辑用户资料视图
+     * 编辑企业资料视图
+     *
+     * @param $uid
+     * @return mixed
+     */
+    public function getEnterpriseEdit($uid)
+    {
+        $info = UserModel::select('users.name', 'users.email', 'enterprise_auth.*', 'users.id')
+            ->where('users.id', $uid)
+            ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
+            ->leftJoin('enterprise_auth', 'users.id', '=', 'enterprise_auth.uid')
+            ->first()->toArray();
+            
+            $province = DistrictModel::findTree(0);            
+            
+            $data = [
+                'info' => $info,
+                'province' => $province,
+                'city' => DistrictModel::getDistrictName($info['city']),
+                'area' => DistrictModel::getDistrictName($info['area']),
+            ];
+            return $this->theme->scope('manage.enterpriseDetail', $data)->render();
+    }   
+    
+    /**
+     * 编辑企业用户资料
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEnterpriseEdit(Request $request)
+    {
+        $business_license = $request->file('business_license');
+        
+        $enterpriseInfo = array();
+        $error = array();
+        $allowExtension = array('jpg', 'gif', 'jpeg', 'bmp', 'png');
+        if ($business_license) {
+            $uploadMsg = json_decode(\FileClass::uploadFile($business_license, 'user', $allowExtension));
+            if ($uploadMsg->code != 200) {
+                $error['business_license'] = $uploadMsg->message;
+            } else {
+                $enterpriseInfo['business_license'] = $uploadMsg->data->url;
+            }
+        }
+        
+        if (!empty($error)) {
+            return back()->withErrors($error)->withInput();
+        }
+        
+        $data = [
+            'uid' => $request->get('uid'),
+            'tax_code' => $request->get('tax_code'),
+            'company_name' => $request->get('company_name'),
+            'bank' => $request->get('bank'),
+            'account' => $request->get('account'),
+            'province' => $request->get('province'),
+            'city' => $request->get('city'),
+            'area' => $request->get('area'),
+            'owner' => $request->get('owner'),
+            'phone' => $request->get('phone'),
+            'contactor' => $request->get('contactor'),
+            'contactor_mobile' => $request->get('contactor_mobile'),
+            'company_email' => $request->get('company_email'),
+            'address' => $request->get('address'),
+        ];
+        
+        if(!empty($request->get('password'))){
+            $salt = \CommonClass::random(4);
+            $data['password'] = UserModel::encryptPassword($request->get('password'), $salt);
+            $data['salt'] = $salt;
+        }
+        
+        if(!empty($enterpriseInfo['business_license'])){
+            $data['business_license'] = $enterpriseInfo['business_license'];
+        }        
+        
+        $status = UserModel::editEnterprise($data);
+        if ($status)
+            return redirect('manage/enterpriseList')->with(['message' => '操作成功']);
+        else
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
+    }
+        
+    /**
+     * 编辑个人资料视图
      *
      * @param $uid
      * @return mixed
      */
     public function getUserEdit($uid)
     {
-        $info = UserModel::select('users.name', 'user_detail.realname', 'user_detail.mobile', 'user_detail.qq', 'users.email', 'user_detail.province'
-            , 'user_detail.city', 'user_detail.area', 'users.id')
+        $info = UserModel::select('users.name', 'user_detail.realname', 'user_detail.card_number', 'user_detail.mobile', 
+                            'user_detail.qq', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id')
             ->where('users.id', $uid)
-            ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')->first()->toArray();
+            ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
+            ->leftJoin('realname_auth', 'users.id', '=', 'realname_auth.uid')
+            ->first()->toArray();
 
         $province = DistrictModel::findTree(0);
+        //技能标签
+        $taskCate = TaskCateModel::findAll();
+        //个人标签
+        $myTags = UserTagsModel::myTag2($uid);
+        $skill = array();
+        if($myTags&&count($myTags)>0){
+            foreach($taskCate as $k => &$v){
+                if(isset($v['children_task'])){
+                    foreach($v['children_task'] as $k1 => &$v1){
+                        foreach($myTags as $k2 => $v2){
+                            if($v1['id']===$v2['cate_id']){
+                                array_push($skill, ['cate_id' =>$v1['id'], 'cate_name' =>$v1['name'] ]);
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+        
         $data = [
             'info' => $info,
             'province' => $province,
+            'taskCate' => $taskCate,
             'city' => DistrictModel::getDistrictName($info['city']),
-            'area' => DistrictModel::getDistrictName($info['area'])
+            'area' => DistrictModel::getDistrictName($info['area']),
+            'skill' => $skill,
         ];
  		return $this->theme->scope('manage.userDetail', $data)->render();
     }
 
     /**
-     * 编辑用户资料
+     * 编辑个人用户资料
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postUserEdit(Request $request)
     {
-        $salt = \CommonClass::random(4);
+        $card_front_side = $request->file('card_front_side');
+        $card_back_dside = $request->file('card_back_dside');
+        
+        $realnameInfo = array();
+        $error = array();
+        $allowExtension = array('jpg', 'gif', 'jpeg', 'bmp', 'png');
+        if ($card_front_side) {
+            $uploadMsg = json_decode(\FileClass::uploadFile($card_front_side, 'user', $allowExtension));
+            if ($uploadMsg->code != 200) {
+                $error['card_front_side'] = $uploadMsg->message;
+            } else {
+                $realnameInfo['card_front_side'] = $uploadMsg->data->url;
+            }
+        }
+        if ($card_back_dside) {
+            $uploadMsg = json_decode(\FileClass::uploadFile($card_back_dside, 'user', $allowExtension));
+            if ($uploadMsg->code != 200) {
+                $error['card_back_dside'] = $uploadMsg->message;
+            } else {
+                $realnameInfo['card_back_dside'] = $uploadMsg->data->url;
+            }
+        }
+        
+        if (!empty($error)) {
+            return back()->withErrors($error)->withInput();
+        }            
+        
         $data = [
             'uid' => $request->get('uid'),
             'realname' => $request->get('realname'),
             'mobile' => $request->get('mobile'),
+            'card_number' => $request->get('card_number'),
             'qq' => $request->get('qq'),
-            'email' => $request->get('email'),
+            //'email' => $request->get('email'),
             'province' => $request->get('province'),
             'city' => $request->get('city'),
             'area' => $request->get('area'),
-            'password' => UserModel::encryptPassword($request->get('password'), $salt),
-            'salt' => $salt
+            'skill' => $request->get('skill'),
         ];
+        
+        if(!empty($request->get('password'))){
+            $salt = \CommonClass::random(4);
+            $data['password'] = UserModel::encryptPassword($request->get('password'), $salt);
+            $data['salt'] = $salt;
+        }
+        
+        if(!empty($realnameInfo['card_front_side'])){
+            $data['card_front_side'] = $realnameInfo['card_front_side'];
+        }
+        
+        if(!empty($realnameInfo['card_back_dside'])){
+            $data['card_back_dside'] = $realnameInfo['card_back_dside'];
+        }
+        
         $status = UserModel::editUser($data);
         if ($status)
             return redirect('manage/userList')->with(['message' => '操作成功']);
-
+       else
+            return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
     }
 
     /**
@@ -416,9 +1157,251 @@ class UserController extends ManageController
         );
         return json_encode($data);
     }
+    
+    /**
+     * 批量删除个人用户
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postUserDeleteAll(Request $request){
+        // dd($request->all());
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/userList')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                RealnameAuthModel::where('uid', $id)->delete();
+                UserDetailModel::where('uid', $id)->delete();
+                UserModel::where('id', $id)->delete();
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/userList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
+    }
+    
+    /**
+     * 批量删除企业用户
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEnterpriseDeleteAll(Request $request){
+        // dd($request->all());
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                EnterpriseAuthModel::where('uid', $id)->delete();
+                UserDetailModel::where('uid', $id)->delete();
+                UserModel::where('id', $id)->delete();
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/enterpriseList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
+    }
+    
+    
+    /**
+     * 单个通过普通用户认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setUserAuthPass($uid){
+        if(!$uid){
+            return  redirect('manage/userList')->with(array('message' => '操作失败'));
+        }
+        $status = DB::transaction(function () use ($uid) {
+            RealnameAuthModel::realnameAuthPassByUid($uid);
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/userList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
+    }
+    
+    /**
+     * 单个通过普通企业认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setEnterpriseAuthPass($uid){
+        if(!$uid){
+            return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
+        }
+        $status = DB::transaction(function () use ($uid) {
+            EnterpriseAuthModel::EnterpriseAuthPassByUid($uid);
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/enterpriseList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
+    }
+    
+    
+    /**
+     * 单个拒绝普通用户认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setUserAuthReject($uid) {
+        if(!$uid){
+            return  redirect('manage/userList')->with(array('message' => '操作失败'));
+        }
+        $status = DB::transaction(function () use ($uid) {
+            RealnameAuthModel::realnameAuthDenyByUid($uid);
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/userList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
+    }
+    
+    /**
+     * 单个拒绝普通企业认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setEnterpriseAuthReject($uid) {
+        if(!$uid){
+            return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
+        }
+        $status = DB::transaction(function () use ($uid) {
+            EnterpriseAuthModel::EnterpriseAuthDenyByUid($uid);
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/enterpriseList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
+    }    
+    
+    /**
+     * 批量通过普通用户认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postUserAuthPassAll(Request $request) {
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/userList')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                RealnameAuthModel::realnameAuthPassByUid($id);
+            }
+        });
+        if(is_null($status))
+        {
+            return redirect()->to('manage/userList')->with(array('message' => '操作成功'));
+        }
+        return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
+    }
+    
+    /**
+     * 批量通过普通企业认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEnterpriseAuthPassAll(Request $request){
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                EnterpriseAuthModel::EnterpriseAuthPassByUid($id);
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/enterpriseList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
+    }
+    
+    /**
+     * 批量拒绝普通用户认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postUserAuthRejectAll(Request $request) {
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/userList')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                RealnameAuthModel::realnameAuthDenyByUid($id);
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/userList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
+    }    
+    
+    /**
+     * 批量拒绝普通企业认证
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEnterpriseAuthRejectAll(Request $request) {
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                EnterpriseAuthModel::EnterpriseAuthDenyByUid($id);
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/enterpriseList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
+    }
 
     /**
-     * 批量删除用户
+     * 批量删除系统用户
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse

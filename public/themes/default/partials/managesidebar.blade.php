@@ -1,7 +1,7 @@
 ﻿@foreach(Theme::get('manageMenu') as $v)
     <li class="{{ in_array($v['id'],Theme::get('menu_ids'))?'active':'' }}">
         <a href="{!! empty($v['route'])?'javaascript:;':url($v['route']) !!}" class="{!! empty($v['_child'])?'':'dropdown-toggle' !!}">
-            <i class="menu-icon fa {{ (!empty(Theme::get('menuIcon')[$v['name']]))?Theme::get('menuIcon')[$v['name']]:'fa-line-chart' }}"></i>
+            <i class="menu-icon fa {{ (!empty($v['style']))?$v['style']:((!empty(Theme::get('menuIcon')[$v['name']]))?Theme::get('menuIcon')[$v['name']]:'fa-line-chart') }}"></i>
             <span class="menu-text"> {!! $v['name'] !!} </span>
             @if(!empty($v['_child']))
             <b class="arrow fa fa-angle-down"></b>

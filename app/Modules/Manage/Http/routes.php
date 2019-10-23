@@ -194,6 +194,31 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/managerDetail', 'UserController@postManagerDetail')->name('managerDetailUpdate');//更新系统用户
     Route::get('/managerDel/{id}', 'UserController@managerDel')->name('managerDelete');//系统用户删除
     Route::post('/managerDeleteAll', 'UserController@postManagerDeleteAll')->name('managerAllDelete');//系统用户批量删除
+    Route::post('/userDeleteAll', 'UserController@postUserDeleteAll')->name('UserDeleteAll');//普通用户批量删除
+    Route::post('/userAuthPassAll', 'UserController@postUserAuthPassAll');//普通用户批量批准认证
+    Route::post('/userAuthRejectAll', 'UserController@postUserAuthRejectAll');//普通用户批量拒绝认证    
+    Route::get('/userAuthPass/{uid}', 'UserController@setUserAuthPass');//单个普通用户批准认证
+    Route::get('/userAuthReject/{uid}', 'UserController@setUserAuthReject');//单个普通用户拒绝认证    
+    Route::get('/userImport', 'UserController@getUserImport')->name('userImportPage');//个人用户批量导入  
+    Route::post('/userImport', 'UserController@postUserImport')->name('userImport');//个人用户批量导入      
+    
+    //企业管理
+    Route::get('/enterpriseList', 'UserController@getEnterpriseList')->name('enterpriseList');;//普通企业列表
+    Route::post('/enterpriseAuthPassAll', 'UserController@postEnterpriseAuthPassAll');//普通企业批量批准认证
+    Route::post('/enterpriseAuthRejectAll', 'UserController@postEnterpriseAuthRejectAll');//普通企业批量拒绝认证    
+    Route::post('/enterpriseDeleteAll', 'UserController@postEnterpriseDeleteAll')->name('EnterpriseDeleteAll');//普通企业批量删除
+    Route::get('/enterpriseAuthPass/{uid}', 'UserController@setEnterpriseAuthPass');//单个普通用户批准认证
+    Route::get('/enterpriseAuthReject/{uid}', 'UserController@setEnterpriseAuthReject');//单个普通用户拒绝认证
+    Route::get('/enterpriseImport', 'UserController@getEnterpriseImport')->name('enterpriseImportPage');//企业用户批量导入   
+    Route::post('/enterpriseImport', 'UserController@postEnterpriseImport')->name('enterpriseImport');//企业用户批量导入      
+    Route::get('/enterpriseAdd', 'UserController@getEnterpriseAdd')->name('enterpriseCreatePage');//添加用户视图
+    Route::post('/enterpriseAdd', 'UserController@postEnterpriseAdd')->name('enterpriseCreate');//添加用户
+    Route::get('/enterpriseEdit/{uid}', 'UserController@getEnterpriseEdit')->name('enterpriseUpdatePage');//用户详情
+    Route::post('/enterpriseEdit', 'UserController@postEnterpriseEdit')->name('enterpriseUpdate');//用户详情更新
+    
+    
+    
+    
 
     Route::get('/rolesList', 'UserController@getRolesList')->name('rolesList');//用户组列表
     Route::get('/rolesAdd', 'UserController@getRolesAdd')->name('rolesCreatePage');//用户组添加视图

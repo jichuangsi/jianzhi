@@ -184,6 +184,30 @@ class EnterpriseAuthModel extends Model
         return is_null($status) ? true : $status;
     }
 
+    static function EnterpriseAuthPassByUid($uid)
+    {
+        $status = DB::transaction(function () use ($uid) {
+            EnterpriseAuthModel::where('uid', $uid)->update(array('status' => 1, 'auth_time' => date('Y-m-d H:i:s')));
+            AuthRecordModel::where('uid', $uid)
+            ->where('auth_code', 'enterprise')->orderby('id', 'desc')->first()
+            ->update(array('status' => 1, 'auth_time' => date('Y-m-d H:i:s')));
+        });
+            
+            return is_null($status) ? true : $status;
+    }
+    
+    
+    static function EnterpriseAuthDenyByUid($uid)
+    {
+        $status = DB::transaction(function () use ($uid) {
+            EnterpriseAuthModel::where('uid', $uid)->update(array('status' => 2));
+            AuthRecordModel::where('uid', $uid)
+            ->where('auth_code', 'enterprise')->orderby('id', 'desc')->first()
+            ->update(array('status' => 2));
+        });
+            
+            return is_null($status) ? true : $status;
+    }    
     
     static function AllEnterpriseAuthPass($idArr)
     {

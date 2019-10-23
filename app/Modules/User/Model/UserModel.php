@@ -178,20 +178,69 @@ class UserModel extends Model implements AuthenticatableContract,
     
     static function editUser($data)
     {
-        $status = DB::transaction(function () use ($data){
-            UserModel::where('id', $data['uid'])->update([
-                'email' => $data['email'],
-                'password' => $data['password'],
-                'salt' => $data['salt']
-            ]);
-            UserDetailModel::where('uid', $data['uid'])->update([
-                'realname' => $data['realname'],
-                'qq' => $data['qq'],
-                'province' => $data['province'],
-                'city' => $data['city'],
-                'area' => $data['area']
-            ]);
-        });
+            $status = DB::transaction(function () use ($data){
+                if(isset($data['password'])&&!empty($data['password'])){
+                    UserModel::where('id', $data['uid'])->update([
+                        //'email' => $data['email'],
+                        'password' => $data['password'],
+                        'salt' => $data['salt'],
+                        'updated_at' => date('Y-m-d H:i:s', time()),
+                    ]);
+                }/* else{
+                    UserModel::where('id', $data['uid'])->update([
+                        'email' => $data['email'],
+                        'updated_at' => date('Y-m-d H:i:s', time()),
+                    ]);
+                } */
+                
+                UserDetailModel::where('uid', $data['uid'])->update([
+                    'realname' => $data['realname'],
+                    'qq' => $data['qq'],
+                    'mobile' => $data['mobile'],
+                    'card_number' => $data['card_number'],
+                    'province' => $data['province'],
+                    'city' => $data['city'],
+                    'area' => $data['area'],
+                    'updated_at' => date('Y-m-d H:i:s', time()),
+                ]);
+                
+                //身份证保存
+                $update = [
+                    'realname' => $data['realname'],
+                    'card_number' => $data['card_number'],
+                    'updated_at' => date('Y-m-d H:i:s', time()),
+                ];
+                
+                if(isset($data['card_front_side'])&&!empty($data['card_front_side'])&&isset($data['card_back_dside'])&&!empty($data['card_back_dside'])){                    
+                    $update['card_front_side'] = $data['card_front_side'];
+                    $update['card_back_dside'] = $data['card_back_dside'];
+                }
+                
+                RealnameAuthModel::where('uid', $data['uid'])->update($update);
+                
+                //注册增加技能标签
+                if(!empty($data['skill'])){
+                    UserTagsModel::where('uid',$data['uid'])->delete();
+                    
+                    $skills = explode(",", $data['skill']);
+                    $allTag = TagsModel::findAll();
+                    $myTags = array();
+                    foreach($skills as $k => $v){
+                        foreach($allTag  as $k1 => $v1){
+                            if(intval($v) === $v1['cate_id']){
+                                array_push($myTags, $v1['id']);
+                                break;
+                            }
+                        }
+                    }
+                    if(count($myTags)>0){
+                        UserTagsModel::insert($myTags, $data['uid']);
+                    }
+                } 
+            });
+            
+            
+            
         return is_null($status) ? true : false;
     }
 
@@ -201,21 +250,247 @@ class UserModel extends Model implements AuthenticatableContract,
         $status = DB::transaction(function () use ($data){
             $data['uid'] = UserModel::insertGetId([
                 'name' => $data['name'],
-                'email' => $data['email'],
+                'email' => isset($data['email'])?$data['email']:'',
                 'password' => $data['password'],
-                'salt' => $data['salt']
+                'salt' => $data['salt'],
+                'email_status' => $data['email_status'],
+                'status' => $data['status'],
+                'type' => $data['type'],
+                'created_at' => date('Y-m-d H:i:s', time()),
+                'updated_at' => date('Y-m-d H:i:s', time()),
             ]);
             UserDetailModel::create([
                 'uid' => $data['uid'],
                 'realname' => $data['realname'],
-                'qq' => $data['qq'],
+                'qq' => isset($data['qq'])?$data['qq']:'',
                 'mobile' => $data['mobile'],
-                'province' => $data['province'],
-                'city' => $data['city'],
-                'area' => $data['area']
+                'card_number' => $data['card_number'],
+                'province' => isset($data['province'])?$data['province']:'',
+                'city' => isset($data['city'])?$data['city']:'',
+                'area' => isset($data['area'])?$data['area']:'',
+                'created_at' => date('Y-m-d H:i:s', time()),
+                'updated_at' => date('Y-m-d H:i:s', time()),
             ]);
+            //身份证保存
+            
+            if($data['astatus']){
+                switch($data['astatus']){
+                    case 1 : $status = 1; break;
+                    case 2 : $status = 0; break;
+                    case 3 : $status = 2; break;
+                    default : $status = 0; break;
+                }
+                if($data['card_front_side']&&$data['card_back_dside']){
+                    $data['aid'] = RealnameAuthModel::insertGetId([
+                        'uid' => $data['uid'],
+                        'username' => $data['name'],
+                        'realname' => $data['realname'],
+                        'status' => $status,
+                        'card_number' => $data['card_number'],
+                        'card_front_side' => $data['card_front_side'],
+                        'card_back_dside' => $data['card_back_dside'],
+                        'created_at' => date('Y-m-d H:i:s', time()),
+                        'updated_at' => date('Y-m-d H:i:s', time()),
+                    ]);
+                    
+                    AuthRecordModel::create([
+                        'auth_id' => $data['aid'],
+                        'uid' => $data['uid'],
+                        'username' => $data['name'],
+                        'auth_code' => 'realname',
+                        'auth_time' => date('Y-m-d H:i:s', time()),
+                    ]);
+                }
+            }else{
+                if($data['card_front_side']&&$data['card_back_dside']){
+                    $data['aid'] = RealnameAuthModel::insertGetId([
+                        'uid' => $data['uid'],
+                        'username' => $data['name'],
+                        'realname' => $data['realname'],
+                        'card_number' => $data['card_number'],
+                        'card_front_side' => $data['card_front_side'],
+                        'card_back_dside' => $data['card_back_dside'],
+                        'created_at' => date('Y-m-d H:i:s', time()),
+                        'updated_at' => date('Y-m-d H:i:s', time()),
+                    ]);
+                    
+                    AuthRecordModel::create([
+                        'auth_id' => $data['aid'],
+                        'uid' => $data['uid'],
+                        'username' => $data['name'],
+                        'auth_code' => 'realname',
+                        'auth_time' => date('Y-m-d H:i:s', time()),
+                    ]);
+                }
+            }
+            
+            //注册增加技能标签
+            if(!empty($data['skill'])){
+                $skills = explode(",", $data['skill']);
+                $allTag = TagsModel::findAll();
+                $myTags = array();
+                foreach($skills as $k => $v){
+                    foreach($allTag  as $k1 => $v1){
+                        if(intval($v) === $v1['cate_id']){
+                            array_push($myTags, $v1['id']);
+                            break;
+                        }
+                    }
+                }
+                if(count($myTags)>0){
+                    UserTagsModel::insert($myTags, $data['uid']);
+                }
+            }            
         });
         return is_null($status) ? true : false;
     }
 
+    
+    static function addEnterprise($data)
+    {
+        $status = DB::transaction(function () use ($data){
+            $data['uid'] = UserModel::insertGetId([
+                'name' => $data['name'],
+                'email' => isset($data['email'])?$data['email']:'',
+                'password' => $data['password'],
+                'salt' => $data['salt'],
+                'email_status' => $data['email_status'],
+                'status' => $data['status'],
+                'type' => $data['type'],
+                'created_at' => date('Y-m-d H:i:s', time()),
+                'updated_at' => date('Y-m-d H:i:s', time()),
+            ]);
+            UserDetailModel::create([
+                'uid' => $data['uid'],
+                'created_at' => date('Y-m-d H:i:s', time()),
+                'updated_at' => date('Y-m-d H:i:s', time()),
+            ]);
+            //身份证保存
+            if($data['astatus']){
+                switch($data['astatus']){
+                    case 1 : $status = 1; break;
+                    case 2 : $status = 0; break;
+                    case 3 : $status = 2; break;
+                    default : $status = 0; break;
+                }
+                if($data['business_license']){
+                    $data['aid'] = EnterpriseAuthModel::insertGetId([
+                        'uid' => $data['uid'],
+                        'company_name' => $data['company_name'],
+                        'status' => $status,
+                        'province' => isset($data['province'])?$data['province']:'',
+                        'city' => isset($data['city'])?$data['city']:'',
+                        'area' => isset($data['area'])?$data['area']:'',
+                        'address' => $data['address'],
+                        'contactor' => $data['contactor'],
+                        'contactor_mobile' => $data['contactor_mobile'],
+                        'phone' => $data['phone'],
+                        'tax_code' => $data['tax_code'],
+                        'bank' => $data['bank'],
+                        'account' => $data['account'],
+                        'owner' => $data['owner'],
+                        'company_email' => $data['company_email'],
+                        'business_license' => $data['business_license'],
+                        'created_at' => date('Y-m-d H:i:s', time()),
+                        'updated_at' => date('Y-m-d H:i:s', time()),
+                    ]);
+                    
+                    AuthRecordModel::create([
+                        'auth_id' => $data['aid'],
+                        'uid' => $data['uid'],
+                        'username' => $data['name'],
+                        'auth_code' => 'enterprise',
+                        'auth_time' => date('Y-m-d H:i:s', time()),
+                    ]);
+                }
+            }else{
+                if($data['business_license']){
+                    $data['aid'] = EnterpriseAuthModel::insertGetId([
+                        'uid' => $data['uid'],
+                        'company_name' => $data['company_name'],
+                        'province' => isset($data['province'])?$data['province']:'',
+                        'city' => isset($data['city'])?$data['city']:'',
+                        'area' => isset($data['area'])?$data['area']:'',
+                        'address' => $data['address'],
+                        'contactor' => $data['contactor'],
+                        'contactor_mobile' => $data['contactor_mobile'],
+                        'phone' => $data['phone'],
+                        'tax_code' => $data['tax_code'],
+                        'bank' => $data['bank'],
+                        'account' => $data['account'],
+                        'owner' => $data['owner'],
+                        'company_email' => $data['company_email'],
+                        'business_license' => $data['business_license'],
+                        'created_at' => date('Y-m-d H:i:s', time()),
+                        'updated_at' => date('Y-m-d H:i:s', time()),
+                    ]);
+                    
+                    AuthRecordModel::create([
+                        'auth_id' => $data['aid'],
+                        'uid' => $data['uid'],
+                        'username' => $data['name'],
+                        'auth_code' => 'enterprise',
+                        'auth_time' => date('Y-m-d H:i:s', time()),
+                    ]);
+                }
+            }
+        });
+            return is_null($status) ? true : false;
+    }
+    
+    static function editEnterprise($data)
+    {
+        $status = DB::transaction(function () use ($data){
+            if(isset($data['password'])&&!empty($data['password'])){
+                UserModel::where('id', $data['uid'])->update([
+                    //'email' => $data['email'],
+                    'password' => $data['password'],
+                    'salt' => $data['salt'],
+                    'updated_at' => date('Y-m-d H:i:s', time()),
+                ]);
+            }/* else{
+            UserModel::where('id', $data['uid'])->update([
+            'email' => $data['email'],
+            'updated_at' => date('Y-m-d H:i:s', time()),
+            ]);
+            } */
+            
+            /* UserDetailModel::where('uid', $data['uid'])->update([
+                'realname' => $data['realname'],
+                'qq' => $data['qq'],
+                'mobile' => $data['mobile'],
+                'card_number' => $data['card_number'],
+                'province' => $data['province'],
+                'city' => $data['city'],
+                'area' => $data['area'],
+                'updated_at' => date('Y-m-d H:i:s', time()),
+            ]); */
+            
+            //身份证保存
+            $update = [
+                'company_name' => $data['company_name'],
+                'province' => $data['province'],
+                'city' => $data['city'],
+                'area' => $data['area'],
+                'address' => $data['address'],
+                'contactor' => $data['contactor'],
+                'contactor_mobile' => $data['contactor_mobile'],
+                'phone' => $data['phone'],
+                'tax_code' => $data['tax_code'],
+                'bank' => $data['bank'],
+                'account' => $data['account'],
+                'owner' => $data['owner'],
+                'company_email' => $data['company_email'],                
+                'updated_at' => date('Y-m-d H:i:s', time()),
+            ];            
+            
+            if(isset($data['business_license'])&&!empty($data['business_license'])){
+                $update['business_license'] = $data['business_license'];
+            }
+            
+            EnterpriseAuthModel::where('uid', $data['uid'])->update($update);
+        });
+        
+            return is_null($status) ? true : false;
+    }
 }

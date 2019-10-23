@@ -11,7 +11,7 @@ class MenuModel extends Model
     protected $table = 'menu';
 
     protected $fillable = [
-        'name', 'pid', 'route','level','note', 'created_at', 'updated_at','sort'
+        'name', 'pid', 'route','level','note', 'created_at', 'updated_at','sort', 'style'
     ];
 
     public  $timestamps = false;  

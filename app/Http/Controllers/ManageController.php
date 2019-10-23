@@ -56,6 +56,7 @@ class ManageController extends BasicController
 
         //菜单图标(先写死)
         $menuIcon = [
+            //旧菜单
 			'后台首页'=>'fa-home',
             '系统配置'=>'fa-cog',
             '用户管理'=>'fa-users',
