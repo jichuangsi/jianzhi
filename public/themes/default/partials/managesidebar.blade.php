@@ -1,4 +1,5 @@
 ﻿@foreach(Theme::get('manageMenu') as $v)
+	@if($v['ban']===0)
     <li class="{{ in_array($v['id'],Theme::get('menu_ids'))?'active':'' }}">
         <a href="{!! empty($v['route'])?'javaascript:;':url($v['route']) !!}" class="{!! empty($v['_child'])?'':'dropdown-toggle' !!}">
             <i class="menu-icon fa {{ (!empty($v['style']))?$v['style']:((!empty(Theme::get('menuIcon')[$v['name']]))?Theme::get('menuIcon')[$v['name']]:'fa-line-chart') }}"></i>
@@ -11,6 +12,7 @@
         @if(!empty($v['_child']))
         <ul class="submenu">
             @foreach($v['_child'] as $value)
+            @if($value['ban']===0)
             <li class="{{ in_array($value['id'],Theme::get('menu_ids'))?'active':'' }}">
                 <a href="{!! (empty($value['route']) && !empty($value['_child']))?'javaascript:;':url($value['route']) !!}" class="{!! empty($value['_child'])?'':'dropdown-toggle' !!}">
                     <i class="menu-icon fa fa-caret-right"></i>
@@ -23,6 +25,7 @@
                 @if(!empty($value['_child']))
                 <ul class="submenu">
                     @foreach($value['_child'] as $menus)
+                    @if($menus['ban']===0)
                     <li class="{{ in_array($menus['id'],Theme::get('menu_ids'))?'active':'' }}">
                         <a href="{!! empty($menus['route'])?'javaascript:;':url($menus['route']) !!}" >
                             <i class="menu-icon fa fa-caret-right"></i>
@@ -30,13 +33,16 @@
                         </a>
                         <b class="arrow"></b>
                     </li>
+                    @endif
                     @endforeach
                 </ul>
                 @endif
             </li>
+            @endif
             @endforeach
         </ul>
         @endif
     </li>
+    @endif
 @endforeach
 

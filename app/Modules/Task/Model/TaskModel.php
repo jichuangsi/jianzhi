@@ -635,6 +635,31 @@ class TaskModel extends Model
         return $data;
     }
 
+    /**
+     * 查询任务详情
+     * @param $id
+     */
+    static function detail2($id)
+    {
+        $query = self::select('task.*', 'b.name as type_name', 'sb.name as sub_type_name', 
+            'enterprise_auth.company_name','province.name as province_name','city.name as city_name','area.name as area_name')
+        ->where('task.id', '=', $id);
+        //赏金已经托管
+        $query = $query->where(function ($query) {
+            $query->where('task.status', '>=', 2)->where('bounty_status',1);
+        });
+            $data = $query
+            //->join('users as a', 'a.id', '=', 'task.uid')
+            ->leftjoin('task_type as b', 'b.id', '=', 'task.type_id')
+            ->leftjoin('task_type as sb', 'sb.id', '=', 'task.sub_type_id')
+            ->leftjoin('district as province','province.id','=','task.province')
+            ->leftjoin('district as city','city.id','=','task.city')
+            ->leftjoin('district as area','area.id','=','task.area')
+            ->leftjoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
+            ->first();
+            return $data;
+    }
+    
 
     /**
      * 查找相似的任务

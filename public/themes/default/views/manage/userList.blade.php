@@ -60,7 +60,7 @@
                     <label class="position-relative">
                         <input type="checkbox" class="ace"/>
                         <span class="lbl"></span>
-                        UID
+                       	 编号
                     </label>
                 </th>
                 <th>用户名</th>
@@ -184,6 +184,10 @@
 		}
 		var value = '';
 		var checkedArr = $("input[name='chk']:checked");
+		if(checkedArr.length===0){
+			 popUpMessage('请选择至少一个用户');
+			 return;
+		}
 		for(var i = 0; i < checkedArr.length; i++){
 			value += $(checkedArr[i]).val() + ',';
 		}

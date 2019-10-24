@@ -50,7 +50,12 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/taskMultiHandle', 'TaskController@taskMultiHandle')->name('taskMultiUpdate');//任务批量处理
     Route::get('/taskDetail/{id}', 'TaskController@taskDetail')->name('taskDetail');//任务详情
     Route::post('/taskDetailUpdate', 'TaskController@taskDetailUpdate')->name('taskDetailUpdate');//任务详情提交
-    Route::get('/taskMassageDelete/{id}', 'TaskController@taskMassageDelete')->name('taskMassageDelete');//删除任务留言
+    Route::get('/taskMassageDelete/{id}', 'TaskController@taskMassageDelete')->name('taskMassageDelete');//删除任务留言    
+    Route::get('/taskDispatch', 'TaskController@getTaskDispatch')->name('taskDispatch');//任务派单
+    Route::post('/taskDispatchDownload', 'TaskController@postTaskDispatchDownload');//任务派单模板下载
+    Route::get('/taskDispatchImport', 'TaskController@getTaskDispatchImport')->name('taskDispatchImportPage');//个人用户批量导入
+    Route::post('/taskDispatchImport', 'TaskController@postTaskDispatchImport')->name('taskDispatchImport');//个人用户批量导入          
+    
 
     //财务管理路由
     Route::get('/financeList', 'FinanceController@financeList')->name('financeList');//网站流水列表

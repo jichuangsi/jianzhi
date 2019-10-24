@@ -21,12 +21,6 @@ use Illuminate\Support\Facades\DB;
 use App\Modules\User\Model\RealnameAuthModel;
 use App\Modules\User\Model\EnterpriseAuthModel;
 use App\Modules\Task\Model\TaskCateModel;
-use Exception;
-use PHPExcel_IOFactory;
-use PHPExcel_Cell;
-use PHPExcel_Worksheet_Drawing;
-use PHPExcel_Worksheet_MemoryDrawing;
-use PHPExcel_Reader_Excel2007;
 
 class UserController extends ManageController
 {
@@ -536,6 +530,11 @@ class UserController extends ManageController
     public function postUserImport(Request $request){
         
         $data = $this->fileImport($request->file('usersfile'));
+        
+        if(isset($data['fail'])&&$data['fail']){
+            return back()->with(['error' => $data['errMsg']]);
+        }
+        
         //dump($data);
         $users = array();
         foreach($data as $k => &$v){
@@ -569,7 +568,7 @@ class UserController extends ManageController
                 $astatus = $aInfos[0];
             }
             
-            if($astatus&&empty($v[7])&&empty($v[8])){
+            if($astatus&&(empty($v[7])||empty($v[8]))){
                 $v['msg'] = '必须同时附带身份证正反面照片，才可进入认证流程';
                 array_push($users, $v);
                 continue;
@@ -628,6 +627,10 @@ class UserController extends ManageController
     //企业用户导入数据
     public function postEnterpriseImport(Request $request){
         $data = $this->fileImport($request->file('enterprisesfile'));
+        
+        if(isset($data['fail'])&&$data['fail']){
+            return back()->with(['error' => $data['errMsg']]);
+        }        
         //dump($data);
         $enterprises = array();
         
@@ -706,123 +709,6 @@ class UserController extends ManageController
         //dump($result);
         return $this->theme->scope('manage.enterpriseImport', $result)->render();
         
-    }
-    
-    private function genEMail($val){
-        return $val.'@'.$val.'.com';
-    }
-    
-    private function fileImport($file, $allowExtension = array()){        
-        $importdUrl = '';
-        $errMsg = '';
-        if ($file) {
-            $uploadMsg = json_decode(\FileClass::uploadFile($file, 'user', $allowExtension));
-            
-            if ($uploadMsg->code != 200) {
-                $errMsg = $uploadMsg->message;
-            } else {
-                $importdUrl = $uploadMsg->data->url;
-            }
-        }else{
-            return ['success'=>false, 'errMsg'=>'缺少必要参数！'];
-        }
-        
-        if (!empty($errMsg)) {
-            return ['success'=>false, 'errMsg'=>$error];
-        }
-        
-        try {
-            $inputFileType = PHPExcel_IOFactory::identify($importdUrl);
-            if('Excel5'===$inputFileType){
-                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-            }else if('Excel2007'===$inputFileType){
-                $objReader = new PHPExcel_Reader_Excel2007();
-            }  
-            if(!$objReader) return ['success'=>false, 'errMsg'=>'缺少必要参数！'];
-            $objPHPExcel = $objReader->load($importdUrl);
-        } catch(Exception $e) {
-            //die('加载文件发生错误："'.pathinfo($importdUrl,PATHINFO_BASENAME).'": '.$e->getMessage());
-            return ['success'=>false, '$errMsg'=>$e->getMessage()];
-        }
-        //$sheet = $objPHPExcel->getSheet(0);
-        $sheet = $objPHPExcel->getActiveSheet();
-        $data=$sheet->toArray();//该方法读取不到图片 图片需单独处理        
-        
-        
-        $imageFilePath= 'attachment' . DIRECTORY_SEPARATOR . 'user' . DIRECTORY_SEPARATOR . date('Y/m/d') . DIRECTORY_SEPARATOR;//图片在本地存储的路径
-        if (! file_exists ( $imageFilePath )) {
-            mkdir("$imageFilePath", 0777, true);
-        }
-        
-        $this->extractImageFromWorksheet($sheet, $imageFilePath, $data);
-        //dump($data);
-        
-        return $data;
-    }    
-    
-    
-    private function extractImageFromWorksheet($worksheet,$basePath,&$data){
-        
-        foreach ($worksheet->getDrawingCollection() as $drawing) {            
-            list($startColumn,$startRow)= PHPExcel_Cell::coordinateFromString($drawing->getCoordinates());//获取图片所在行和列
-            $startColumn = $this->ABC2decimal($startColumn);//由于图片所在位置的列号为字母，转化为数字
-            $imageFilefolder = $drawing->getCoordinates() .time(). mt_rand(10000, 99999);
-            //$xy=$drawing->getCoordinates();
-            $path = $basePath . $imageFilefolder . DIRECTORY_SEPARATOR;
-            if (! file_exists ( $path )) {
-                mkdir("$path", 0777, true);
-            }
-            
-            // for xlsx
-            if ($drawing instanceof PHPExcel_Worksheet_Drawing) {
-                $filename = $drawing->getPath();
-                //$imageFileName = $drawing->getIndexedFilename();
-                $path = $path . $drawing->getIndexedFilename();                
-                copy($filename, $path);
-                //$result[$xy] = $path;
-                $data[$startRow-1][$startColumn]=$path;//把图片插入到数组中
-                // for xls                
-            } else if ($drawing instanceof PHPExcel_Worksheet_MemoryDrawing) {
-                $image = $drawing->getImageResource();
-                $renderingFunction = $drawing->getRenderingFunction();
-                switch ($renderingFunction) {
-                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG:
-                        //$imageFileName = $drawing->getIndexedFilename();                        
-                        $path = $path . $drawing->getIndexedFilename();                        
-                        imagejpeg($image, $path);                        
-                        break;      
-                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_GIF:
-                        //$imageFileName = $drawing->getIndexedFilename();                        
-                        $path = $path . $drawing->getIndexedFilename();                        
-                        imagegif($image, $path);                        
-                        break;
-                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG:
-                        //$imageFileName = $drawing->getIndexedFilename();                        
-                        $path = $path . $drawing->getIndexedFilename();                        
-                        imagegif($image, $path);                        
-                        break;
-                    case PHPExcel_Worksheet_MemoryDrawing::RENDERING_DEFAULT:                        
-                        //$imageFileName = $drawing->getIndexedFilename();                        
-                        $path = $path . $drawing->getIndexedFilename();                        
-                        imagegif($image, $path);                        
-                        break;                        
-                }                
-                //$result[$xy] = $imageFileName;     
-                $data[$startRow-1][$startColumn]=$path;//把图片插入到数组中
-            }            
-        }              
-    }    
-    
-    private function ABC2decimal($abc){
-        $ten = 0;
-        $len = strlen($abc);
-        for($i=1;$i<=$len;$i++){
-            $char = substr($abc,0-$i,1);//反向获取单个字符
-            
-            $int = ord($char);
-            $ten += ($int-65)*pow(26,$i-1);
-        }
-        return $ten;
     }
     
     /**

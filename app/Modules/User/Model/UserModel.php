@@ -162,6 +162,24 @@ class UserModel extends Model implements AuthenticatableContract,
         return $userInfo->name;
     }
 
+    static function getUserIdByMobileAndIDCard($mobile, $card_number)
+    {
+        $query = Self::select('users.id');
+        
+        if($mobile){
+            $query = $query->where('user_detail.mobile', $mobile);
+        }
+        
+        if($card_number){
+            $query = $query->where('user_detail.card_number', $card_number);
+        }
+        
+        $data = $query->leftjoin('user_detail','user_detail.uid', '=', 'users.id')
+            ->first();
+        
+        return $data;
+    }
+    
     
     public function isAuth($uid)
     {
