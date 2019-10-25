@@ -56,7 +56,7 @@
                     <th>编号</th>
                     <th>用户名</th>
                     <th>任务标题</th>
-
+					 <th>任务主类别</th>
                     <th>
                         发布时间
                     </th>
@@ -70,7 +70,7 @@
                     <th>处理</th>
                 </tr>
                 </thead>
-                <form action="/manage/taskMultiHandle" method="post">
+                <form id="rms" action="/manage/taskMultiHandle" method="post">
                     {!! csrf_field() !!}
                     <tbody>
                     @foreach($task as $item)
@@ -85,22 +85,24 @@
                             <td>
                                 <a href="#">{!! $item->id !!}</a>
                             </td>
+                            
                             <td>{!! $item->name !!}</td>
                             <td class="hidden-480">
                                 @if($item->status >=2)<a target="_blank" href="/task/{!! $item->id  !!}">{!! $item->title !!}</a>@else{!! $item->title !!} @endif
                             </td>
+                            <td>{!! $item->cname !!}</td>
                             <td>{!! $item->created_at !!}</td>
-
+							
                             <td class="hidden-480">
                                 @if($item->status == 0)
                                     <span class="label label-sm label-warning">未发布</span>
-                                @elseif($item->status == 1 || $item->status == 2)
+                                @elseif($item->status == 2)
                                     <span class="label label-sm label-success">待审核</span>
                                 @elseif($item->status >= 3 && $item->status <= 8)
                                     <span class="label label-sm label-danger ">进行中</span>
                                 @elseif($item->status == 9)
                                     <span class="label label-sm label-inverse">已结束</span>
-                                @elseif($item->status == 10)
+                                @elseif($item->status == 1)
                                     <span class="label label-sm label-danger">失败</span>
                                 @elseif($item->status == 11)
                                     <span class="label label-sm label-inverse">维权</span>
@@ -117,7 +119,7 @@
 
                             <td>
                                 <div class="hidden-sm hidden-xs btn-group">
-                                    @if($item->status == 1 || $item->status == 2)
+                                    @if($item->status == 2)
                                         <a class="btn btn-xs btn-success" href="/manage/taskHandle/{!! $item->id !!}/pass">
                                             <i class="ace-icon fa fa-check bigger-120">审核通过</i>
                                         </a>
@@ -137,7 +139,7 @@
                         </tr>
                     @endforeach
                     </tbody>
-                </form>
+                
             </table>
         </div>
         <div class="row">
@@ -148,6 +150,8 @@
                         <span class="lbl"> 全选</span>
                     </label>
                     <button type="submit" class="btn btn-primary btn-sm">批量审核</button>
+                    <button type="button" onclick="refuse()" class="btn btn-primary btn-sm">批量拒绝</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/manage/taskAdd'">添加</button>
                 </div>
             </div>
             <div class="space-10 col-xs-12"></div>
@@ -157,9 +161,15 @@
                 </div>
             </div>
         </div>
+        </form>
     </div>
 </div><!-- /.row -->
-
+<script>
+	function refuse(){
+		$("#rms").append('<input type="hidden" name="action" value="deny"/>');
+		$("#rms").submit();
+	}
+</script>
 
 {!! Theme::asset()->container('custom-css')->usepath()->add('backstage', 'css/backstage/backstage.css') !!}
 

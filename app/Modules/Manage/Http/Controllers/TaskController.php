@@ -2,6 +2,8 @@
 namespace App\Modules\Manage\Http\Controllers;
 
 use App\Http\Controllers\ManageController;
+use App\Modules\Task\Model\TaskCateModel;
+use App\Modules\User\Model\DistrictModel;
 use App\Modules\Finance\Model\FinancialModel;
 use App\Modules\Manage\Model\MessageTemplateModel;
 use App\Modules\Task\Model\TaskAttachmentModel;
@@ -33,6 +35,101 @@ class TaskController extends ManageController
         $this->theme->setTitle('任务列表');
         $this->theme->set('manageType', 'task');
     }
+     /**
+     * 进入任务添加
+     */
+    public function getTaskAdd(){        
+        $data = array();
+        //dump( TaskCateModel::findByPid([0]));exit;
+            //任务类型
+            $taskType = TaskTypeModel::findByPid([0]);
+            //技能标签     
+            $taskCate = TaskCateModel::findAll();
+            //查询地区一级数据
+            $province = DistrictModel::findTree(0);
+            //查询地区二级信息
+            $city = DistrictModel::findTree($province[0]['id']);
+            //查询三级
+            $area = DistrictModel::findTree($city[0]['id']);
+            $qiye = UserModel::getqiye();
+            $data = array(
+                'taskType' => $taskType,
+                'taskCate' => $taskCate,
+                'province' => $province,
+                'area' => $area,
+                'city' => $city,
+                'qiye' => $qiye,
+            );
+            
+        return $this->theme->scope("manage.taskAdd",$data)->render();
+    }
+    
+     
+    /**
+     * 任务提交，创建一个新任务
+     * @param TaskRequest $request
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */    
+    public function postTaskAdd(Request $request)
+    {        
+        $data = $request->except('_token');
+        $data['uid'] = $data['uids'];
+        $data['username'] ='ttt';
+//      $data['type_id'] = $data['mainType'];
+//      $data['sub_type_id'] = $data['subType'];
+        $data['desc'] = \CommonClass::removeXss($data['desc']);
+        $data['created_at'] = date('Y-m-d H:i:s', time());
+        $data['begin_at'] = preg_replace('/([\x80-\xff]*)/i', '', $data['begin_at']);
+        $data['end_at'] = date('Y-m-d H:i:s', strtotime($data['end_at']));
+        if(isset($data['district'])&&!empty($data['district'])){
+            $districts = explode("-", $data['district']);
+            $data['province'] = $districts[0];
+            $data['city'] = $districts[1];
+            $data['area'] = $districts[2];
+        }
+        //新建后马上发布任务并进入审核流程
+        $data['status'] = 2;
+        //任务进入赏金托管状态
+        $data['bounty_status'] = 1;
+        
+        //$data['show_cash'] = $data['bounty'];        
+        //$data['delivery_deadline'] = preg_replace('/([\x80-\xff]*)/i', '', $data['delivery_deadline']);        
+        //$data['delivery_deadline'] = date('Y-m-d H:i:s', strtotime($data['delivery_deadline']));
+        
+        //联合验证托管赏金和开始时间结束时间
+        
+        
+        //发布预览和暂不发布切换
+        /* if ($data['slutype'] == 1) {
+            $data['status'] = 1;
+            $controller = 'bounty';
+        } elseif ($data['slutype'] == 2) {
+            return redirect()->to('task/preview')->with($data);
+        } elseif ($data['slutype'] == 3) {
+            $data['status'] = 0;
+            $controller = 'detail';
+        } */
+        //查询当前的任务成功抽成比率
+        /* $task_percentage = \CommonClass::getConfig('task_percentage');
+        $task_fail_percentage = \CommonClass::getConfig('task_fail_percentage');
+        $data['task_success_draw_ratio'] = $task_percentage;
+        $data['task_fail_draw_ratio'] = $task_fail_percentage; */
+        
+                
+        $taskModel = new TaskModel();
+        $result = $taskModel->createTask($data);
+        
+        if (!$result) {
+        	return  redirect()->to('manage/taskList')->with(array('message' => '创建任务失败'));
+        }
+        
+        /* if($data['slutype']==3){
+            return redirect()->to('user/unreleasedTasks');
+        } */
+        //return redirect()->to('task/' . $controller . '/' . $result['id']);
+        //跳转至任务列表
+        return redirect('manage/taskList')->with(['message' => '操作成功']);
+    }
     /**
      * 任务列表
      *
@@ -46,7 +143,7 @@ class TaskController extends ManageController
         $order = $request->get('order') ? $request->get('order') : 'desc';
         $paginate = $request->get('paginate') ? $request->get('paginate') : 10;
 
-        $taskList = TaskModel::select('task.id', 'us.name', 'task.title', 'task.created_at', 'task.status', 'task.verified_at', 'task.bounty_status');
+        $taskList = TaskModel::select('task.id', 'us.name', 'task.title', 'task.created_at', 'task.status', 'task.verified_at', 'task.bounty_status', 'tt.name as cname');
 
         if ($request->get('task_title')) {
             $taskList = $taskList->where('task.title','like','%'.$request->get('task_id').'%');
@@ -92,6 +189,7 @@ class TaskController extends ManageController
         }
         $taskList = $taskList->orderBy($by, $order)
             ->leftJoin('users as us', 'us.id', '=', 'task.uid')
+            ->leftJoin('task_type as tt', 'tt.id', '=', 'task.type_id')
         ->paginate($paginate);
 
         $data = array(
@@ -201,7 +299,7 @@ class TaskController extends ManageController
                 break;
             //审核失败
             case 'deny':
-                $status = 10;
+                $status = 1;
                 break;
         }
         //审核失败和成功 发送系统消息
@@ -236,7 +334,7 @@ class TaskController extends ManageController
                 ];
                 MessageReceiveModel::create($data);
             }
-        }elseif($status==10)
+        }elseif($status==1)
         {
             $result = DB::transaction(function() use($id,$status,$task){
                  TaskModel::where('id', $id)->whereIn('status', [1,2])->update(array('status' => $status));
@@ -303,14 +401,14 @@ class TaskController extends ManageController
                 $status = 3;
                 break;
             case 'deny':
-                $status = 10;
+                $status = 1;
                 break;
             default:
                 $status = 3;
                 break;
         }
 
-        $status = TaskModel::whereIn('id', $request->get('ckb'))->where('status', 1)->orWhere('status', 2)->update(array('status' => $status));
+        $status = TaskModel::whereIn('id', $request->get('ckb'))->where('status', 2)->update(array('status' => $status));
         if ($status)
             return back();
 

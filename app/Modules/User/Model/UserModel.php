@@ -99,12 +99,12 @@ class UserModel extends Model implements AuthenticatableContract,
             'validation_code' => $validationCode,
             'created_at' => $date,
             'updated_at' => $date,
-            //³õÊ¼»¯¼¤»îÓÃ»§
+            //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½
             'email_status' => 2,
             'status' => 1,
-            //×¢²áÔö¼ÓÓÃ»§ÀàÐÍ
+            //×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
             'type' => isset($data['type'])?$data['type']:'',
-            //×¢²áÔö¼Ó¼¼ÄÜ±êÇ©
+            //×¢ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ü±ï¿½Ç©
             'skill' => isset($data['skill'])?$data['skill']:''
         );
         $objUser = new UserModel();
@@ -112,7 +112,7 @@ class UserModel extends Model implements AuthenticatableContract,
         $status = $objUser->initUser($userArr);
         
         return $status;
-        //ÔÝÊ±È¥µôÓÊÏäÈÏÖ¤
+        //ï¿½ï¿½Ê±È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¤
         /* if ($status){
             $emailSendStatus = \MessagesClass::sendActiveEmail($data['email']);
             if (!$emailSendStatus){
@@ -133,7 +133,7 @@ class UserModel extends Model implements AuthenticatableContract,
             $data['uid'] = UserModel::insertGetId($data);
             UserDetailModel::create($data);
             
-            //×¢²áÔö¼Ó¼¼ÄÜ±êÇ©
+            //×¢ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ü±ï¿½Ç©
             if(!empty($skill)){
                 $skills = explode(",", $skill);
                 $allTag = TagsModel::findAll();
@@ -160,7 +160,15 @@ class UserModel extends Model implements AuthenticatableContract,
         $userInfo = UserModel::where('id',$id)->first();
         return $userInfo->name;
     }
-
+    /*
+     * èŽ·å–ä¼ä¸šåˆ—è¡¨
+     */
+	static function getqiye()
+    {
+//  	 $taskType = TaskTypeModel::select('*')->where('status','!=',0)->orderBy('pid', 'ASC')->orderBy('sort', 'ASC')->get()->toArray();
+       $userInfo = UserModel::select('*')->where('type','=',2)->get()->toArray();
+        return $userInfo;
+    }
     static function getUserIdByMobileAndIDCard($mobile, $card_number)
     {
         $query = Self::select('users.id');
@@ -220,7 +228,7 @@ class UserModel extends Model implements AuthenticatableContract,
                     'updated_at' => date('Y-m-d H:i:s', time()),
                 ]);
                 
-                //Éí·ÝÖ¤±£´æ
+                //ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½
                 $update = [
                     'realname' => $data['realname'],
                     'card_number' => $data['card_number'],
@@ -237,7 +245,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 
                 RealnameAuthModel::where('uid', $data['uid'])->update($update);
                 
-                //×¢²áÔö¼Ó¼¼ÄÜ±êÇ©
+                //×¢ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ü±ï¿½Ç©
                 if(!empty($data['skill'])){
                     UserTagsModel::where('uid',$data['uid'])->delete();
                     
@@ -291,7 +299,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 'created_at' => date('Y-m-d H:i:s', time()),
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ]);
-            //Éí·ÝÖ¤±£´æ
+            //ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½
             
             if(isset($data['astatus'])&&$data['astatus']){
                 switch($data['astatus']){
@@ -344,7 +352,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 }
             }
             
-            //×¢²áÔö¼Ó¼¼ÄÜ±êÇ©
+            //×¢ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ü±ï¿½Ç©
             if(!empty($data['skill'])){
                 $skills = explode(",", $data['skill']);
                 $allTag = TagsModel::findAll();
@@ -387,7 +395,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 'created_at' => date('Y-m-d H:i:s', time()),
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ]);
-            //Éí·ÝÖ¤±£´æ
+            //ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½
             if(isset($data['astatus'])&&$data['astatus']){
                 switch($data['astatus']){
                     case 1 : $status = 1; break;
@@ -488,7 +496,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ]); */
             
-            //Éí·ÝÖ¤±£´æ
+            //ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½
             $update = [
                 'company_name' => $data['company_name'],
                 'province' => $data['province'],

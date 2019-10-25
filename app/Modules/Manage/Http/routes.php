@@ -46,6 +46,8 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
 
     //任务管理路由
     Route::get('/taskList', 'TaskController@taskList')->name('taskList');//任务列表
+    Route::get('/taskAdd', 'TaskController@getTaskAdd')->name('totaskAdd');//进入任务添加
+    Route::post('/taskAdd', 'TaskController@postTaskAdd')->name('taskAdd');//任务添加
     Route::get('/taskHandle/{id}/{action}', 'TaskController@taskHandle')->name('taskUpdate');//任务处理
     Route::post('/taskMultiHandle', 'TaskController@taskMultiHandle')->name('taskMultiUpdate');//任务批量处理
     Route::get('/taskDetail/{id}', 'TaskController@taskDetail')->name('taskDetail');//任务详情
