@@ -6,7 +6,7 @@
             <div class="form-inline search-group">
                 <form  role="form" action="/manage/taskDispatch" method="get">
                     <div class="form-group search-list">
-                        <label for="name">任务标题　</label>
+                        <label for="name">任务名称　</label>
                         <input type="text" class="form-control" id="task_title" name="task_title" placeholder="请输入任务标题" @if(isset($merge['task_title']))value="{!! $merge['task_title'] !!}"@endif>
                     </div>
                     <div class="form-group search-list">

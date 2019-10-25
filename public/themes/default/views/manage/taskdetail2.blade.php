@@ -321,7 +321,11 @@ function usersli(){
 }
 
 var text = ''
+@if(isset($type)&&$type==='dispatch')
 var rest_worker = '{{$rest_worker}}';
+@else
+var rest_worker = 0;
+@endif
 $('.users').find('li').click(function(event){
     	event.stopPropagation()
         if($(this)[0].className == 'users_check'){
