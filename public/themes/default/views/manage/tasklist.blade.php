@@ -6,12 +6,12 @@
             <div class="form-inline search-group">
                 <form  role="form" action="/manage/taskList" method="get">
                     <div class="form-group search-list">
-                        <label for="name">任务标题　</label>
-                        <input type="text" class="form-control" id="task_title" name="task_title" placeholder="请输入任务标题" @if(isset($merge['task_title']))value="{!! $merge['task_title'] !!}"@endif>
+                        <label for="name">任务名称　</label>
+                        <input type="text" class="form-control" id="task_title" name="task_title" placeholder="请输入任务名称" @if(isset($merge['task_title']))value="{!! $merge['task_title'] !!}"@endif>
                     </div>
                     <div class="form-group search-list">
-                        <label for="namee">用户名　　</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名" @if(isset($merge['username']))value="{!! $merge['username'] !!}"@endif>
+                        <label for="namee">企业名称　　</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name" placeholder="请输入企业名称" @if(isset($merge['company_name']))value="{!! $merge['company_name'] !!}"@endif>
                     </div>
                     <div class="form-group">
                     	<button type="submit" class="btn btn-primary btn-sm">搜索</button>
@@ -33,12 +33,12 @@
                             <label class="">状态　</label>
                             <select name="status">
                                 <option value="0">全部</option>
-                                <option value="1" @if(isset($merge['status']) && $merge['status'] == '1')selected="selected"@endif>未发布</option>
-                                <option value="2" @if(isset($merge['status']) && $merge['status'] == '2')selected="selected"@endif>待审核</option>
-                                <option value="3" @if(isset($merge['status']) && $merge['status'] == '3')selected="selected"@endif>进行中</option>
-                                <option value="4" @if(isset($merge['status']) && $merge['status'] == '4')selected="selected"@endif>已结束</option>
+                                <option value="1" @if(isset($merge['status']) && $merge['status'] == '1')selected="selected"@endif>已通过</option>
+                                <option value="2" @if(isset($merge['status']) && $merge['status'] == '2')selected="selected"@endif>未审核</option>
+                                <option value="3" @if(isset($merge['status']) && $merge['status'] == '3')selected="selected"@endif>未通过</option>
+                                <!-- <option value="4" @if(isset($merge['status']) && $merge['status'] == '4')selected="selected"@endif>已结束</option>
                                 <option value="5" @if(isset($merge['status']) && $merge['status'] == '5')selected="selected"@endif>失败</option>
-                                <option value="6" @if(isset($merge['status']) && $merge['status'] == '6')selected="selected"@endif>维权</option>
+                                <option value="6" @if(isset($merge['status']) && $merge['status'] == '6')selected="selected"@endif>维权</option> -->
                             </select>
                         </div>
                     </div>
@@ -54,20 +54,20 @@
                         
                     </th>
                     <th>编号</th>
-                    <th>用户名</th>
+                    <!-- <th>用户名</th> -->
                     <th>任务标题</th>
 					 <th>任务主类别</th>
                     <th>
-                        发布时间
+                        发布企业
                     </th>
                     <th>
-                        状态
+                        任务预算
                     </th>
-                    <th>赏金</th>
-                    <th>
+                    <th>任务状态</th>
+                    <!-- <th>
                         审核时间
-                    </th>
-                    <th>处理</th>
+                    </th> -->
+                    <th>操作</th>
                 </tr>
                 </thead>
                 <form id="rms" action="/manage/taskMultiHandle" method="post">
@@ -86,36 +86,35 @@
                                 <a href="#">{!! $item->id !!}</a>
                             </td>
                             
-                            <td>{!! $item->name !!}</td>
-                            <td class="hidden-480">
+                            <td>{!! $item->title !!}</td>
+                            <td>{!! $item->cname !!}</td>
+                            <td>{!! $item->company_name !!}</td>
+                            <td>{!! $item->bounty !!}</td>
+                            
+                            
+                            <!-- <td class="hidden-480">
                                 @if($item->status >=2)<a target="_blank" href="/task/{!! $item->id  !!}">{!! $item->title !!}</a>@else{!! $item->title !!} @endif
                             </td>
                             <td>{!! $item->cname !!}</td>
-                            <td>{!! $item->created_at !!}</td>
+                            <td>{!! $item->created_at !!}</td> -->
 							
                             <td class="hidden-480">
-                                @if($item->status == 0)
-                                    <span class="label label-sm label-warning">未发布</span>
+                                @if($item->status < 2)
+                                    <span class="label label-sm label-warning">未通过</span>
                                 @elseif($item->status == 2)
                                     <span class="label label-sm label-success">待审核</span>
-                                @elseif($item->status >= 3 && $item->status <= 8)
-                                    <span class="label label-sm label-danger ">进行中</span>
-                                @elseif($item->status == 9)
-                                    <span class="label label-sm label-inverse">已结束</span>
-                                @elseif($item->status == 1)
-                                    <span class="label label-sm label-danger">失败</span>
-                                @elseif($item->status == 11)
-                                    <span class="label label-sm label-inverse">维权</span>
+                                @elseif($item->status >= 3)
+                                    <span class="label label-sm label-danger ">已通过</span>
                                 @endif
                             </td>
 
-                            <td>
+                            <!-- <td>
                                 @if($item->bounty_status)已托管@else未托管@endif
                             </td>
 
                             <td>
                                 @if(isset($item->verified_at)){!! $item->verified_at !!}@else N/A @endif
-                            </td>
+                            </td> -->
 
                             <td>
                                 <div class="hidden-sm hidden-xs btn-group">

@@ -224,8 +224,9 @@
     </div>
     <script>
     var today=new Date()
-    var date = new Array(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours(), today.getMinutes());
-    var taskform=$("#taskform").Validform({
+    var date = new Array(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours()<10?("0"+today.getHours()):today.getHours(), today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes());
+        
+     var taskform=$("#taskform").Validform({
         tiptype:3,
         label:".label",
         showAllError:true,

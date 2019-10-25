@@ -106,8 +106,13 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/templateCreate','IndustryController@templateCreate')->name('templateCreate');//行业实例添加控制器
     Route::get('/industryInfo/{id}','IndustryController@industryInfo')->name('industryDetail');//编辑行业分类图标
     Route::post('/industryInfo','IndustryController@postIndustryInfo')->name('postIndustryDetail');//编辑行业分类图标
-
-
+    //任务类型管理路由
+    Route::get('/taskType','TaskTypeController@taskTypeList')->name('taskTypeList');//行业管理列表
+    Route::post('/taskTypeCreate','TaskTypeController@taskTypeCreate')->name('taskTypeCreate');//行业管理提交
+    Route::get('/taskTypeDelete/{id}','TaskTypeController@taskTypeDelete')->name('taskTypeDelete');//行业管理删除
+    Route::get('/taskType/ajaxSecond','TaskTypeController@ajaxSecond')->name('ajaxSecond');//行业管理筛选（城市）
+    Route::get('/taskType/ajaxThird','TaskTypeController@ajaxThird')->name('ajaxThird');//行业管理筛选（地区）
+    
     Route::get('/userFinance', 'FinanceController@userFinance')->name('userFinanceCreate');//用户流水记录
     Route::get('/cashoutList', 'FinanceController@cashoutList')->name('cashoutList');//提现审核列表
     Route::get('/cashoutHandle/{id}/{action}', 'FinanceController@cashoutHandle')->name('cashoutUpdate');//提现审核处理

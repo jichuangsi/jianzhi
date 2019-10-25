@@ -143,27 +143,28 @@ class TaskController extends ManageController
         $order = $request->get('order') ? $request->get('order') : 'desc';
         $paginate = $request->get('paginate') ? $request->get('paginate') : 10;
 
-        $taskList = TaskModel::select('task.id', 'us.name', 'task.title', 'task.created_at', 'task.status', 'task.verified_at', 'task.bounty_status', 'tt.name as cname');
+        $taskList = TaskModel::select('task.id', 'us.name', 'task.title', 'task.created_at', 'task.status', 'task.verified_at', 'task.bounty', 'tt.name as cname','enterprise_auth.company_name')
+                        ->where('task.status', '<=', '3');
 
         if ($request->get('task_title')) {
-            $taskList = $taskList->where('task.title','like','%'.$request->get('task_id').'%');
+            $taskList = $taskList->where('task.title','like','%'.$request->get('task_title').'%');
         }
-        if ($request->get('username')) {
-            $taskList = $taskList->where('us.name','like','%'.e($request->get('username')).'%');
+        if ($request->get('company_name')) {
+            $taskList = $taskList->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
         }
         //状态筛选
         if ($request->get('status') && $request->get('status') != 0) {
             switch($request->get('status')){
                 case 1:
-                    $status = [0];
+                    $status = [3];
                     break;
                 case 2:
-                    $status = [1,2];
+                    $status = [2];
                     break;
                 case 3:
-                    $status = [3,4,5,6,7,8];
+                    $status = [0,1];
                     break;
-                case 4:
+                /* case 4:
                     $status = [9];
                     break;
                 case 5:
@@ -171,7 +172,7 @@ class TaskController extends ManageController
                     break;
                 case 6:
                     $status = [11];
-                    break;
+                    break; */
             }
             $taskList = $taskList->whereIn('task.status',$status);
         }
@@ -190,6 +191,7 @@ class TaskController extends ManageController
         $taskList = $taskList->orderBy($by, $order)
             ->leftJoin('users as us', 'us.id', '=', 'task.uid')
             ->leftJoin('task_type as tt', 'tt.id', '=', 'task.type_id')
+            ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
         ->paginate($paginate);
 
         $data = array(

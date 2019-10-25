@@ -10,26 +10,28 @@ use App\Modules\User\Model\TagsModel;
 use App\Modules\User\Model\UserTagsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use App\Modules\Task\Model\TaskTypeModel;
 
-class IndustryController extends ManageController
+class TaskTypeController extends ManageController
 {
     public function __construct()
     {
         parent::__construct();
 
         $this->initTheme('manage');
-        $this->theme->setTitle('行业管理');
+        $this->theme->setTitle('任务类型管理');
         $this->theme->set('manageType', 'industry');
     }
     
-    public function industryList()
+    public function taskTypeList()
     {
-        $category_data = TaskCateModel::findByPid([0]);
+        
+        $tasktype_data = TaskTypeModel::findByPid([0]);
         $data = [
-            'category_data'=>$category_data,
+            'tasktype_data'=>$tasktype_data,
         ];
 
-        return $this->theme->scope('manage.industrylist', $data)->render();
+        return $this->theme->scope('manage.tasktypelist', $data)->render();
     }
 
     private function iteratorChildrenTask($children){
@@ -38,37 +40,37 @@ class IndustryController extends ManageController
             if(isset($v['children_task'])&&!empty($v['children_task'])){
                 $this->iteratorChildrenTask($v['children_task']);
             }else{
-                TaskCateModel::destroy($v['id']);
+                TaskTypeModel::destroy($v['id']);
             }
         }
     }
     
-    public function industryDelete($id)
+    public function taskTypeDelete($id)
     {
         
-        $taskCate = TaskCateModel::where('id', $id)->with('childrenTask')->get()->toArray();
-        $taskCate = $taskCate[0];
+        $taskType = TaskTypeModel::where('id', $id)->with('childrenTask')->get()->toArray();
+        $taskType = $taskType[0];
         
-        if(isset($taskCate['children_task'])&&!empty($taskCate['children_task'])){
-            $this->iteratorChildrenTask($taskCate['children_task']);
+        if(isset($taskType['children_task'])&&!empty($taskType['children_task'])){            
+            $this->iteratorChildrenTask($taskType['children_task']);
         }
         
-        
-        $result = TaskCateModel::destroy($id);
+        $result = TaskTypeModel::destroy($id);
+        //$result = TaskCateModel::destroy($id);
         if(!$result)
         {
             return response()->json(['errCode'=>0,'errMsg'=>'删除失败！']);
-        }else{
+        }/* else{
             $result1 = TagsModel::where('cate_id', $id)->delete();
             
             if($result1) TagsModel::betteringCache();
-        }
-        Cache::forget('task_cate');
+        } */
+        Cache::forget('task_type');
         return response()->json(['errCode'=>1,'id'=>$id]);
     }
 
     
-    public function industryCreate(Request $request)
+    public function taskTypeCreate(Request $request)
     {
         $data = $request->except('_token');
         
@@ -91,28 +93,30 @@ class IndustryController extends ManageController
         {
             $change_ids = explode(' ',$data['change_ids']);
             if(in_array($k,$change_ids)){
-                $result = TaskCateModel::where('pid',$pid)->where('id',$k)->update(['name'=>$v,'sort'=>$data['sort'][$k]]);
+                //$result = TaskCateModel::where('pid',$pid)->where('id',$k)->update(['name'=>$v,'sort'=>$data['sort'][$k]]);
+                $result = TaskTypeModel::where('pid',$pid)->where('id',$k)->update(['name'=>$v,'sort'=>$data['sort'][$k]]);
                 
-                if(!empty($data['third']) && $result)
+                /* if(!empty($data['third']) && $result)
                 {
                     TagsModel::where('cate_id',$k)->update(['tag_name'=>$v]);
                     
                     TagsModel::betteringCache();
-                }
+                    } */
                 if(!$result)
                 {
-                    $task_cate = TaskCateModel::firstOrCreate(['name'=>$v,'pid'=>$pid,'path'=>$path,'sort'=>$data['sort'][$k]]);
-                    if(!empty($data['third']) && $task_cate)
+                    $task_type = TaskTypeModel::firstOrCreate(['name'=>$v,'pid'=>$pid,'path'=>$path,'sort'=>$data['sort'][$k],'status'=>1]);
+                    //$task_cate = TaskCateModel::firstOrCreate(['name'=>$v,'pid'=>$pid,'path'=>$path,'sort'=>$data['sort'][$k]]);
+                    /* if(!empty($data['third']) && $task_cate)
                     {
                         $tags = TagsModel::firstOrCreate(['tag_name' => $task_cate['name']]);
                         TagsModel::where('id',$tags['id'])->update(['cate_id'=>$task_cate['id']]);
                         
                         TagsModel::betteringCache();
-                    }
+                    } */
                 }
             }
         }
-        Cache::forget('task_cate');
+        Cache::forget('task_type');
         return redirect()->back()->with(['massage'=>'修改成功！']);
     }
 
@@ -123,13 +127,14 @@ class IndustryController extends ManageController
         if(is_null($id)){
             return response()->json(['errMsg'=>'参数错误！']);
         }
-        $province = TaskCateModel::findByPid([$id]);
-        $domain = \CommonClass::getDomain();
+        $province = TaskTypeModel::findByPid([$id]);
+        //$province = TaskCateModel::findByPid([$id]);
+        /* $domain = \CommonClass::getDomain();
         if(!empty($province)){
             foreach($province as $k => $v){
                 $province[$k]['pic'] = $domain.'/'.$v['pic'];
             }
-        }
+        } */
 
         $data = [
             'province'=>$province,
@@ -145,13 +150,14 @@ class IndustryController extends ManageController
         if(is_null($id)){
             return response()->json(['errMsg'=>'参数错误！']);
         }
+        $area = TaskTypeModel::findByPid([$id]);
         $area = TaskCateModel::findByPid([$id]);
-        $domain = \CommonClass::getDomain();
+        /* $domain = \CommonClass::getDomain();
         if(!empty($area)){
             foreach($area as $k => $v){
                 $area[$k]['pic'] = $domain.'/'.$v['pic'];
             }
-        }
+        } */
         return response()->json($area);
     }
 
