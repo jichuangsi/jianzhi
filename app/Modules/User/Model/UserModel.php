@@ -40,7 +40,7 @@ class UserModel extends Model implements AuthenticatableContract,
     
     static function checkPassword($username, $password)
     {
-        $user = UserModel::where('name', $username)->orWhere('email', $username)->first();
+        $user = UserModel::where('name', $username)->orWhere('mobile', $username)->first();
         if ($user) {
             $password = self::encryptPassword($password, $user->salt);
             if ($user->password === $password) {
@@ -83,15 +83,14 @@ class UserModel extends Model implements AuthenticatableContract,
 
     
     static function createUser(array $data)
-    {
-        
+    {        
         $salt = \CommonClass::random(4);
         $validationCode = \CommonClass::random(6);
         $date = date('Y-m-d H:i:s');
         $now = time();
         $userArr = array(
             'name' => $data['username'],
-            'email' => $data['email'],
+            'mobile' => $data['mobile'],
             'password' => UserModel::encryptPassword($data['password'], $salt),
             'alternate_password' => UserModel::encryptPassword($data['password'], $salt),
             'salt' => $salt,
@@ -167,15 +166,14 @@ class UserModel extends Model implements AuthenticatableContract,
         $query = Self::select('users.id');
         
         if($mobile){
-            $query = $query->where('user_detail.mobile', $mobile);
+            $query = $query->where('users.mobile', $mobile);
         }
         
         if($card_number){
-            $query = $query->where('user_detail.card_number', $card_number);
+            $query = $query->where('realname_auth.card_number', $card_number);
         }
         
-        $data = $query->leftjoin('user_detail','user_detail.uid', '=', 'users.id')
-            ->first();
+        $data = $query->leftjoin('realname_auth','realname_auth.uid', '=', 'users.id')->first();
         
         return $data;
     }
@@ -204,16 +202,16 @@ class UserModel extends Model implements AuthenticatableContract,
                         'salt' => $data['salt'],
                         'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
-                }/* else{
+                }else{
                     UserModel::where('id', $data['uid'])->update([
-                        'email' => $data['email'],
+                        'mobile' => $data['mobile'],
                         'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
-                } */
+                }
                 
                 UserDetailModel::where('uid', $data['uid'])->update([
                     'realname' => $data['realname'],
-                    'qq' => $data['qq'],
+                    'qq' => isset($data['qq'])?$data['qq']:'',
                     'mobile' => $data['mobile'],
                     'card_number' => $data['card_number'],
                     'province' => $data['province'],
@@ -229,8 +227,11 @@ class UserModel extends Model implements AuthenticatableContract,
                     'updated_at' => date('Y-m-d H:i:s', time()),
                 ];
                 
-                if(isset($data['card_front_side'])&&!empty($data['card_front_side'])&&isset($data['card_back_dside'])&&!empty($data['card_back_dside'])){                    
+                if(isset($data['card_front_side'])&&!empty($data['card_front_side'])){                    
                     $update['card_front_side'] = $data['card_front_side'];
+                }
+                
+                if(isset($data['card_back_dside'])&&!empty($data['card_back_dside'])){                    
                     $update['card_back_dside'] = $data['card_back_dside'];
                 }
                 
@@ -274,6 +275,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 'email_status' => $data['email_status'],
                 'status' => $data['status'],
                 'type' => $data['type'],
+                'mobile' => $data['mobile'],
                 'created_at' => date('Y-m-d H:i:s', time()),
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ]);
@@ -291,7 +293,7 @@ class UserModel extends Model implements AuthenticatableContract,
             ]);
             //身份证保存
             
-            if($data['astatus']){
+            if(isset($data['astatus'])&&$data['astatus']){
                 switch($data['astatus']){
                     case 1 : $status = 1; break;
                     case 2 : $status = 0; break;
@@ -375,16 +377,18 @@ class UserModel extends Model implements AuthenticatableContract,
                 'email_status' => $data['email_status'],
                 'status' => $data['status'],
                 'type' => $data['type'],
+                'mobile' => $data['mobile'],
                 'created_at' => date('Y-m-d H:i:s', time()),
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ]);
             UserDetailModel::create([
                 'uid' => $data['uid'],
+                'mobile' => $data['mobile'],
                 'created_at' => date('Y-m-d H:i:s', time()),
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ]);
             //身份证保存
-            if($data['astatus']){
+            if(isset($data['astatus'])&&$data['astatus']){
                 switch($data['astatus']){
                     case 1 : $status = 1; break;
                     case 2 : $status = 0; break;
@@ -466,12 +470,12 @@ class UserModel extends Model implements AuthenticatableContract,
                     'salt' => $data['salt'],
                     'updated_at' => date('Y-m-d H:i:s', time()),
                 ]);
-            }/* else{
-            UserModel::where('id', $data['uid'])->update([
-            'email' => $data['email'],
-            'updated_at' => date('Y-m-d H:i:s', time()),
-            ]);
-            } */
+            }else{
+                UserModel::where('id', $data['uid'])->update([
+                'mobile' => $data['mobile'],
+                'updated_at' => date('Y-m-d H:i:s', time()),
+                ]);
+            }
             
             /* UserDetailModel::where('uid', $data['uid'])->update([
                 'realname' => $data['realname'],
@@ -510,5 +514,21 @@ class UserModel extends Model implements AuthenticatableContract,
         });
         
             return is_null($status) ? true : false;
+    }
+    
+    static function getUsersById($ids){
+        $query = Self::select('users.*', 'realname_auth.card_number', 'realname_auth.realname');
+        if(is_array($ids)){
+            $query = $query->whereIn('users.id', $ids);
+        }else{
+            $query = $query->where('users.id', $ids);
+        }
+        
+        $data = $query
+                    //->leftjoin("user_detail", 'users.id', '=', 'user_detail.uid')
+                    ->leftjoin("realname_auth", 'users.id', '=', 'realname_auth.uid')
+                    ->get();
+        
+        return $data;
     }
 }

@@ -15,6 +15,9 @@ use App\Modules\Task\Model\WorkModel;
 use App\Modules\User\Model\MessageReceiveModel;
 use App\Modules\User\Model\UserDetailModel;
 use App\Modules\User\Model\UserModel;
+use App\Modules\User\Model\AttachmentModel;
+use App\Modules\Task\Model\WorkAttachmentModel;
+use App\Modules\User\Model\UserTagsModel;
 use App\Modules\Manage\Model\ConfigModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -394,6 +397,145 @@ class TaskController extends ManageController
         ];
         return $this->theme->scope('manage.taskdetail', $data)->render();
     }
+    
+    public function taskDetail2($id){
+        
+        $data = $this->getTaskDetail($id);
+        
+        $data['type'] = 'detail';
+        
+        return $this->theme->scope('manage.taskdetail2', $data)->render();
+    }
+    
+    public function createTaskDispatch($id){
+        $data = $this->getTaskDetail($id);
+        
+        $tags = $data['tags']; 
+        $tagIds = array();
+        foreach($tags as $k => $v){
+            array_push($tagIds, $v['tag_id']);
+        }
+        
+        $uids = UserTagsModel::getUsersByTagId($tagIds);
+        $uids = array_flatten($uids);
+        
+        $users = UserModel::getUsersById($uids);
+        
+        $usersInfo = array();
+        foreach($users as $k => $v){
+            array_push($usersInfo, ['uid'=>$v->id,'realname'=>$v->realname,'card_number'=>$v->card_number,'mobile'=>$v->mobile]);
+        }
+        
+        //判断当前的任务的入围人数是否用完
+        $worker_num = TaskModel::where('id',$id)->lists('worker_num');
+        $worker_num = $worker_num[0];
+        //当前任务的入围人数统计
+        $win_bid_num = WorkModel::where('task_id',$id)->where('status',1)->count();
+        
+        
+        $data['type'] = 'dispatch';
+        $data['users'] = $usersInfo;
+        $data['rest_worker'] = ($worker_num >= $win_bid_num)?($worker_num - $win_bid_num) : 0;
+        
+        return $this->theme->scope('manage.taskdetail2', $data)->render();
+    }
+    
+    public function createNewTaskDispatch(Request $request){
+        $param = $request->except('_token');
+        
+        if(!isset($param['task_id'])){
+            return redirect()->back()->with(['error'=>'缺少必要参数！']);
+        }
+        
+        if(!isset($param['users_id'])){
+            return redirect()->back()->with(['error'=>'请选择接单人员！']);
+        }
+        
+        $msg = array();
+        
+        //创建一个新的稿件
+        $workModel = new WorkModel();
+        $userIds = explode(',', $param['users_id']);
+        foreach($userIds as $k => $v){
+            
+            //判断当前的任务的入围人数是否用完
+            $worker_num = TaskModel::where('id',$param['task_id'])->lists('worker_num');
+            $worker_num = $worker_num[0];
+            //当前任务的入围人数统计
+            $win_bid_num = WorkModel::where('task_id',$param['task_id'])->where('status',1)->count();
+            
+            if($worker_num<=$win_bid_num){
+                $msg['message'] .= '任务接单人数已满！';
+                break;
+            }           
+            
+            $data = [
+                'task_id' => $param['task_id'],
+                'uid' => $v,
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s',time()),
+            ];
+            
+            $status = $workModel->workCreate($data);
+            
+            if(!$status){
+                $msg['message'] .= '第'.$k.'人接单失败！';
+                continue;
+            }
+            
+            if(($win_bid_num+1)== $worker_num)
+            {
+                //派单人数已满，任务状态变成进行中
+                TaskModel::where('id',$param['task_id'])->update(['status'=>4,'updated_at'=>date('Y-m-d H:i:s',time())]);
+            }
+        }
+        
+        if(empty($msg)) $msg['message'] = '派单成功！';
+        return redirect()->back()->with($msg);
+        
+    }
+    
+    private function getTaskDetail($id){
+        
+        //查询任务详情
+        $detail = TaskModel::detail($id);
+        
+        //查询任务的附件
+        $attatchment_ids = TaskAttachmentModel::where('task_id','=',$id)->lists('attachment_id')->toArray();
+        $attatchment_ids = array_flatten($attatchment_ids);
+        $attatchment = AttachmentModel::whereIn('id',$attatchment_ids)->get();
+        
+        //查询任务技能标签
+        $tags = TaskTagsModel::getTagsByTaskId($id);
+        
+        //企业查询投稿记录
+        $works = WorkModel::findAll2($id);
+        
+        if($works&&count($works)>0){
+            foreach($works as $k => &$v){
+                $v['skills'] = UserTagsModel::getTagsByUserId($v['uid']);
+                
+                if($v['id']&&$v['status']>=2){
+                    $w_attatchment_ids = WorkAttachmentModel::findById($v['id']);
+                    $w_attatchment_ids = array_flatten($w_attatchment_ids);
+                    $v['attachments'] = AttachmentModel::whereIn('id',$w_attatchment_ids)->get();
+                }
+                
+                $v['comments'] = WorkCommentModel::where('work_id',$v['id'])->where('pid',0)->with('childrenComment')->get()->toArray();
+            }
+            
+        }
+        
+        
+        $data = [
+            'task'=>$detail,
+            'taskAttachment'=>$attatchment,
+            'tags' => $tags,
+            'works' => $works,
+        ];
+        
+        return $data;
+    }
 
     /**
      * 任务详情提交
@@ -588,6 +730,8 @@ class TaskController extends ManageController
             if(!$status){
                 array_push($tasksDispatch, ['num'=>$k, 'msg'=>'接单失败！']);
                 continue;
+            }else{
+                array_push($tasksDispatch, ['num'=>$k, 'msg'=>'接单成功！']);
             }
             
             if(($win_bid_num+1)== $worker_num)

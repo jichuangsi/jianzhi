@@ -324,6 +324,27 @@ class UserCenterController extends BasicUserCenterController
     }
 
     /**
+     * 验证用户输入手机是否已注册
+     * @param Request $request
+     * @return mixed
+     */
+    public function checkMobile(Request $request)
+    {
+        $sendTime = Session::get('send_code_time');
+        $nowTime = time();
+        if ($nowTime - $sendTime < 60) {
+            return response()->json(['errCode' => 0, 'errMsg' => '请稍后点击发送验证码！']);
+        }
+        $mobile = $request->get('mobile');
+        //验证用户填写邮箱
+        if ($mobile != $this->user['mobile']) {
+            return response()->json(['errCode' => 0, 'errMsg' => '请输入注册时候填写的手机号！']);
+        } else {
+            return response()->json(['errCode' => 1]);
+        }
+    }
+    
+    /**
      * 验证用户的验证码跳转修改密码页面
      */
     public function validateCode(Request $request)

@@ -7,7 +7,7 @@
            <span class="iconfont icon-yonghu"></span><input type="text" name="username" placeholder="请输入用户名" ajaxurl="{!! url('checkUserName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
        	</div>
         <div class="ipt">
-           <span class="iconfont icon-youxiang"></span><input type="text" name="email" placeholder="请输入邮箱" ajaxurl="{!! url('checkEmail') !!}" datatype="e" nullmsg="请输入邮箱帐号" errormsg="邮箱地址格式不对！">
+           <span class="iconfont icon-youxiang"></span><input type="text" name="mobile" placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
         </div>
         <div class="ipt">
            <span class="iconfont icon-mima"></span><input type="password" name="password" placeholder="请输入密码" datatype="*6-16" nullmsg="请输入密码" errormsg="密码长度为6-16位字符">

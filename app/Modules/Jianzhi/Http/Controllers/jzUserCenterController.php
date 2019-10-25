@@ -95,11 +95,19 @@ class jzUserCenterController extends BasicUserCenterController
         }else{
             $path = 'info';
             
-            $uinfo = UserDetailModel::findByUid($this->user['id']);
+            //$uinfo = UserDetailModel::findByUid($this->user['id']);
             
-            $data = [
-                'uinfo' => $uinfo
-            ];
+            
+            $authStatus = RealnameAuthModel::getRealnameAuthStatus2($this->user['id']);
+            
+            if($authStatus!=1){
+                return redirect('jz/auth');
+            }else{
+                $userInfo  = UserModel::getUsersById($this->user['id']);
+                $data = [
+                    'uinfo' => ['realname'=>$userInfo[0]->realname,'card_number'=>$userInfo[0]->card_number,'mobile'=>$userInfo[0]->mobile],
+                ];
+            }
             
         }
         return $this->theme->scope($path,$data)->render();
@@ -444,4 +452,33 @@ class jzUserCenterController extends BasicUserCenterController
             return redirect()->back()->with(['error'=>'更新信息失败']);
     }
     
+    /**
+        * 用户信息更新
+     * @param UserInfoRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function infoUpdate(UserInfoRequest $request)
+    {
+        $mobile = $request->get('mobile');
+        
+        if(!isset($mobile)||empty($mobile)){
+            return redirect()->back()->with(['error' => '手机号不能为空！']);
+        }
+        
+        $cnt = UserModel::where('id', '<>', $this->user['id'])->where('mobile', $mobile)->count();
+        
+        if($cnt>0){
+            return redirect()->back()->with(['error' => '手机号已注册！']);
+        }
+        
+        $result = UserModel::where('id', $this->user['id'])->update(['mobile'=>$mobile]);
+        UserDetailModel::where('uid', $this->user['id'])->update(['mobile'=>$mobile]);//同步一下
+        
+        if (!$result) {
+            return redirect()->back()->with(['error' => '修改失败！']);
+        }
+        
+        return redirect()->back()->with(['message' => '修改成功！']);        
+        
+    }
 }

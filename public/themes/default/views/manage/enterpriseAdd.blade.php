@@ -14,9 +14,9 @@
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册邮箱：</label>
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="email" id="form-field-1"  class="col-xs-10 col-sm-5"  ajaxurl="{!! url('manage/checkEmail') !!}" datatype="e" nullmsg="请输入邮箱帐号" errormsg="邮箱地址格式不对！">
+                    <input type="text" name="mobile" id="form-field-1"  class="col-xs-10 col-sm-5"  ajaxurl="{!! url('manage/checkMobile') !!}" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字" >
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>

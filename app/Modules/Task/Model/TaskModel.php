@@ -618,7 +618,7 @@ class TaskModel extends Model
      */
     static function detail($id)
     {
-        $query = self::select('task.*', 'a.name as user_name', 'b.name as type_name', 'sb.name as sub_type_name', 'c.name as cate_name','province.name as province_name','city.name as city_name','area.name as area_name')
+        $query = self::select('task.*', 'a.name as user_name', 'b.name as type_name', 'sb.name as sub_type_name', 'c.name as cate_name','province.name as province_name','city.name as city_name','area.name as area_name','enterprise_auth.company_name')
             ->where('task.id', '=', $id);
         //赏金已经托管
         $query = $query->where(function ($query) {
@@ -631,6 +631,7 @@ class TaskModel extends Model
             ->leftjoin('district as city','city.id','=','task.city')
             ->leftjoin('district as area','area.id','=','task.area')
             ->leftjoin('cate as c', 'c.id', '=', 'task.cate_id')
+            ->leftjoin('enterprise_auth', 'task.uid', '=', 'enterprise_auth.uid')
             ->first();
         return $data;
     }

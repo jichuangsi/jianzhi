@@ -27,7 +27,7 @@
         			@endif
             	</span> 
             	
-            	<input type="number" name="mobile" id="mobile" placeholder="请输入手机号" value="{{ $uinfo['mobile'] }}"></div>
+            	<input type="number" name="mobile" id="mobile" placeholder="请输入手机号" value="{{ $uinfo['mobile'] }}" ></div>
         </div>
     </div>
     <button class="btn" type="submit">

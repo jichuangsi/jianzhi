@@ -61,9 +61,9 @@ class jzAuthController extends AuthController
         
         if ($this->create($request->all())){
             $throttles = $this->isUsingThrottlesLoginsTrait();
-            $user = UserModel::where('email', $request->get('username'))->orWhere('name', $request->get('username'))->first();            
+            $user = UserModel::where('mobile', $request->get('mobile'))->orWhere('name', $request->get('username'))->first();            
             Auth::loginUsingId($user->id);
-            UserModel::where('email', $request->get('email'))->update(['last_login_time' => date('Y-m-d H:i:s')]);
+            UserModel::where('mobile', $request->get('mobile'))->orWhere('name', $request->get('username'))->update(['last_login_time' => date('Y-m-d H:i:s')]);
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
         return back()->with(['message' => '注册失败']);

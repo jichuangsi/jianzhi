@@ -11,7 +11,7 @@
         </div> -->
         <div class="ipt">
            <span class="iconfont icon-yonghu">           		           
-           </span><input type="text" name="username" placeholder="请输入用户名/邮箱" onkeydown='clearError(this)'>
+           </span><input type="text" name="username" placeholder="请输入用户名/手机" onkeydown='clearError(this)'>
            		@if($errors->first('username'))
         			<p class="Validform_checktip Validform_wrong">{!! $errors->first('username') !!}</p>
         		@endif

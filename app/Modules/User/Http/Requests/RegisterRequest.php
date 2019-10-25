@@ -10,7 +10,7 @@ class RegisterRequest extends FormRequest
 	{
 		return [
             'username' => 'required|between:4,15|string|unique:users,name',
-            'email' => 'required|email|unique:users,email',
+		    'mobile' => 'required|mobilePhone',
             'password' => 'required|between:6,16|string',
             'confirmPassword' => 'required|same:password',
             'agree' => 'required'
@@ -32,9 +32,8 @@ class RegisterRequest extends FormRequest
             'username.string' => '用户名格式错误',
             'username.unique' => '用户名已注册',
 
-            'email.required' => '请输入注册邮箱',
-            'email.email' => '请输入正确的邮箱格式',
-            'email.unique' => '邮箱已注册',
+            'mobile.required' => '手机号码不能为空',
+            'mobile.mobile_phone' => '请填写正确的手机号码',
 
             'password.required' => '请输入注册密码',
             'password.between' => '密码长度在:min - :max 个字符',

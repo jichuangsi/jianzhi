@@ -76,7 +76,7 @@
                     <!-- <th>处理</th> -->
                 </tr>
                 </thead>
-                <form action="/manage/taskMultiHandle" method="post">
+                <!-- <form action="/manage/taskMultiHandle" method="post"> -->
                     {!! csrf_field() !!}
                     <tbody>
                     @foreach($task as $item)
@@ -89,9 +89,9 @@
                             </td>
 
                             <td>
-                                <a href="#">{!! $item->id !!}</a>
+                                {!! $item->id !!}
                             </td>
-                            <td>{!! $item->title !!}</td>
+                            <td><a href="/manage/taskDetail2/{{ $item->id }}" target="_Self">{!! $item->title !!}</a></td>
                             <td>
                                 {!! $item->company_name !!}
                             </td>
@@ -103,7 +103,7 @@
                         </tr>
                     @endforeach
                     </tbody>
-                </form>
+                <!-- </form> -->
             </table>
         </div>
         <div class="row">
@@ -139,7 +139,7 @@
 			value += $(checkedArr[i]).val() + ',';
 		}
 
-		console.log(value);
+		window.location.href = "/manage/createTaskDispatch/"+value.substr(0, value.length-1);
 	}
 
 	function templateDownload(){

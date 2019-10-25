@@ -90,4 +90,14 @@ class UserTagsModel extends Model
         return $tag;
     }
 
+    static function getUsersByTagId($tid)
+    {
+        if(is_array($tid)){
+            $tag = Self::select('uid')->whereIn('tag_id', $tid)->groupby('uid')->get()->toArray();
+        }else{
+            $tag = Self::where('tag_user.tag_id',$tid)->select('tag_user.uid')->get()->toArray();
+        }
+        return $tag;
+    }
+    
 }

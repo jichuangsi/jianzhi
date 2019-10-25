@@ -14,10 +14,13 @@
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 电子邮箱：</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
 			<p class="col-sm-4">
-				<input type="text" disabled="disabled" name="email" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="e" value="{!! $info['email'] !!}">
+				<input type="text" name="mobile" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字" value="{!! $info['mobile'] !!}">
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+						@if($errors->first('mobile'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('mobile') !!}</p>
+            			@endif	
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
@@ -148,6 +151,9 @@
                 <div class="col-sm-5">
                     <input type="file" name="business_license" id="business_license">                    
                 </div>
+                		@if($errors->first('business_license'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('business_license') !!}</p>
+            			@endif
             </div> 
 			          
 		

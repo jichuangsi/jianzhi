@@ -52,6 +52,7 @@ Route::post('password/reset', 'Auth\PasswordController@postReset')->name('nameRe
 Route::get('flushCode', 'Auth\AuthController@flushCode')->name('flushCode');
 Route::post('checkUserName', 'Auth\AuthController@checkUserName')->name('checkUserName');
 Route::post('checkEmail', 'Auth\AuthController@checkEmail')->name('checkEmail');
+Route::post('checkMobile', 'Auth\AuthController@checkMobile')->name('checkMobile');
 Route::get('reSendActiveEmail/{email}', 'Auth\AuthController@reSendActiveEmail')->name('reSendActiveEmail');
 
 Route::get('user/getZone', 'AuthController@getZone')->name('zoneDetail');

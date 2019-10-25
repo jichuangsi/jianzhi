@@ -89,7 +89,7 @@
             <div>文件上传说明</div>
             <div class="ipt1">
                 <ul>
-                    <li>企业信息导入文件必须为一个合法格式的Excel文件(<a href="{{ URL('/attachment/sys/templates/template_company.xlsm') }}" target="#">下载模板</a>)</li>
+                    <li>企业信息导入文件必须为一个合法格式的Excel文件(<a href="{{ URL('/attachment/sys/templates/template_company.xlsx') }}" target="#">下载模板</a>)</li>
                     <li>Excel文件第一行为标题行</li>
                     <li>请务必正确填写企业名称、纳税人识别号、联系电话等信息</li>
                     <li>营业执照副本照片请尽量插入JPG格式的图片</li>

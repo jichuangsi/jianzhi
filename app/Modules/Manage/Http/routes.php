@@ -55,6 +55,9 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/taskDispatchDownload', 'TaskController@postTaskDispatchDownload');//任务派单模板下载
     Route::get('/taskDispatchImport', 'TaskController@getTaskDispatchImport')->name('taskDispatchImportPage');//个人用户批量导入
     Route::post('/taskDispatchImport', 'TaskController@postTaskDispatchImport')->name('taskDispatchImport');//个人用户批量导入          
+    Route::get('/taskDetail2/{id}', 'TaskController@taskDetail2')->name('taskDetail2');//任务详情
+    Route::get('/createTaskDispatch/{id}', 'TaskController@createTaskDispatch')->name('createTaskDispatchPage');//任务派单
+    Route::post('/createTaskDispatch', 'TaskController@createNewTaskDispatch')->name('createNewTaskDispatch');//提交任务派单
     
 
     //财务管理路由
@@ -187,6 +190,7 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/userAdd', 'UserController@postUserAdd')->name('userCreate');//添加用户
     Route::post('checkUserName', 'UserController@checkUserName')->name('checkUserName');//检测用户名是否存在
     Route::post('checkEmail', 'UserController@checkEmail')->name('checkEmail');//检测邮箱
+    Route::post('checkMobile', 'UserController@checkMobile')->name('checkMobile');//检测手机
     Route::get('/userEdit/{uid}', 'UserController@getUserEdit')->name('userUpdatePage');//用户详情
     Route::post('/userEdit', 'UserController@postUserEdit')->name('userUpdate');//用户详情更新
     Route::get('/managerList', 'UserController@getManagerList')->name('managerList');//系统用户列表

@@ -110,13 +110,13 @@
 				<input type="text" disabled="disabled" id="form-field-1" class="col-xs-10 col-sm-5" value="{!! $info['name'] !!}">				
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册邮箱：</p>
 			<p class="col-sm-4">
 				<input type="text" disabled="disabled" name="email" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="e" value="{!! $info['email'] !!}">
-				<!-- <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span> -->
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
-		</div>
+		</div> -->
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 真实姓名：</p>
 			<p class="col-sm-4">
@@ -132,18 +132,21 @@
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 手机号码：</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
 			<p class="col-sm-4">
 				<input type="text" name="mobile" id="form-field-1"   class="col-xs-10 col-sm-5" value="{!! $info['mobile'] !!}" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>	
+						@if($errors->first('mobile'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('mobile') !!}</p>
+            			@endif					
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> QQ号码：</p>
 			<p class="col-sm-4">
 				<input type="text" name="qq" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! $info['qq'] !!}">
 			</p>
-		</div>
+		</div> -->
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p  class="col-sm-1 control-label no-padding-left">所在地：</p>
 			<div class="col-sm-5">
@@ -203,6 +206,9 @@
                 <div class="col-sm-4">
                     <input type="file" name="card_front_side" id="card_front_side">
                 </div>
+                	@if($errors->first('card_front_side'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_front_side') !!}</p>
+        			@endif
             </div>
             
             <div class="bankAuth-bottom clearfix col-xs-12">
@@ -210,6 +216,9 @@
                 <div class="col-sm-4">
                     <input type="file" name="card_back_dside" id="card_back_dside">
                 </div>
+                		@if($errors->first('card_back_dside'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_back_dside') !!}</p>
+            			@endif
             </div>
 		
 		

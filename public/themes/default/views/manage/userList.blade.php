@@ -13,10 +13,10 @@
                     <label for="">用户名　　</label>
                     <input type="text" name="username" @if(isset($username)) value="{!! $username !!}" @endif/>
                 </div>
-                <div class="form-group search-list">
+                <!-- <div class="form-group search-list">
                     <label for="">注册邮箱　</label>
                     <input type="text" name="email" @if(isset($email))value="{!! $email !!}"@endif/>
-                </div>
+                </div> -->
                 <div class="form-group search-list">
                     <label for="">注册手机　</label>
                     <input type="text" name="mobile" @if(isset($mobile))value="{!! $mobile !!}" @endif/>

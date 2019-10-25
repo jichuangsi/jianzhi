@@ -101,7 +101,7 @@ class AuthController extends IndexController
             return redirect($this->loginPath())->withInput($request->only('username', 'remember'))->withErrors($error);
         }
         $throttles = $this->isUsingThrottlesLoginsTrait();
-        $user = UserModel::where('email', $request->get('username'))->orWhere('name', $request->get('username'))->first();
+        $user = UserModel::where('mobile', $request->get('username'))->orWhere('name', $request->get('username'))->first();
         //暂时去掉邮箱认证
         if ($user && !$user->status) {
             //return redirect('waitActive/' . Crypt::encrypt($user->email))->withInput(array('email' => $request->get('email')));
@@ -109,7 +109,7 @@ class AuthController extends IndexController
             return redirect($this->loginPath())->withInput($request->only('username', 'remember'))->withErrors($error);
         }
         Auth::loginUsingId($user->id);
-        UserModel::where('email', $request->get('email'))->update(['last_login_time' => date('Y-m-d H:i:s')]);
+        UserModel::where('mobile', $request->get('username'))->orWhere('name', $request->get('username'))->update(['last_login_time' => date('Y-m-d H:i:s')]);
         return $this->handleUserWasAuthenticated($request, $throttles);
 
     }
@@ -223,6 +223,25 @@ class AuthController extends IndexController
             $info = '';
         } else {
             $info = '邮箱已占用';
+            $status = 'n';
+        }
+        $data = array(
+            'info' => $info,
+            'status' => $status
+        );
+        return json_encode($data);
+    }
+    
+    public function checkMobile(Request $request)
+    {
+        $mobile = $request->get('param');
+        
+        $status = UserModel::where('mobile', $mobile)->first();
+        if (empty($status)){
+            $status = 'y';
+            $info = '';
+        } else {
+            $info = '手机号已注册';
             $status = 'n';
         }
         $data = array(

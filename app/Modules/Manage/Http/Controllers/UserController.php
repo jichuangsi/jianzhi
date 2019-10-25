@@ -41,7 +41,7 @@ class UserController extends ManageController
      */
     public function getUserList(Request $request)
     {
-        $list = UserModel::select('users.name', 'user_detail.created_at', 'user_detail.balance', 'user_detail.card_number', 'user_detail.mobile', 
+        $list = UserModel::select('users.name', 'users.created_at', 'user_detail.balance', 'realname_auth.card_number', 'users.mobile', 
                             'users.id', 'users.last_login_time', 'users.status', 'realname_auth.status as astatus', 'realname_auth.realname as realname')
             ->where('users.type', 1)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
@@ -57,7 +57,7 @@ class UserController extends ManageController
             $list = $list->where('users.email', $request->get('email'));
         }
         if ($request->get('mobile')){
-            $list = $list->where('user_detail.mobile', $request->get('mobile'));
+            $list = $list->where('users.mobile', $request->get('mobile'));
         }
         if (intval($request->get('status'))){
             switch(intval($request->get('status'))){
@@ -151,7 +151,7 @@ class UserController extends ManageController
      */
     public function getEnterpriseList(Request $request)
     {
-        $list = UserModel::select('users.name', //'user_detail.created_at', 'user_detail.balance', 'user_detail.card_number', 'user_detail.mobile',
+        $list = UserModel::select('users.name', 'users.mobile',//'user_detail.created_at', 'user_detail.balance', 'user_detail.card_number', 'user_detail.mobile',
             'users.id', 'users.last_login_time', 'users.status', 'enterprise_auth.status as astatus', 'enterprise_auth.company_name as company_name'
             , 'enterprise_auth.contactor as contactor', 'enterprise_auth.contactor_mobile as contactor_mobile'
             , 'province.name as province_name','city.name as city_name','area.name as area_name', 'enterprise_auth.address as address')
@@ -336,7 +336,7 @@ class UserController extends ManageController
         $salt = \CommonClass::random(4);
         $data = [
             'name' => $request->get('name'),
-            'email' => $request->get('email'),
+            'mobile' => $request->get('mobile'),
             'tax_code' => $request->get('tax_code'),
             'password' => UserModel::encryptPassword($request->get('password'), $salt),
             'salt' => $salt,
@@ -513,6 +513,30 @@ class UserController extends ManageController
         );
         return json_encode($data);
     }
+    
+    /**
+     * 检测手机是否可用
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function checkMobile(Request $request){
+        $mobile = $request->get('param');
+        
+        $status = UserModel::where('mobile', $mobile)->first();
+        if (empty($status)){
+            $status = 'y';
+            $info = '';
+        } else {
+            $info = '手机已注册';
+            $status = 'n';
+        }
+        $data = array(
+            'info' => $info,
+            'status' => $status
+        );
+        return json_encode($data);
+    }
 
     //个人用户导入视图
     public function getUserImport(){
@@ -577,7 +601,7 @@ class UserController extends ManageController
             $salt = \CommonClass::random(4);
             $param = [
                 'name' => $v[2],
-                'email' => $this->genEMail($v[7]),
+                //'email' => $this->genEMail($v[7]),
                 'realname' => $v[0],
                 'card_number' => $v[1],
                 'email_status' => 2,
@@ -670,6 +694,7 @@ class UserController extends ManageController
                 'name' => $v[7],                
                 'password' => UserModel::encryptPassword($v[7], $salt),
                 'email' => $this->genEMail($v[7]),
+                'mobile' => $v[7],
                 'salt' => $salt,
                 'email_status' => 2,
                 'status' => 1,
@@ -719,7 +744,7 @@ class UserController extends ManageController
      */
     public function getEnterpriseEdit($uid)
     {
-        $info = UserModel::select('users.name', 'users.email', 'enterprise_auth.*', 'users.id')
+        $info = UserModel::select('users.name', 'users.mobile', 'enterprise_auth.*', 'users.id')
             ->where('users.id', $uid)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
             ->leftJoin('enterprise_auth', 'users.id', '=', 'enterprise_auth.uid')
@@ -758,12 +783,19 @@ class UserController extends ManageController
             }
         }
         
+        $cnt = UserModel::where('id', '<>', $request->get('uid'))->where('mobile', $request->get('mobile'))->count();
+        
+        if($cnt>0){
+            $error['mobile'] = '手机号已注册！';
+        }
+        
         if (!empty($error)) {
             return back()->withErrors($error)->withInput();
         }
         
         $data = [
             'uid' => $request->get('uid'),
+            'mobile' => $request->get('mobile'),
             'tax_code' => $request->get('tax_code'),
             'company_name' => $request->get('company_name'),
             'bank' => $request->get('bank'),
@@ -804,7 +836,7 @@ class UserController extends ManageController
      */
     public function getUserEdit($uid)
     {
-        $info = UserModel::select('users.name', 'user_detail.realname', 'user_detail.card_number', 'user_detail.mobile', 
+        $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile', 
                             'user_detail.qq', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id')
             ->where('users.id', $uid)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
@@ -873,16 +905,22 @@ class UserController extends ManageController
             }
         }
         
+        $cnt = UserModel::where('id', '<>', $request->get('uid'))->where('mobile', $request->get('mobile'))->count();
+        
+        if($cnt>0){
+            $error['mobile'] = '手机号已注册！';
+        }
+        
         if (!empty($error)) {
             return back()->withErrors($error)->withInput();
-        }            
+        }        
         
         $data = [
             'uid' => $request->get('uid'),
             'realname' => $request->get('realname'),
             'mobile' => $request->get('mobile'),
             'card_number' => $request->get('card_number'),
-            'qq' => $request->get('qq'),
+            //'qq' => $request->get('qq'),
             //'email' => $request->get('email'),
             'province' => $request->get('province'),
             'city' => $request->get('city'),

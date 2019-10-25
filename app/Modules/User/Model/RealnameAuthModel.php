@@ -113,5 +113,6 @@ class RealnameAuthModel extends Model
         });
             
             return is_null($status) ? true : $status;
-    }
+    }   
+    
 }
