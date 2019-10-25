@@ -119,7 +119,7 @@
     </div>
     <div class="table_box">
         <table style="table-layout: fixed;">
-        	<thead>数据检查结果</thead>
+        	<thead>数据导入结果</thead>
             <tr>
                 <th>行号</th>
                 <th>导入结果</th>

@@ -150,23 +150,27 @@ class ManageController extends BasicController
         return $savePath.$fileName.'.xlsx';
     }
     
-    protected function fileImport($file, $allowExtension = array()){
+    protected function fileImport($file, $allowExtension = array(), $template = ''){
         $importdUrl = '';
         $errMsg = '';
-        if ($file) {
-            $uploadMsg = json_decode(\FileClass::uploadFile($file, 'user', $allowExtension));
-            
-            if ($uploadMsg->code != 200) {
-                $errMsg = $uploadMsg->message;
-            } else {
-                $importdUrl = $uploadMsg->data->url;
+        if(empty($template)){
+            if ($file) {
+                $uploadMsg = json_decode(\FileClass::uploadFile($file, 'user', $allowExtension));
+                
+                if ($uploadMsg->code != 200) {
+                    $errMsg = $uploadMsg->message;
+                } else {
+                    $importdUrl = $uploadMsg->data->url;
+                }
+            }else{
+                return ['fail'=>true, 'errMsg'=>'缺少必要参数！'];
             }
         }else{
-            return ['fail'=>true, 'errMsg'=>'缺少必要参数！'];
-        }
+            $importdUrl = $template;
+        }        
         
         if (!empty($errMsg)) {
-            return ['fail'=>true, 'errMsg'=>$error];
+            return ['fail'=>true, 'errMsg'=>$errMsg];
         }
         
         try {
