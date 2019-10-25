@@ -58,6 +58,22 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::get('/taskDetail2/{id}', 'TaskController@taskDetail2')->name('taskDetail2');//任务详情
     Route::get('/createTaskDispatch/{id}', 'TaskController@createTaskDispatch')->name('createTaskDispatchPage');//任务派单
     Route::post('/createTaskDispatch', 'TaskController@createNewTaskDispatch')->name('createNewTaskDispatch');//提交任务派单
+    //任务验收   
+    Route::get('/taskCheck', 'TaskController@getTaskCheck')->name('taskCheck');//任务验收    
+    Route::post('/taskCheckEndAll', 'TaskController@postTaskCheckEndAll');//任务批量终止
+    Route::post('/taskCheckRejectAll', 'TaskController@postTaskCheckRejectAll');//任务批量驳回
+    Route::get('/taskCheckHandle/{id}/{action}', 'TaskController@taskCheckHandle')->name('taskCheckHandle');//单个任务处理
+    Route::post('/taskCheckDownload', 'TaskController@postTaskCheckDownload');//任务验收模板下载
+    Route::get('/taskCheckImport', 'TaskController@getTaskCheckImport')->name('taskCheckImportPage');//任务验收批量导入
+    Route::post('/taskCheckImport', 'TaskController@postTaskCheckImport')->name('taskCheckImport');//任务验收批量导入
+    Route::get('/taskDetail3/{id}', 'TaskController@taskDetail3')->name('taskDetail3');//任务交付详情
+    //任务结算
+    Route::get('/taskSettle', 'TaskController@getTaskSettle')->name('taskSettle');//任务结算
+    Route::post('/taskSettleAll', 'TaskController@postTaskSettleAll');//任务批量结算
+    Route::get('/taskSettleHandle/{id}/{action}', 'TaskController@taskSettleHandle')->name('taskSettleHandle');//单个任务处理
+    Route::post('/taskSettleDownload', 'TaskController@postTaskSettleDownload');//任务结算模板下载    
+    Route::get('/taskSettleImport', 'TaskController@getTaskSettleImport')->name('taskSettleImportPage');//任务结算批量导入
+    Route::post('/taskSettleImport', 'TaskController@postTaskSettleImport')->name('taskSettleImport');//任务结算批量导入   
     
 
     //财务管理路由

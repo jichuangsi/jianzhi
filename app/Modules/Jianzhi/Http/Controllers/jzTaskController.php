@@ -628,7 +628,7 @@ class jzTaskController extends TaskBasicController
         $worker_num = TaskModel::where('id',$data['task_id'])->first();
         $worker_num = $worker_num['worker_num'];
         //任务验收通过人数
-        $win_check = WorkModel::where('work.task_id',$data['task_id'])->where('status','>',2)->count();
+        $win_check = WorkModel::where('work.task_id',$data['task_id'])->whereIn('status',[3,5])->count();
         
         $data['worker_num'] = $worker_num;
         $data['win_check'] = $win_check;

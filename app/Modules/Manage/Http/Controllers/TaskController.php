@@ -407,6 +407,40 @@ class TaskController extends ManageController
         return $this->theme->scope('manage.taskdetail2', $data)->render();
     }
     
+    public function taskDetail3($id){
+        
+        $work = WorkModel::select('work.id as w_id','work.task_id as w_task_id', 'work.desc as w_desc', 'work.status as w_status', 'work.uid as w_uid', 'work.created_at as w_created_at', 'work.delivered_at as w_delivered_at', 
+                        'work.checked_at as w_checked_at','work.settle_at as w_settle_at','users.mobile as w_mobile',
+                        'work.delivered_at as w_delivered_at', 'work.payment as w_payment','enterprise_auth.company_name','mt.name as mt_type_name','st.name as st_type_name','realname_auth.realname','realname_auth.card_number as w_card_number',
+                        'task.title','task.begin_at','task.end_at','province.name as province_name','city.name as city_name','area.name as area_name','task.address','task.status as t_status','task.bounty')->where('work.id', $id);
+        
+        $work = $work->leftJoin('users', 'users.id', '=', 'work.uid')
+                    ->leftJoin('task', 'task.id', '=', 'work.task_id')
+                    ->leftJoin('task_type as mt', 'task.type_id', '=', 'mt.id')
+                    ->leftJoin('task_type as st', 'task.sub_type_id', '=', 'st.id')
+                    ->leftjoin('district as province','province.id','=','task.province')
+                    ->leftjoin('district as city','city.id','=','task.city')
+                    ->leftjoin('district as area','area.id','=','task.area')
+                    ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
+                    ->leftJoin('realname_auth', 'realname_auth.uid', '=', 'work.uid')->first();
+        
+        //查询任务技能标签
+        $t_tags = TaskTagsModel::getTagsByTaskId($work->w_task_id);
+        
+        //查询接单人技能标签
+        $w_tags = UserTagsModel::getTagsByUserId($work->w_uid);
+        
+        $data = [
+            'work' => $work,
+            't_tag' => $t_tags,
+            'w_tag' => $w_tags,
+        ];
+        
+        //dump($data);
+        
+        return $this->theme->scope('manage.taskdetail3', $data)->render();
+    }
+    
     public function createTaskDispatch($id){
         $data = $this->getTaskDetail($id);
         
@@ -430,7 +464,7 @@ class TaskController extends ManageController
         $worker_num = TaskModel::where('id',$id)->lists('worker_num');
         $worker_num = $worker_num[0];
         //当前任务的入围人数统计
-        $win_bid_num = WorkModel::where('task_id',$id)->where('status',1)->count();
+        $win_bid_num = WorkModel::where('task_id',$id)->where('status','>=',1)->count();
         
         
         $data['type'] = 'dispatch';
@@ -462,7 +496,7 @@ class TaskController extends ManageController
             $worker_num = TaskModel::where('id',$param['task_id'])->lists('worker_num');
             $worker_num = $worker_num[0];
             //当前任务的入围人数统计
-            $win_bid_num = WorkModel::where('task_id',$param['task_id'])->where('status',1)->count();
+            $win_bid_num = WorkModel::where('task_id',$param['task_id'])->where('status','>=',1)->count();
             
             if($worker_num<=$win_bid_num){
                 $msg['message'] .= '任务接单人数已满！';
@@ -604,7 +638,7 @@ class TaskController extends ManageController
             $tags = TaskTagsModel::getTagsByTaskId($v);
             $skills = '';
             foreach($tags as $k1 => $v1){
-                $skills = $v1['tag_name'].',';
+                $skills .= $v1['tag_name'].',';
             }
                         
             $taskDetail = [
@@ -670,7 +704,15 @@ class TaskController extends ManageController
             
             $uid = UserModel::getUserIdByMobileAndIDCard($v[16], $v[15]);
             
-            if(!$uid){
+            if(!$uid||empty($uid)){
+                
+                $status = UserModel::where('mobile', $v[16])->first();
+                if($status){
+                    $v['msg'] = '新接单人的手机已经被注册！';
+                    array_push($tasksDispatch, $v);
+                    continue;
+                }
+                
                 if(empty($v[14])||empty($v[15])||empty($v[18])||empty($v[19])){
                     array_push($tasksDispatch, ['num'=>$k, 'msg'=>'新接单人必须同时提供姓名，身份证号以及身份证正反面照片！']);
                     continue;
@@ -709,7 +751,7 @@ class TaskController extends ManageController
             $worker_num = TaskModel::where('id',$v[0])->lists('worker_num');
             $worker_num = $worker_num[0];
             //当前任务的入围人数统计
-            $win_bid_num = WorkModel::where('task_id',$v[0])->where('status',1)->count();
+            $win_bid_num = WorkModel::where('task_id',$v[0])->where('status','>=',1)->count();
             
             if($worker_num<=$win_bid_num){
                 array_push($tasksDispatch, ['num'=>$k, 'msg'=>'任务接单人数已满！']);
@@ -749,6 +791,685 @@ class TaskController extends ManageController
         ];
         //dump($result);
         return $this->theme->scope('manage.taskDispatchImport', $result)->render();
-    }   
+    }
+    
+    /**
+     * 任务验收列表
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function getTaskCheck(Request $request){
+        
+        $search = $request->all();
+        $by = $request->get('by') ? $request->get('by') : 'work.id';
+        $order = $request->get('order') ? $request->get('order') : 'desc';
+        $paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+        
+        
+        $worklist = WorkModel::select('work.id as w_id','work.task_id as w_task_id', 'work.desc as w_desc', 'work.status as w_status', 'work.uid as w_uid', 'work.created_at as w_created_at', 
+                                        'work.delivered_at as w_delivered_at', 'work.payment as w_payment','enterprise_auth.company_name','task_type.name as t_type_name','realname_auth.realname',
+                                        'task.title')
+                            ->where('work.status', '>=', '1');
+            
+            if ($request->get('task_title')) {
+                $worklist = $worklist->where('task.title','like','%'.$request->get('task_title').'%');
+            }
+            if ($request->get('username')) {
+                $worklist = $worklist->where('realname_auth.realname','like','%'.e($request->get('username')).'%');
+            }
+            if ($request->get('company_name')) {
+                $worklist = $worklist->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
+            }
+            //状态筛选
+             if ($request->get('status') && $request->get('status') != 0) {
+                 switch($request->get('status')){
+                     case 1:
+                        $status = [3];
+                        break;
+                     case 2:
+                         $status = [4];
+                         break;
+                     case 3:
+                         $status = [2];
+                         break;
+                     case 4:
+                         $status = [5];
+                         break;                     
+                 }
+                 $worklist = $worklist->whereIn('work.status',$status);
+             }
+             
+             
+            //时间筛选
+            if($request->get('time_type')){
+                if($request->get('start')){
+                    $start = date('Y-m-d H:i:s',strtotime($request->get('start')));
+                    $worklist = $worklist->where($request->get('time_type'),'>',$start);
+                }
+                if($request->get('end')){
+                    $end = date('Y-m-d H:i:s',strtotime($request->get('end')));
+                    $worklist = $worklist->where($request->get('time_type'),'<',$end);
+                }
+                
+            }            
+            
+            $worklist = $worklist->orderBy($by, $order)
+                            ->leftJoin('users', 'users.id', '=', 'work.uid')
+                            ->leftJoin('task', 'task.id', '=', 'work.task_id')
+                            ->leftJoin('task_type', 'task.type_id', '=', 'task_type.id')
+                            ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
+                            ->leftJoin('realname_auth', 'realname_auth.uid', '=', 'work.uid')
+                            ->paginate($paginate);
+            
+            $data = array(
+                'work' => $worklist,
+            );
+            $data['merge'] = $search;
+            
+            return $this->theme->scope('manage.taskCheck', $data)->render();
+    }
+    
+    /**
+     * 任务批量终止
+     */
+    public function postTaskCheckEndAll(Request $request){
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/taskCheck')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                WorkModel::where('id', $id)->update(['status' => 5]);
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/taskCheck')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/taskCheck')->with(array('message' => '操作失败'));
+    }
+    
+    /**
+     * 任务批量驳回
+     */
+    public function postTaskCheckRejectAll(Request $request){
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/taskCheck')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                WorkModel::where('id', $id)->update(['status' => 4]);
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/taskCheck')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/taskCheck')->with(array('message' => '操作失败'));
+    }
+    
+    public function taskCheckHandle($id, $action){
+        if (!$id) {
+            return  redirect()->to('manage/taskCheck')->with(array('error' => '参数错误'));
+        }
+        $id = intval($id);
+        
+        switch ($action) {
+            case 'pass':
+                $wstatus = 3;
+                break;
+            case 'reject':
+                $wstatus = 4;
+                break;
+            case 'end':
+                $wstatus = 5;
+                break;
+        }
+        
+        $status = DB::transaction(function () use ($id, $wstatus) {
+            WorkModel::where('id', $id)->update(['status' => $wstatus]);
+        });
+        if(is_null($status))
+        {
+            return redirect()->to('manage/taskCheck')->with(array('message' => '操作成功'));
+        }
+        return  redirect()->to('manage/taskCheck')->with(array('message' => '操作失败'));
+    }
+    
+    //任务验收模板下载
+    public function postTaskCheckDownload(Request $request){
+        $work = $request->get('chk');
+        
+        if(!isset($work)||empty($work)){
+            return  redirect()->to('manage/taskCheck')->with(array('message' => '下载失败'));
+        }
+        
+        $works = explode(",", $work);        
+        $task_ids = WorkModel::select('task_id')->whereIn('id',$works)->groupby('task_id')->get()->toArray();   
+        
+        if(!$task_ids||empty($task_ids)) {
+            return redirect()->to('/manage/taskCheck')->with(['massage'=>'验收任务不存在！']);
+        };
+        
+        $tasksDetail = array();        
+        foreach($task_ids as $k => $v){
+            
+            $task_detail = TaskModel::detail3($v['task_id']);
+            
+            //查询任务技能标签
+            $tags = TaskTagsModel::getTagsByTaskId($v['task_id']);
+            $skills = '';
+            foreach($tags as $k1 => $v1){
+                $skills .= $v1['tag_name'].',';
+            }
+            
+            foreach($task_detail as $v1){
+                unset($taskDetail);
+                $taskDetail = [
+                    'id' => $v1->id,
+                    'title' => $v1->title,
+                    'type_name' => $v1->type_name,
+                    'sub_type_name' => $v1->sub_type_name,
+                    'begin_at' => $v1->begin_at,
+                    'end_at' => $v1->end_at,
+                    'city' => $v1->province_name.$v1->city_name,
+                    'address' => $v1->address,
+                    'skills' => $skills?substr($skills,0,-1):'',
+                    'bounty' => $v1->bounty,
+                    'worker_num' => $v1->worker_num,
+                    'desc' => $v1->desc,
+                    'attachment' => '',
+                    'created_at' => $v1->created_at,
+                    'worker_name' => $v1->w_realname,
+                    'worker_card_number' => $v1->w_card_number,
+                    'worker_mobile' => $v1->w_mobile,
+                    'worker_account' => '',
+                    'worker_front_id_side' => '',
+                    'worker_back_id_side' => '',
+                ];  
+                
+                array_push($tasksDetail, $taskDetail);
+            }
+        }
+        //dump($tasksDetail);
+        
+        /* $template = $this->fileImport('',[],$_SERVER['DOCUMENT_ROOT'].'/attachment/sys/templates/template_taskys.xlsx');
+        dump($template); */
+        
+        $title = ['任务ID','任务名称','任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址','技能要求','任务预算','任务人数','任务描述','任务图片','发布时间'
+                    ,'姓名','身份证号码','手机号','银行卡号','身份证正面','身份证反面','验收状态(注：1-通过，2-驳回，3-任务终止)','验收时间','结算价格','评价及说明'];
+        
+        
+        $this->exportExcel($title, $tasksDetail,'任务验收及结算', 'template_taskys_'.time(), './', true);
+        
+        return redirect()->to('manage/taskCheck');        
+        
+    }
+    
+    //提交任务验收导入数据
+    public function getTaskCheckImport(){
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $data = [
+            'filesize' => $attachmentConfig['attachment']['size']
+        ];
+        
+        return $this->theme->scope('manage.taskCheckImport', $data)->render();
+    }
+    
+    //提交任务验收导入数据
+    public function postTaskCheckImport(Request $request){
+        $data = $this->fileImport($request->file('taskcheckfile'));
+        
+        if(isset($data['fail'])&&$data['fail']){
+            return back()->with(['error' => $data['errMsg']]);
+        }
+                
+        //dump($data);
+        $taskUpdate = array();
+        foreach($data as $k => $v){
+            if($k === 0 || empty($v[0])) continue;            
+            if (!array_key_exists(intval($v[0]),$taskUpdate)){
+                $taskUpdate[$v[0]] = intval($v[10]);
+            }
+        }
+        foreach($taskUpdate as $k => $v){
+            TaskModel::where('id', $k)->update(['worker_num'=>$v]);
+        }
+        
+        $tasksCheck = array();
+        foreach($data as $k => &$v){
+            if($k === 0 || empty($v[0])) continue;
+        
+            $v['num'] = $k;
+            $v[15] = strval($v[15]);
+            $v[16] = strval($v[16]);
+            $v[0] = intval($v[0]);
+            
+            if(empty($v[16])){
+                $v['msg'] = '接单人手机不能为空！';
+                array_push($tasksCheck, $v);
+                continue;
+            }
+            
+            $uid = UserModel::getUserIdByMobileAndIDCard($v[16], $v[15]);
+            
+            if(!$uid||empty($uid)){
+                
+                $status = UserModel::where('mobile', $v[16])->first();
+                if($status){
+                    $v['msg'] = '新接单人的手机已经被注册！';
+                    array_push($tasksCheck, $v);
+                    continue;
+                }
+                
+                if(empty($v[14])||empty($v[15])||empty($v[18])||empty($v[19])){
+                    $v['msg'] = '新接单人必须同时提供姓名，身份证号以及身份证正反面照片！';
+                    array_push($tasksCheck, $v);
+                    continue;
+                }
+                
+                $salt = \CommonClass::random(4);
+                $param = [
+                    'name' => $v[16],
+                    'email' => $this->genEMail($v[16]),
+                    'realname' => $v[14],
+                    'card_number' => $v[15],
+                    'email_status' => 2,
+                    'status' => 1,
+                    'type' => 1,
+                    'mobile' => $v[16],
+                    'password' => UserModel::encryptPassword($v[16], $salt),
+                    'salt' => $salt,
+                    'card_front_side' => $v[18],
+                    'card_back_dside' => $v[19],
+                    'astatus' => 1,
+                ];
+                $status = UserModel::addUser($param);
+                
+                if(!$status){
+                    $v['msg'] = '新接单人创建失败！';
+                    array_push($tasksCheck, $v);
+                    continue;
+                }
+                
+                $uid = UserModel::getUserIdByMobileAndIDCard($v[16], $v[15]);
+                if(!$uid){
+                    $v['msg'] = '新接单人创建失败！';
+                    array_push($tasksCheck, $v);
+                    continue;
+                }
+            }
+            
+            if($v[20]&&$uid){                
+                $status = explode('-', $v[20]);
+                
+                if($status[0]){
+                    $update = array();
+                    switch(intval($status[0])){
+                        case 1: $update['status'] = 3; $v['c_status']='验收通过'; break;
+                        case 2: $update['status'] = 4; $v['c_status']='验收驳回'; break;
+                        case 3: $update['status'] = 5; $v['c_status']='任务终止'; break;
+                    }
+                    if($v[21]){
+                        $update['checked_at'] = date('Y-m-d H:i:s', strtotime($v[21]));
+                    }
+                    if($v[22]){
+                        $update['payment'] = floatval($v[22]);
+                    }
+                    if($v[23]){
+                        $comment = \CommonClass::removeXss($v[23]);
+                    }
+                    
+                    $work_id = WorkModel::select('id')->where('task_id',$v[0])->where('uid',$uid->id)->first();
+                    
+                    if(!$work_id){
+                        
+                        $param1 = [
+                            'task_id' => $v[0],
+                            'uid' => $uid->id,
+                            'status' => 1,
+                            'created_at' => date('Y-m-d H:i:s',time()),
+                        ];
+                        
+                        //创建一个新的稿件
+                        $workModel = new WorkModel();
+                        $result = $workModel->workCreate($param1);
+                        
+                        if(!$result){
+                            $v['msg'] = '新接单人接单失败！';
+                            array_push($tasksCheck, $v);
+                            continue;
+                        }else{
+                            $work_id = WorkModel::select('id')->where('task_id',$v[0])->where('uid',$uid->id)->first();
+                        }
+                    }
+                    
+                    
+                    if($work_id){
+                        
+                        //查询任务需要的人数
+                        $worker_num = TaskModel::where('id',$v[0])->first();
+                        $worker_num = $worker_num['worker_num'];
+                        //任务验收通过人数
+                        $win_check = WorkModel::where('work.task_id',$v[0])->whereIn('status',[3,5])->count();
+                        
+                        if(($win_check>=$worker_num)&&$update['status'] === 3){
+                            $v['msg'] = '不能再接受新的验收！';
+                            array_push($tasksCheck, $v);
+                            continue;
+                        }                        
+                        
+                        $param = [
+                            'work_id' => $work_id->id,
+                            'update' => $update,
+                            'win_check' => $win_check,
+                            'worker_num' => $worker_num
+                        ];
+                        
+                        if(isset($comment)&&!empty($comment)){
+                            $param['task_id'] = $v[0];
+                            $param['comment'] = $comment;
+                        }
+                        
+                        $result = DB::transaction(function() use($param) {
+                            WorkModel::where('id', $param['work_id'])->update($param['update']);
+                            
+                            if(isset($param['comment'])&&!empty($param['comment'])){
+                                //将数据存入数据库
+                                $work_comment = [
+                                    'task_id'=>$param['task_id'],
+                                    'work_id'=>$param['work_id'],
+                                    'comment'=>$param['comment'],
+                                    'created_at'=>date('Y-m-d H:i:s',time()),
+                                ];
+                                WorkCommentModel::create($work_comment);
+                            }
+                            if(($param['win_check']+1)==$param['worker_num']&&$param['update']['status']!=4)
+                            {
+                                TaskModel::where('id',$param['task_id'])->update(['status'=>8,'comment_at'=>date('Y-m-d H:i:s',time()),'updated_at'=>date('Y-m-d H:i:s',time())]);
+                            }
+                        });
+                        
+                            if($result){
+                                $v['msg'] = '接单人验收状态更行失败！';
+                                array_push($tasksCheck, $v);
+                            }else{
+                                $v['msg'] = '接单人验收状态更行成功！';
+                                array_push($tasksCheck, $v);
+                            }
+                        
+                    }else{
+                        $v['msg'] = '接单人接单失败！';
+                        array_push($tasksCheck, $v);
+                        continue;
+                    }
+                }else{
+                    $v['msg'] = '设置的验收状态异常！';
+                    array_push($tasksCheck, $v);
+                    continue;
+                }
+                
+            }else{
+                $v['msg'] = '接单人的验收状态异常！';
+                array_push($tasksCheck, $v);
+                continue;
+            }
+        }
+        //dump($tasksCheck);
+        
+        
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $result = [
+            'filesize' => $attachmentConfig['attachment']['size'],
+            'tasksCheck' => $tasksCheck,
+        ];
+        //dump($result);
+        return $this->theme->scope('manage.taskCheckImport', $result)->render();        
+        
+    }
+    
+    //任务结算
+    public function getTaskSettle(Request $request){
+        
+        $search = $request->all();
+        $by = $request->get('by') ? $request->get('by') : 'work.id';
+        $order = $request->get('order') ? $request->get('order') : 'desc';
+        $paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+        
+        
+        $worklist = WorkModel::select('work.id as w_id','work.task_id as w_task_id', 'work.desc as w_desc', 'work.status as w_status', 'work.uid as w_uid', 'work.created_at as w_created_at',
+            'work.delivered_at as w_delivered_at', 'work.checked_at as w_checked_at', 'work.payment as w_payment','enterprise_auth.company_name','task_type.name as t_type_name','realname_auth.realname',
+            'task.title')
+            ->whereIn('work.status', [3,5]);
+            
+            if ($request->get('task_title')) {
+                $worklist = $worklist->where('task.title','like','%'.$request->get('task_title').'%');
+            }
+            if ($request->get('username')) {
+                $worklist = $worklist->where('realname_auth.realname','like','%'.e($request->get('username')).'%');
+            }
+            if ($request->get('company_name')) {
+                $worklist = $worklist->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
+            }
+            //状态筛选
+            if ($request->get('status') && $request->get('status') != 0) {
+                switch($request->get('status')){
+                    case 1:
+                        $status = [3];
+                        break;
+                    case 2:
+                        $status = [4];
+                        break;
+                    case 3:
+                        $status = [2];
+                        break;
+                    case 4:
+                        $status = [5];
+                        break;
+                }
+                $worklist = $worklist->whereIn('work.status',$status);
+            }
+            
+            
+            //时间筛选
+            if($request->get('time_type')){
+                if($request->get('start')){
+                    $start = date('Y-m-d H:i:s',strtotime($request->get('start')));
+                    $worklist = $worklist->where($request->get('time_type'),'>',$start);
+                }
+                if($request->get('end')){
+                    $end = date('Y-m-d H:i:s',strtotime($request->get('end')));
+                    $worklist = $worklist->where($request->get('time_type'),'<',$end);
+                }
+                
+            }
+            
+            $worklist = $worklist->orderBy($by, $order)
+            ->leftJoin('users', 'users.id', '=', 'work.uid')
+            ->leftJoin('task', 'task.id', '=', 'work.task_id')
+            ->leftJoin('task_type', 'task.type_id', '=', 'task_type.id')
+            ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
+            ->leftJoin('realname_auth', 'realname_auth.uid', '=', 'work.uid')
+            ->paginate($paginate);
+            
+            $data = array(
+                'work' => $worklist,
+            );
+            $data['merge'] = $search;
+        
+        return $this->theme->scope('manage.taskSettle', $data)->render();
+    }
+    
+    /**
+     * 任务批量结算
+     */
+    public function postTaskSettleAll(Request $request){
+        $data = $request->except('_token');
+        //var_dump($data['chk']);exit;
+        if(!$data['chk']){
+            return  redirect('manage/taskSettle')->with(array('message' => '操作失败'));
+        }
+        if(is_string($data['chk'])){
+            $data['chk'] = explode(',', $data['chk']);
+        }
+        $status = DB::transaction(function () use ($data) {
+            foreach ($data['chk'] as $id) {
+                WorkModel::where('id', $id)->update(['status' => 5, 'settle_at'=>date('Y-m-d H:i:d',time())]);
+            }
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/taskSettle')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/taskSettle')->with(array('message' => '操作失败'));
+    }
+    
+    public function taskSettleHandle($id, $action){
+        if (!$id) {
+            return  redirect()->to('manage/taskSettle')->with(array('error' => '参数错误'));
+        }
+        $id = intval($id);
+        
+        switch ($action) {
+            case 'settle':
+                $wstatus = 5;
+                break;
+        }
+        
+        $status = DB::transaction(function () use ($id, $wstatus) {
+            WorkModel::where('id', $id)->update(['status' => $wstatus]);
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/taskSettle')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/taskSettle')->with(array('message' => '操作失败'));
+    }
+    
+    public function postTaskSettleDownload(Request $request){
+        $work = $request->get('chk');
+        
+        if(!isset($work)||empty($work)){
+            return  redirect()->to('manage/taskSettle')->with(array('message' => '下载失败'));
+        }
+        
+        $works = explode(",", $work);
+        $task_ids = WorkModel::select('task_id')->whereIn('id',$works)->groupby('task_id')->get()->toArray();
+        
+        if(!$task_ids||empty($task_ids)) {
+            return redirect()->to('/manage/taskSettle')->with(['massage'=>'结算任务不存在！']);
+        };        
+        
+        $tasksDetail = array();
+        foreach($task_ids as $k => $v){
+            
+            $task_detail = TaskModel::detail3($v['task_id']);
+            
+            foreach($task_detail as $v1){
+                unset($taskDetail);
+                if($v1->w_status != 3) continue;
+                $taskDetail = [
+                    'uid'=> $v1->uid,
+                    'company_name' => $v1->company_name,
+                    'id' => $v1->id,
+                    'title' => $v1->title,
+                    'type_name' => $v1->type_name,
+                    'checked_at' => $v1->checked_at,
+                    'worker_name' => $v1->w_realname,
+                    'worker_account' => '',
+                    'worker_card_number' => $v1->w_card_number,
+                    'worker_payment' => $v1->payment,
+                    'worker_status' => '未结算',
+                ];
+                
+                array_push($tasksDetail, $taskDetail);
+            }
+        }
+        //dump($tasksDetail);
+        
+        /* $template = $this->fileImport('',[],$_SERVER['DOCUMENT_ROOT'].'/attachment/sys/templates/template_taskys.xlsx');
+         dump($template); */
+        
+        $title = ['企业ID','企业名称','任务ID','任务名称','任务主类别','验收时间','收款户名(真实姓名,必填)','收款账号(个人银行卡号)','身份证号(必填)','打款金额/元(四舍五入至分,必填)','结算状态'];
+        
+        
+        $this->exportExcel($title, $tasksDetail,'任务结算', 'template_taskjs_'.time(), './', true);
+        
+        return redirect()->to('manage/taskCheck');        
+        
+    }
+    
+    //跳转任务结算导入视图
+    public function getTaskSettleImport(){
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $data = [
+            'filesize' => $attachmentConfig['attachment']['size']
+        ];
+        
+        return $this->theme->scope('manage.taskSettleImport', $data)->render();
+    }
+    
+    //提交任务结算导入数据
+    public function postTaskSettleImport(Request $request){
+        $data = $this->fileImport($request->file('tasksettlefile'));
+        
+        if(isset($data['fail'])&&$data['fail']){
+            return back()->with(['error' => $data['errMsg']]);
+        }
+        
+        //dump($data);
+        $tasks = array();
+        foreach($data as $k => $v){
+            if($k === 0 || empty($v[2])) continue;
+            if (!array_key_exists(intval($v[2]),$tasks)){
+                $tasks[$v[2]] = $v[3];
+            }
+        }
+        $tasks = array_keys($tasks);
+        
+        WorkModel::whereIn('task_id',$tasks)->where('status', '3')->update(['status'=>5, 'settle_at'=>date('Y-m-d H:i:d',time())]);
+        
+        $tasksSettle = array();
+        foreach($data as $k => &$v){
+            if($k === 0 || empty($v[0])) continue;
+            
+            $v['num'] = $k;
+            $v[0] = intval($v[0]);
+            $v[2] = intval($v[2]);
+            $v[8] = strval($v[8]);
+            
+            $v['msg'] = '结算成功！';
+            
+            array_push($tasksSettle, $v);
+        }        
+        
+        //dump($tasksSettle);        
+        
+        $attachmentConfig = ConfigModel::getConfigByType('attachment');
+        
+        $result = [
+            'filesize' => $attachmentConfig['attachment']['size'],
+            'tasksSettle' => $tasksSettle,
+        ];
+        //dump($result);
+        return $this->theme->scope('manage.taskSettleImport', $result)->render();        
+        
+    }
+    
+    
+    
     
 }

@@ -49,6 +49,7 @@
         .users {
             width: 100%;
             position: relative;
+            height:21px;
         }
         .users ul{
             width: 60%;
@@ -260,7 +261,7 @@
                                                         <input type="text" onclick="event.stopPropagation()">
                                                         @if(isset($users))
                                                         	@foreach($users as $item)
-                                                        	<li data-id="{{$item['uid']}}">{{$item['realname']}} {{$item['card_number']}}<img src="/themes/default/assets/images/tick.png"></li>
+                                                        	<li data-id="{{$item['uid']}}" onclick="userscheck(this)">{{$item['realname']}} {{$item['card_number']}}<img src="/themes/default/assets/images/tick.png"></li>
                                                         	@endforeach
                                                         @endif                                                        
                                                     </ul>
@@ -326,7 +327,7 @@ var rest_worker = '{{$rest_worker}}';
 @else
 var rest_worker = 0;
 @endif
-$('.users').find('li').click(function(event){
+/* $('.users').find('li').click(function(event){
     	event.stopPropagation()
         if($(this)[0].className == 'users_check'){
         	var userId = $(this).attr('data-id');
@@ -344,7 +345,26 @@ $('.users').find('li').click(function(event){
             $(this).parent().parent().find('span').text(text.substr(0, text.length-1))
             $(this).addClass('users_check')
         }
-})
+}) */
+function userscheck(val){
+	event.stopPropagation()
+    if($(val)[0].className == 'users_check'){
+    	var userId = $(val).attr('data-id');
+    	var userIds = $("input[name='users_id']").val();
+    	userIds = userIds.replace(','+userId,'').replace(userId+',','').replace(userId,'')
+    	$("input[name='users_id']").val(userIds);            
+        text = text.split($(val).text())[0]+' '+text.split($(val).text()+'，')[1]
+        $(val).parent().parent().find('span').text(text)
+        $(val).removeClass('users_check')
+    }else if($('.users_check').length < parseInt(rest_worker)){
+        var userId = $(val).attr('data-id');
+        var userIds = $("input[name='users_id']").val();
+        text+=$(val).text() + '，'
+		$("input[name='users_id']").val(userIds+(userIds?",":"")+userId);
+        $(val).parent().parent().find('span').text(text.substr(0, text.length-1))
+        $(val).addClass('users_check')
+    }
+}
 </script>
 {!! Theme::widget('editor')->render() !!}
 {!! Theme::widget('ueditor')->render() !!}
