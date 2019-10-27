@@ -233,6 +233,8 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::get('/userAuthReject/{uid}', 'UserController@setUserAuthReject');//单个普通用户拒绝认证    
     Route::get('/userImport', 'UserController@getUserImport')->name('userImportPage');//个人用户批量导入  
     Route::post('/userImport', 'UserController@postUserImport')->name('userImport');//个人用户批量导入      
+    Route::get('/userInfo/{uid}', 'UserController@getUserInfo')->name('userInfo');//个人用户详情
+    Route::get('/enterpriseInfo/{uid}', 'UserController@getEnterpriseInfo')->name('enterpriseInfo');//企业用户详情
     
     //企业管理
     Route::get('/enterpriseList', 'UserController@getEnterpriseList')->name('enterpriseList');;//普通企业列表

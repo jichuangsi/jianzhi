@@ -126,15 +126,15 @@
                                         </a>
                                 @elseif($item->w_status===3)
                                 		<a class="btn btn-xs btn-info" href="/manage/taskDetail3/{!! $item->w_id !!}">
-                                            <i class="ace-icon fa fa-edit bigger-120">详情</i>
+                                            <i class="ace-icon fa fa-info bigger-120">详情</i>
                                         </a>
                                 @elseif($item->w_status===4)
                                 		<a class="btn btn-xs btn-info" href="/manage/taskDetail3/{!! $item->w_id !!}">
-                                            <i class="ace-icon fa fa-edit bigger-120">详情</i>
+                                            <i class="ace-icon fa fa-info bigger-120">详情</i>
                                         </a>
                                 @elseif($item->w_status===5)
                                 		<a class="btn btn-xs btn-info" href="/manage/taskDetail3/{!! $item->w_id !!}">
-                                            <i class="ace-icon fa fa-edit bigger-120">详情</i>
+                                            <i class="ace-icon fa fa-info bigger-120">详情</i>
                                         </a>
                                 @else
                                 	未知状态

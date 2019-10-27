@@ -737,6 +737,30 @@ class UserController extends ManageController
     }
     
     /**
+     * 企业详情资料视图
+     *
+     * @param $uid
+     * @return mixed
+     */
+    public function getEnterpriseInfo($uid){
+        $info = UserModel::select('users.id as uid', 'users.name', 'users.mobile','users.created_at as u_created_at', 'enterprise_auth.*', 'users.id', 'province.name as province_name','city.name as city_name','area.name as area_name')
+                ->where('users.id', $uid)
+                ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
+                ->leftJoin('enterprise_auth', 'users.id', '=', 'enterprise_auth.uid')
+                ->leftjoin('district as province','province.id','=','enterprise_auth.province')
+                ->leftjoin('district as city','city.id','=','enterprise_auth.city')
+                ->leftjoin('district as area','area.id','=','enterprise_auth.area')
+                ->first()->toArray();
+        
+        
+        
+        $data = [
+            'info' => $info,
+        ];
+        return $this->theme->scope('manage.enterpriseInfo', $data)->render();
+    }
+    
+    /**
      * 编辑企业资料视图
      *
      * @param $uid
@@ -828,6 +852,32 @@ class UserController extends ManageController
             return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
     }
         
+    /**
+     * 个人资料详情视图
+     *
+     * @param $uid
+     * @return mixed
+     */
+    public function getUserInfo($uid){
+        $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile',
+                    'user_detail.qq', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id',
+                    'realname_auth.card_front_side','realname_auth.card_back_dside','realname_auth.status as astatus')
+                    ->where('users.id', $uid)
+                    ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
+                    ->leftJoin('realname_auth', 'users.id', '=', 'realname_auth.uid')
+                    ->first()->toArray();            
+            
+            //个人标签
+            $myTags = UserTagsModel::getTagsByUserId($uid);
+            
+            $data = [
+                'info' => $info,
+                'myTags' => $myTags,
+            ];
+            return $this->theme->scope('manage.userInfo', $data)->render();
+    }
+    
+    
     /**
      * 编辑个人资料视图
      *

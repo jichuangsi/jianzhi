@@ -114,17 +114,20 @@
                         <div class="btn-group">
                         	@if($item->astatus === 0)
                         		<a class="btn btn-xs btn-success" href="{!! url('manage/enterpriseAuthPass/' . $item->id) !!}">
-                                    <i class="fa fa-edit"></i>通过
+                                    <i class="fa fa-check bigger-120"></i>通过
                                 </a>
                         	@endif
                             <a class="btn btn-xs btn-info" target="_Self" href="{!! url('manage/enterpriseEdit/' . $item->id) !!}">
-                                <i class="fa fa-edit"></i>编辑
+                                <i class="fa fa-edit bigger-120"></i>编辑
                             </a>
                             @if($item->astatus === 0)
                         		<a class="btn btn-xs btn-danger" href="{!! url('manage/enterpriseAuthReject/' . $item->id) !!}">
-                                    <i class="fa fa-edit"></i>拒绝
+                                    <i class="fa fa-minus-circle bigger-120"></i>拒绝
                                 </a>
                         	@endif
+                        	<a class="btn btn-xs btn-info" target="_Self" href="{!! url('manage/enterpriseInfo/' . $item->id) !!}">
+                                <i class="fa fa-info bigger-120"></i>详情
+                            </a>
                             <!-- @if($item->status == 1)
                             <a class="btn btn-xs btn-danger" href="{!! url('manage/handleUser/' . $item->id . '/disable') !!}">
                                 <i class="fa fa-ban"></i>禁用
