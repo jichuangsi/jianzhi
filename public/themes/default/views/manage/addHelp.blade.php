@@ -20,7 +20,7 @@
         <div class="form-group interface-bottom col-xs-12">
             <label class="col-sm-1 text-right">问题描述</label>
             <div class="text-left col-sm-9">
-                <input type="text" name="title" id="title" value="" placeholder="请输入问题描述" >
+                <input type="text" name="title" id="title" value="" placeholder="请输入问题描述" style="width:88.5%;" >
                 {{ $errors->first('title') }}                
             </div>
         </div>

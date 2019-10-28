@@ -20,7 +20,7 @@
                                 <div class="form-group interface-bottom col-xs-12">
                                     <label class="col-sm-1 text-right">文章标题</label>
                                     <div class="text-left col-sm-9">
-                                        <input type="text" name="title" value="{!! $article->title !!}">
+                                        <input type="text" name="title" value="{!! $article->title !!}" style="width:88.5%;" >
                                         <input type="hidden" name="artID" value="{!! $article->id !!}">
                                     </div>
                                 </div>
