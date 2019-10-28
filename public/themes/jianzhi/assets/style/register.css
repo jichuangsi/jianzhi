@@ -49,7 +49,7 @@
     margin-right: 0.2rem;
 }
 .radio .radio_check span {
-    background-color: #3399ff;
+    background-color: #0377bb;
 }
 .radio .radio_check span em {
     color: #fff;
@@ -80,7 +80,7 @@
 }
 .radio label .radio_check {
     border: 1px solid #fff;
-    background-color: #3399ff;
+    background-color: #0377bb;
     color: #fff;
 }
 .radio label input{
@@ -89,7 +89,7 @@
 .btn {
     width: 80%;
     height: 0.64rem;
-    background-color: #3399ff;
+    background-color: #0377bb;
     border-radius: 0.1rem;
     font-size: 0.36rem;
     color: #fff;
@@ -106,13 +106,21 @@
     margin-bottom: 0.6rem;
 }
 .tishi a {
-    color: #3399ff
+    color: #0377bb
 }
 .xy {
-    font-size: 0.24rem;
-    color: #3399ff;
-    text-align: center;
-    margin-top: 0.2rem;
+	width:80%;
+	font-size:0.24rem;
+	color:#0377bb;
+	text-align:center;
+	margin:0 auto;
+	margin-top:0.2rem;
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+}
+.xy span {
+	padding:0.1rem 0rem;
 }
 .xybj {
     width: 100%;
@@ -202,14 +210,14 @@
     overflow: hidden;
 }
 .jnbox .li .right .jn_check {
-    border-color: #3399ff;
-    color: #3399ff;
+    border-color: #0377bb;
+    color: #0377bb;
 }
 .jnbox .li .right .jn_check em {
     position: absolute;
     right: 0rem;
     bottom: 0rem;
-    background-color: #3399ff;
+    background-color: #0377bb;
     color: #fff;
     width: 0.6rem;
     height: 0.6rem;

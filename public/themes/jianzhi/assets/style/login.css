@@ -26,7 +26,7 @@
 .btn {
     width: 80%;
     height: 0.64rem;
-    background-color: #3399ff;
+    background-color: #0377bb;
     border-radius: 0.1rem;
     font-size: 0.36rem;
     color: #fff;
@@ -44,5 +44,5 @@
     margin-bottom: 0.6rem;
 }
 .tishi a {
-    color: #3399ff
+    color: #0377bb
 }

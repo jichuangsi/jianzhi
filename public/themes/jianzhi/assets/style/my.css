@@ -1,6 +1,6 @@
 .top {
     font-size: 0.24rem;
-    background-color: #3399ff;
+    background-color: #0377bb;
     color: #fff;
     padding: 0rem 0.2rem;
 }
@@ -54,7 +54,7 @@
     line-height: 0.6rem;
     text-align: center;
     border-radius: 0.05rem;
-    background-color: #3399ff;
+    background-color: #0377bb;
     color: #fff;
     margin: 0.4rem auto;
     font-size: 0.3rem;
@@ -82,5 +82,5 @@
     font-size: 0.4rem;
 }
 .foot .foot_check {
-    color: #3399ff;
+    color: #0377bb;
 }

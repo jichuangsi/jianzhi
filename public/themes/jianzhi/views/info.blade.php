@@ -2,7 +2,7 @@
         信息编辑
         <div class="out iconfont icon-fanhui" onclick="backToMy();"></div>
     </div>
-    <form action="/jz/user/infoUpdate" method="post" id="uinfoform" enctype="multipart/form-data">
+    <form action="/jz/user/infoUpdate" method="post" id="uinfoform" enctype="multipart/form-data" onsubmit='return validate()'>
     {!! csrf_field() !!}
     <div class="center">
         <div class="center_box">
@@ -16,7 +16,7 @@
             <div class="title">
                 账户信息
             </div>
-            <div class="ipt">银行卡号 <input type="text" placeholder="请输入银行卡号" value=""></div>
+            <div class="ipt">银行卡号 <input type="number" name="account" id="account" placeholder="请输入银行卡号" value="{{ $uinfo['account'] }}"></div>
         </div>
         <div class="center_box">
             <div class="ipt">
@@ -46,6 +46,17 @@
     });
     function backToMy(){
     	window.location.href = "{!! url('jz/my') !!}";
+    }
+    function validate(){
+		if($("#account").val()){
+			if(luhnCheck($("#account").val())){
+				return true;
+			}else{
+				popUpMessage('银行卡号校验失败！');
+				return false;
+			}
+		}
+		return true;
     }
     </script>
     {!! Theme::asset()->container('specific-css')->usepath()->add('edit-style','style/edit.css') !!}

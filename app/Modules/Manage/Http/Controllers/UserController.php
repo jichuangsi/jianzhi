@@ -427,7 +427,7 @@ class UserController extends ManageController
             'status' => 1,
             'type' => 1,
             'mobile' => $request->get('mobile'),
-            'qq' => $request->get('qq'),
+            'account' => $request->get('account'),
             'email' => $request->get('email'),
             'province' => $request->get('province'),
             'city' => $request->get('city'),
@@ -601,7 +601,7 @@ class UserController extends ManageController
             $salt = \CommonClass::random(4);
             $param = [
                 'name' => $v[2],
-                //'email' => $this->genEMail($v[7]),
+                'account' => $v[3],
                 'realname' => $v[0],
                 'card_number' => $v[1],
                 'email_status' => 2,
@@ -753,7 +753,6 @@ class UserController extends ManageController
                 ->first()->toArray();
         
         
-        
         $data = [
             'info' => $info,
         ];
@@ -887,7 +886,7 @@ class UserController extends ManageController
     public function getUserEdit($uid)
     {
         $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile', 
-                            'user_detail.qq', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id')
+                            'realname_auth.account', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id')
             ->where('users.id', $uid)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
             ->leftJoin('realname_auth', 'users.id', '=', 'realname_auth.uid')
@@ -970,7 +969,7 @@ class UserController extends ManageController
             'realname' => $request->get('realname'),
             'mobile' => $request->get('mobile'),
             'card_number' => $request->get('card_number'),
-            //'qq' => $request->get('qq'),
+            'account' => $request->get('account'),
             //'email' => $request->get('email'),
             'province' => $request->get('province'),
             'city' => $request->get('city'),
@@ -1132,6 +1131,24 @@ class UserController extends ManageController
         return json_encode($data);
     }
     
+    //普通个人单个删除  
+    public function userDelete($uid){
+        if(!$uid){
+            return  redirect('manage/userList')->with(array('message' => '操作失败'));
+        }
+        $status = DB::transaction(function () use ($uid) {
+            RealnameAuthModel::where('uid', $uid)->delete();
+            UserDetailModel::where('uid', $uid)->delete();
+            UserModel::where('id', $uid)->delete();
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/userList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
+    }
+    
+    
     /**
      * 批量删除个人用户
      *
@@ -1148,8 +1165,15 @@ class UserController extends ManageController
         if(is_string($data['chk'])){
             $data['chk'] = explode(',', $data['chk']);
         }
-        $status = DB::transaction(function () use ($data) {
-            foreach ($data['chk'] as $id) {
+        $remove = array();
+        foreach ($data['chk'] as $id) {
+            $delAble = RealnameAuthModel::where('uid', $id)->where('status','>','0')->count();
+            if($delAble===0){
+                array_push($remove, $id);
+            }
+        }
+        $status = DB::transaction(function () use ($remove) {
+            foreach ($remove as $id) {
                 RealnameAuthModel::where('uid', $id)->delete();
                 UserDetailModel::where('uid', $id)->delete();
                 UserModel::where('id', $id)->delete();
@@ -1160,6 +1184,23 @@ class UserController extends ManageController
                 return redirect()->to('manage/userList')->with(array('message' => '操作成功'));
             }
             return  redirect()->to('manage/userList')->with(array('message' => '操作失败'));
+    }
+    
+    //普通企业单个删除    
+    public function enterpriseDelete($uid){
+        if(!$uid){
+            return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
+        }
+        $status = DB::transaction(function () use ($uid) {
+            EnterpriseAuthModel::where('uid', $uid)->delete();
+            UserDetailModel::where('uid', $uid)->delete();
+            UserModel::where('id', $uid)->delete();
+        });
+            if(is_null($status))
+            {
+                return redirect()->to('manage/enterpriseList')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/enterpriseList')->with(array('message' => '操作失败'));
     }
     
     /**
@@ -1178,8 +1219,16 @@ class UserController extends ManageController
         if(is_string($data['chk'])){
             $data['chk'] = explode(',', $data['chk']);
         }
-        $status = DB::transaction(function () use ($data) {
-            foreach ($data['chk'] as $id) {
+        $remove = array();
+        foreach ($data['chk'] as $id) {
+            $delAble = EnterpriseAuthModel::where('uid', $id)->where('status','>','0')->count();            
+            if($delAble===0){
+                array_push($remove, $id);
+            }
+        }
+        //dump($remove);
+        $status = DB::transaction(function () use ($remove) {
+            foreach ($remove as $id) {
                 EnterpriseAuthModel::where('uid', $id)->delete();
                 UserDetailModel::where('uid', $id)->delete();
                 UserModel::where('id', $id)->delete();

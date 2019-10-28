@@ -3,7 +3,22 @@
         <div class="out iconfont icon-fanhui" onclick="backToMy();"></div>
     </div>
     <div class="center">
-        <div class="list">
+    	@if(!empty($list))
+    		@foreach($list as $item)
+    				<div class="list">
+                        <div class="title">
+                            	{{$item['title']}}
+                        </div>
+                        <span class="iconfont icon-jiantou9"></span>
+                        <div class="text">
+                            	{!! htmlspecialchars_decode($item['content']) !!}
+                        </div>
+                    </div>
+    		
+    		@endforeach
+    	 @endif
+    
+        <!-- <div class="list">
             <div class="title">
                 如何知道报名任务是否成功？
             </div>
@@ -12,6 +27,15 @@
                 可以在我的任务---已报名查看
             </div>
         </div>
+        <div class="list">
+            <div class="title">
+                如何知道报名任务是否成功？
+            </div>
+            <span class="iconfont icon-jiantou9"></span>
+            <div class="text">
+                可以在我的任务---已报名查看
+            </div>
+        </div> -->
     </div>
     <script>
         $('.list').click(function(){

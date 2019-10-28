@@ -101,7 +101,7 @@
 <div class="row">
     <div class="col-md-12">
 
-        <form class="form-horizontal registerform" role="form" action="{!! url('manage/userAdd') !!}" method="post" enctype="multipart/form-data">
+        <form class="form-horizontal registerform" role="form" action="{!! url('manage/userAdd') !!}" method="post" enctype="multipart/form-data" onsubmit="return validate()">
             {!! csrf_field() !!}
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</label>
@@ -127,23 +127,23 @@
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证号码：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符">
+                    <input type="number" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 手机号码：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="mobile" id="form-field-1"   class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkMobile') !!}"  datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字">
+                    <input type="number" name="mobile" id="form-field-1"   class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkMobile') !!}"  datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
-            <!-- <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> QQ号码：</label>
+            <div class="form-group basic-form-bottom">
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="qq" id="form-field-1"  class="col-xs-10 col-sm-5" >
+                    <input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" >
                 </div>
-            </div> -->
+            </div>
             <div class="form-group basic-form-bottom">
                 <label  class="col-sm-1 control-label no-padding-left">所在地：</label>
                 <div class="col-sm-5">
@@ -284,6 +284,17 @@
                 $(this).siblings().addClass('text_check')
             }
         })
+        function validate(){
+    		if($("input[name='account']").val()){
+    			if(luhnCheck($("input[name='account']").val())){
+    				return true;
+    			}else{
+    				popUpMessage('银行卡号校验失败！');
+    				return false;
+    			}
+    		}
+    		return true;
+    	}
     </script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('back-stage-css', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}
@@ -292,3 +303,4 @@
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userManage-js', 'js/userManage.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/main.js') !!}
+{!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/tools.js') !!}

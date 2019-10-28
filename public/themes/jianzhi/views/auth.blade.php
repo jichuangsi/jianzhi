@@ -21,7 +21,7 @@
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_number') !!}</p>
         			@endif
             </span>
-            <input type="text" name="card_number" id="card_number" placeholder="请输入身份证号码" onkeydown='clearError(this)'>
+            <input type="number" name="card_number" id="card_number" placeholder="请输入身份证号码" onkeydown='clearError(this)'>
         </div>
         <div class="list">
             银行卡号<input type="text">

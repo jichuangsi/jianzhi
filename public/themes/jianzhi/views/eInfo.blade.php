@@ -35,13 +35,13 @@
             		@if($errors->first('contactor_mobile'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor_mobile') !!}</p>
         			@endif            
-            </span><input type="text" placeholder="请输入联系电话" name="contactor_mobile" id="contactor_mobile" value="{{ $einfo['contactor_mobile'] }}" onkeydown='clearError(this)'></div>
+            </span><input type="number" placeholder="请输入联系电话" name="contactor_mobile" id="contactor_mobile" value="{{ $einfo['contactor_mobile'] }}" onkeydown='clearError(this)'></div>
             <div class="ipt">
             <span>企业电话
             			@if($errors->first('phone'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('phone') !!}</p>
             			@endif            		
-            	</span><input type="text" placeholder="请输入企业电话"  name="phone" id="phone" value="{{ $einfo['phone'] }}" onkeydown='clearError(this)'></div>
+            	</span><input type="number" placeholder="请输入企业电话"  name="phone" id="phone" value="{{ $einfo['phone'] }}" onkeydown='clearError(this)'></div>
             <div class="img">
                	 营业执照副本
                 <div class="img_file">

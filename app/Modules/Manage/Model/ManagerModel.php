@@ -13,7 +13,7 @@ class ManagerModel extends Model
     protected $table = 'manager';
 
     protected $fillable = [
-        'username', 'password', 'salt'
+        'username', 'password', 'salt', 'id'
     ];
 
 

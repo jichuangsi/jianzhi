@@ -205,14 +205,14 @@ class UserModel extends Model implements AuthenticatableContract,
             $status = DB::transaction(function () use ($data){
                 if(isset($data['password'])&&!empty($data['password'])){
                     UserModel::where('id', $data['uid'])->update([
-                        //'email' => $data['email'],
+                        'mobile' => $data['mobile'],
                         'password' => $data['password'],
                         'salt' => $data['salt'],
                         'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
                 }else{
                     UserModel::where('id', $data['uid'])->update([
-                        'mobile' => $data['mobile'],
+                        'mobile' => $data['mobile'],                       
                         'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
                 }
@@ -232,6 +232,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 $update = [
                     'realname' => $data['realname'],
                     'card_number' => $data['card_number'],
+                    'account' => isset($data['account'])?$data['account']:'',
                     'updated_at' => date('Y-m-d H:i:s', time()),
                 ];
                 
@@ -315,6 +316,7 @@ class UserModel extends Model implements AuthenticatableContract,
                         'realname' => $data['realname'],
                         'status' => $status,
                         'card_number' => $data['card_number'],
+                        'account' => isset($data['account'])?$data['account']:'',
                         'card_front_side' => $data['card_front_side'],
                         'card_back_dside' => $data['card_back_dside'],
                         'created_at' => date('Y-m-d H:i:s', time()),
@@ -336,6 +338,7 @@ class UserModel extends Model implements AuthenticatableContract,
                         'username' => $data['name'],
                         'realname' => $data['realname'],
                         'card_number' => $data['card_number'],
+                        'account' => isset($data['account'])?$data['account']:'',
                         'card_front_side' => $data['card_front_side'],
                         'card_back_dside' => $data['card_back_dside'],
                         'created_at' => date('Y-m-d H:i:s', time()),

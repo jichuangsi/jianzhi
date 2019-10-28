@@ -19,8 +19,8 @@
     border-right: 1px solid #ddd;
 }
 .top_nav .top_nav_check {
-    color: #3399ff;
-    border-bottom: 1px solid #3399ff;
+    color: #0377bb;
+    border-bottom: 1px solid #0377bb;
 }
 .center {
     margin-bottom: 1rem;
@@ -70,5 +70,5 @@
     font-size: 0.4rem;
 }
 .foot .foot_check {
-    color: #3399ff;
+    color: #0377bb;
 }

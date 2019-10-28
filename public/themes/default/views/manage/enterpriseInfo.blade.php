@@ -1,3 +1,20 @@
+	<style>
+        .bigimg {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            justify-content: center;
+            align-items: center;
+        }
+        .bigimg img {
+            transform: scale(1.5);
+            /* 放大倍数 */
+        }
+    </style>
 {{--<div class="well">
 	<h4 >企业用户详情</h4>
 </div>--}}
@@ -98,13 +115,17 @@
 			<div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 营业执副本：</label>
                 <div class="col-sm-4">
-                    <img alt="身份证正面" src="{!! url($info['business_license']) !!}">                 
+                    <img alt="身份证正面" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                 
                 </div>
             </div> 
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">审核：</p>
 			<p class="col-sm-4">
-				超级管理员({!! $info['auth_time'] !!})
+				@if(isset($info['status']))
+    				@if($info['status']!=0)
+    					{!! Theme::get('manager') !!}({!! $info['auth_time'] !!})		
+    				@endif		
+				@endif
 			</p>
 		</div> 
 		
@@ -129,10 +150,19 @@
 
 		</div>
 	</div>
+	
+	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+        <img src="" alt="">
+    </div>
 	<script>
 	function toEdit(id){
 		window.location.href = "{!! url('manage/enterpriseEdit') !!}" + "/" + id;		
 	}
+
+	function bigimg(val){
+        $('.bigimg > img')[0].src = val.src
+        $('.bigimg').css('display','flex')
+    }
     </script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('back-stage-css', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}

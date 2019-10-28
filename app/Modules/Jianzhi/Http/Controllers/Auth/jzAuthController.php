@@ -57,6 +57,21 @@ class jzAuthController extends AuthController
         return $this->theme->scope('agreement', $view)->render();
     }    
     
+    public function getNotice(){
+        $view = array();
+        return $this->theme->scope('notice', $view)->render();
+    }  
+    
+    public function getPartner(){
+        $view = array();
+        return $this->theme->scope('partner', $view)->render();
+    }  
+    
+    public function getTaskContract(){
+        $view = array();
+        return $this->theme->scope('taskContract', $view)->render();
+    }  
+    
     public function postRegister(RegisterRequest $request){
         
         if ($this->create($request->all())){

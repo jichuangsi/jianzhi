@@ -126,7 +126,11 @@
                         	<a class="btn btn-xs btn-info" target="_Self" href="{!! url('manage/userInfo/' . $item->id) !!}">
                                 <i class="fa fa-info bigger-120"></i>详情
                             </a>
-                        	
+                        	@if($item->astatus === 0||$item->astatus === NULL)
+                            <a title="删除" class="btn btn-xs btn-danger" href="{!! url('manage/userDelete/' . $item->id) !!}" >
+                                <i class="ace-icon fa fa-trash-o bigger-120"></i>删除
+                            </a>
+                            @endif
                             <!-- @if($item->status == 1)
                             <a class="btn btn-xs btn-danger" href="{!! url('manage/handleUser/' . $item->id . '/disable') !!}">
                                 <i class="fa fa-ban"></i>禁用

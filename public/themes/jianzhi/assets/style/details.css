@@ -55,8 +55,8 @@
 }
 .text_box .jn span {
     padding: 0.05rem 0.1rem;
-    color: #3399ff;
-    border: 1px solid #3399ff;
+    color: #0377bb;
+    border: 1px solid #0377bb;
     border-radius: 0.05rem;
     margin-right: 0.1rem;
     margin-bottom: 0.1rem;
@@ -70,7 +70,7 @@
     line-height: 0.8rem;
     text-align: center;
     color: #fff;
-    background-color: #3399ff;
+    background-color: #0377bb;
     font-size: 0.24rem;
     position: fixed;
     bottom: 0rem;
@@ -121,7 +121,7 @@
     margin-bottom: 0.1rem;
 }
 .xybox .blue {
-    color: #3399ff;
+    color: #0377bb;
 }
 .xybox .xy_btn {
     width: 100%;
@@ -140,7 +140,7 @@
 }
 .xybox .xy_btn span:last-child {
     color: #fff;
-    background-color: #3399ff;
+    background-color: #0377bb;
 }
 .textbox{
 	font-size:0.24rem;

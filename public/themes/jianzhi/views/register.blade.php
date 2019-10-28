@@ -7,7 +7,7 @@
            <span class="iconfont icon-yonghu"></span><input type="text" name="username" placeholder="请输入用户名" ajaxurl="{!! url('checkUserName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
        	</div>
         <div class="ipt">
-           <span class="iconfont icon-youxiang"></span><input type="text" name="mobile" placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
+           <span class="iconfont icon-youxiang"></span><input type="number" name="mobile" placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
         </div>
         <div class="ipt">
            <span class="iconfont icon-mima"></span><input type="password" name="password" placeholder="请输入密码" datatype="*6-16" nullmsg="请输入密码" errormsg="密码长度为6-16位字符">
@@ -21,15 +21,18 @@
             </div>
             <input type="hidden" name="skill">
         </div>
-         <!-- <div class="text">
+         <div class="text">
                 为了确保您的账户提现功能,请使用银行卡预留手机号注册
-         </div> -->
+         </div>
          <div class="radio">
          	    <input type="checkbox" name="agree" checked="checked" datatype="*" nullmsg="勾选及表示您已同意">
          		勾选及表示您已同意
          </div>
-         <div class="xy" onclick="xy()">
-             《平台注册认证协议》
+         <div class="xy">
+             	<span onclick="xy_one()">《平台注册认证协议》</span>
+                <span onclick="xy_two()">《平台合作伙伴协议协议》</span>
+                <span onclick="xy_three()">《平台接包须知》</span>
+                <span onclick="xy_four()">《平台任务承揽协议》</span>
          </div>
         <div class="radio">
             <!-- <div class="radio_check" onclick="radio_check(this)"><span><em class="iconfont icon-dagou"></em></span>个人注册</div>
@@ -45,7 +48,10 @@
     <div class="xybj">
         <div class="xybox">
             <div class="none" onclick="xy_none()">x</div>
-            <iframe src="{!! url('jz/agreement') !!}" frameborder="0"></iframe>
+            <iframe id="zc_one" src="{!! url('jz/agreement') !!}" frameborder="0"></iframe>
+            <iframe id="zc_two" src="{!! url('jz/partner') !!}" frameborder="0"></iframe>
+            <iframe id="zc_three" src="{!! url('jz/notice') !!}" frameborder="0"></iframe>
+            <iframe id="zc_four" src="{!! url('jz/taskContract') !!}" frameborder="0"></iframe>
         </div>
     </div>
     
@@ -117,11 +123,37 @@
             $(val).find('span').append('<em class="iconfont icon-dagou"></em>')
         }
     }
-    function xy(){
-        $('.xybj').css('display','block');
-        setTimeout(function(){
-            $('.xybox').css('bottom','10%');
-        },500)
+    function xy_one(){
+    	$('.xybj').css('display','block');
+    	$('.xybj').find('iframe').css('display','none');
+    	$('#zc_one').css('display','block')
+    	setTimeout(function(){
+    		$('.xybox').css('bottom','10%');
+    	},500)
+    }
+    function xy_two(){
+    	$('.xybj').css('display','block');
+    	$('.xybj').find('iframe').css('display','none');
+    	$('#zc_two').css('display','block')
+    	setTimeout(function(){
+    		$('.xybox').css('bottom','10%');
+    	},500)
+    }
+    function xy_three(){
+    	$('.xybj').css('display','block');
+    	$('.xybj').find('iframe').css('display','none');
+    	$('#zc_three').css('display','block')
+    	setTimeout(function(){
+    		$('.xybox').css('bottom','10%');
+    	},500)
+    }
+    function xy_four(){
+    	$('.xybj').css('display','block');
+    	$('.xybj').find('iframe').css('display','none');
+    	$('#zc_four').css('display','block')
+    	setTimeout(function(){
+    		$('.xybox').css('bottom','10%');
+    	},500)
     }
     function xy_none(){
         $('.xybox').css('bottom','100%');

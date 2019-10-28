@@ -14,7 +14,7 @@ class ApprovalRequest extends FormRequest
 	{
 		$rules = [
 		        'payment'=>'required|positive',
-				'comment'=>'required|str_length:5000',
+				'comment'=>'str_length:5000',
 		];
 
 		return $rules;
@@ -24,7 +24,7 @@ class ApprovalRequest extends FormRequest
 		return [
     		    'payment.required' => '请填写任务金额',
     		    'payment.positive'=>'任务预算必须大于0',
-				'comment.required' => '验收说明不能为空',
+				//'comment.required' => '验收说明不能为空',
 				'comment.str_length'=> '字数超过限制',
 		];
 	}

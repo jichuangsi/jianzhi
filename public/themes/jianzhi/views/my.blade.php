@@ -43,7 +43,7 @@
             <div>建议反馈</div>
             <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
         </div>
-        <div class="list" onclick="window.location.href = '{!! url('jz/contact') !!}'">
+        <div class="list" onclick="window.location.href = '{!! url('jz/contact') !!}'" style="display:none">
             <span class="iconfont icon-tubiao-" style="color:#3399ff"></span>
             <div>客服中心</div>
             <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>

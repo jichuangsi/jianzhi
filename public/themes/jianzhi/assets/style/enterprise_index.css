@@ -93,7 +93,7 @@ textarea {
     line-height: 0.8rem;
     text-align: center;
     color: #fff;
-    background-color: #3399ff;
+    background-color: #0377bb;
     font-size: 0.24rem;
     margin: 0.4rem auto;
     margin-bottom: 1.6rem;
@@ -123,7 +123,7 @@ textarea {
     font-size: 0.4rem;
 }
 .foot .foot_check {
-    color: #3399ff;
+    color: #0377bb;
 }
 .jnbj {
     width: 100%;
@@ -171,14 +171,14 @@ textarea {
     overflow: hidden;
 }
 .jnbox .li .right .jn_check {
-    border-color: #3399ff;
-    color: #3399ff;
+    border-color: #0377bb;
+    color: #0377bb;
 }
 .jnbox .li .right .jn_check em {
     position: absolute;
     right: 0rem;
     bottom: 0rem;
-    background-color: #3399ff;
+    background-color: #0377bb;
     color: #fff;
     width: 0.6rem;
     height: 0.6rem;
@@ -239,8 +239,8 @@ textarea {
     color: #fff;
 }
 .lxbox .radio_check {
-    color: #3399ff;
-    background-color: #3399ff;
+    color: #0377bb;
+    background-color: #0377bb;
 }
 .lxbox .lxbtn {
     width: 100%;
@@ -251,7 +251,7 @@ textarea {
     text-align: center;
     line-height: 0.8rem;
     color: #fff;
-    background-color: #3399ff;
+    background-color: #0377bb;
     letter-spacing: 4px;
     font-size: 0.36rem;
 }
@@ -294,7 +294,7 @@ textarea {
     text-align: center;
     line-height: 0.8rem;
     color: #fff;
-    background-color: #3399ff;
+    background-color: #0377bb;
     letter-spacing: 4px;
     font-size: 0.36rem;
 }

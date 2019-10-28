@@ -52,7 +52,7 @@
             height:21px;
         }
         .users ul{
-            width: 60%;
+            /* width: 60%;
             height: 300px;
             position: absolute;
             bottom: 36px;
@@ -61,7 +61,18 @@
             border: 1px solid #999;
             padding: 20px;
             overflow-y: auto;
-            display: none;
+            display: none; */
+            width: 100%;
+            height: 0px;
+            position: absolute;
+            bottom: 36px;
+            right: 0px;
+            background-color: #fff;
+            padding: 0px;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            box-sizing: border-box;
+            transition: height 0.5s linear;
         }
         .users ul input {
             border: 1px solid #999;
@@ -258,12 +269,17 @@
                                             	<div class="users" onclick="usersli()">
                                                     <span></span>
                                                     <ul>
-                                                        <input type="text" onclick="event.stopPropagation()">
+                                                        <input type="text" onclick="event.stopPropagation()" oninput="iptuser(this)">
+                                                        <div class="star_user" onclick="event.stopPropagation()">
                                                         @if(isset($users))
                                                         	@foreach($users as $item)
                                                         	<li data-id="{{$item['uid']}}" onclick="userscheck(this)">{{$item['realname']}} {{$item['card_number']}}<img src="/themes/default/assets/images/tick.png"></li>
                                                         	@endforeach
-                                                        @endif                                                        
+                                                        @endif    
+                                                        </div>        
+                                                        <div class="end_user" onclick="event.stopPropagation()">
+
+														</div>                                            
                                                     </ul>
                                                 </div>
                                                 </div>
@@ -314,11 +330,24 @@ function toBack(){
 }
 
 function usersli(){
-    if($('.users').find('ul').css('display') == 'none'){
+    /* if($('.users').find('ul').css('display') == 'none'){
         $('.users').find('ul').css('display','block')
     }else{
         $('.users').find('ul').css('display','none')
-    }
+    } */
+	if($('.users').find('ul').css('height').split('px')[0] < 10){
+		$('.users').find('ul').css('padding','20px')
+		$('.users').find('ul').css('overflow-y','auto')
+		$('.users').find('ul').css('height','300px')
+		$('.users').find('ul').css('border','1px solid #999')
+	}else{
+		$('.users').find('ul').css('overflow-y','hidden')
+		$('.users').find('ul').css('height','0px')
+		setTimeout(function(){
+    		$('.users').find('ul').css('padding','0px')
+    		$('.users').find('ul').css('border','none')
+		},500)
+	}
 }
 
 var text = ''
@@ -364,6 +393,29 @@ function userscheck(val){
         $(val).parent().parent().find('span').text(text.substr(0, text.length-1))
         $(val).addClass('users_check')
     }
+}
+var timer = null
+function iptuser(val){
+    var arr = $('.star_user').find('li') //筛选数组
+    var arr1 = ''
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+    timer = null
+    if(val.value.trim() != ''){
+        for(let i = 0; i < arr.length; i++){
+            if(arr[i].innerText.indexOf(val.value.trim()) != -1){
+            	arr1+='<li onclick="userscheck(this)">'+arr[i].innerText+'<img src="/themes/default/assets/images/tick.png"></li>'
+            }
+        }
+        $('.star_user').css('display','none')
+        $('.end_user').css('display','block')
+        $('.end_user').find('li').remove()
+        $('.end_user').append(arr1)
+    }else{
+        $('.star_user').css('display','block')
+        $('.end_user').css('display','none')
+    }
+    }, 500);
 }
 </script>
 {!! Theme::widget('editor')->render() !!}

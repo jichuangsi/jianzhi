@@ -102,21 +102,90 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li>--}}
 
         <li class="purple">
             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                 <i class="ace-icon fa fa-bell icon-animated-bell"></i>
-                <span class="badge badge-important">8</span>
+                @if(Theme::get('messageCount'))
+                <span class="badge badge-important">{!! Theme::get('messageCount') !!}</span>
+                @endif
             </a>
 
             <ul class="dropdown-menu-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
+            	@if(Theme::get('messageCount'))
                 <li class="dropdown-header">
                     <i class="ace-icon fa fa-exclamation-triangle"></i>
-                    8 Notifications
+                    {!! Theme::get('messageCount') !!} 个未读通知
                 </li>
+                @else
+                <li class="dropdown-header">
+                    <i class="ace-icon fa fa-exclamation-triangle"></i>
+                    	暂无新的未读通知
+                </li>
+                @endif
 
-                <li>
+				@if(Theme::get('eAuth_messageCount'))
+					<li>
+                    <a href="#" onclick="jumpPage('enterprise_auth')">
+                        <div class="clearfix">
+											<span class="pull-left">
+												<i class="btn btn-xs no-hover btn-info fa fa-building"></i>
+												新增企业认证{{Theme::get('eAuth_messageCount')}}条
+											</span>
+                            <!-- <span class="pull-right badge badge-info">+11</span> -->
+                        </div>
+                    </a>
+                </li>
+				
+				@endif
+
+				@if(Theme::get('uAuth_messageCount'))
+					<li>
+                    <a href="#" onclick="jumpPage('realname_auth')">
+                        <div class="clearfix">
+											<span class="pull-left">
+												<i class="btn btn-xs no-hover btn-info fa fa-user"></i>
+												新增个人认证{{Theme::get('uAuth_messageCount')}}条
+											</span>
+                            <!-- <span class="pull-right badge badge-info">+11</span> -->
+                        </div>
+                    </a>
+                </li>
+				
+				@endif
+
+				@if(Theme::get('newTask_messageCount'))
+					<li>
+                    <a href="#" onclick="jumpPage('new_task')">
+                        <div class="clearfix">
+											<span class="pull-left">
+												<i class="btn btn-xs no-hover btn-info fa fa-tasks"></i>
+												新增任务审核{{Theme::get('newTask_messageCount')}}条
+											</span>
+                            <!-- <span class="pull-right badge badge-info">+11</span> -->
+                        </div>
+                    </a>
+                </li>
+				
+				@endif
+
+				@if(Theme::get('newFeedback_messageCount'))
+					<li>
+                    <a href="#" onclick="jumpPage('user_feedback')">
+                        <div class="clearfix">
+											<span class="pull-left">
+												<i class="btn btn-xs no-hover btn-info fa fa-comment"></i>
+												新增意见反馈{{Theme::get('newFeedback_messageCount')}}条
+											</span>
+                            <!-- <span class="pull-right badge badge-info">+11</span> -->
+                        </div>
+                    </a>
+                </li>
+				
+				@endif
+
+                <!-- <li>
                     <a href="#">
                         <div class="clearfix">
 											<span class="pull-left">
@@ -139,34 +208,24 @@
                     <a href="#">
                         <div class="clearfix">
 											<span class="pull-left">
-												<i class="btn btn-xs no-hover btn-success fa fa-shopping-cart"></i>
+												<i class="btn btn-xs no-hover btn-success fa fa-tasks"></i>
 												New Orders
 											</span>
                             <span class="pull-right badge badge-success">+8</span>
                         </div>
                     </a>
-                </li>
+                </li> -->
 
-                <li>
-                    <a href="#">
-                        <div class="clearfix">
-											<span class="pull-left">
-												<i class="btn btn-xs no-hover btn-info fa fa-twitter"></i>
-												Followers
-											</span>
-                            <span class="pull-right badge badge-info">+11</span>
-                        </div>
-                    </a>
-                </li>
+                
 
-                <li class="dropdown-footer">
+                <!-- <li class="dropdown-footer">
                     <a href="#">
                         See all notifications
                         <i class="ace-icon fa fa-arrow-right"></i>
                     </a>
-                </li>
+                </li> -->
             </ul>
-        </li>--}}
+        </li>
 
      
 
@@ -206,5 +265,34 @@
         <!-- /section:basics/navbar.user_menu -->
     </ul>
 </div>
+<script type="text/javascript">
+function jumpPage(type){
 
+	$.get('/manage/changeMessageStatus',{'type':type},function(ret,status,xhr){
+        console.log(ret);
+        console.log(status);
+
+        switch(type){
+    	case 'enterprise_auth': {
+    		window.location.href = "{!! url('manage/enterpriseList') !!}";	
+    	};
+    	break;
+    	case 'realname_auth': {
+    		window.location.href = "{!! url('manage/userList') !!}";	
+        };
+        break;
+        case 'new_task': {
+    		window.location.href = "{!! url('manage/taskList') !!}";	
+        };
+        break;
+        case 'user_feedback': {
+    		window.location.href = "{!! url('manage/feedbackList') !!}";	
+        };
+        break;
+    	}
+    });
+	
+	
+}
+</script>
 <!-- /section:basics/navbar.dropdown -->

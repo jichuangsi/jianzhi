@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-md-12">
 
-        <form class="form-horizontal registerform" role="form" action="{!! url('manage/enterpriseAdd') !!}" method="post" enctype="multipart/form-data">
+        <form class="form-horizontal registerform" role="form" action="{!! url('manage/enterpriseAdd') !!}" method="post" enctype="multipart/form-data" onsubmit="return validate()">
             {!! csrf_field() !!}
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</label>
@@ -16,7 +16,7 @@
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="mobile" id="form-field-1"  class="col-xs-10 col-sm-5"  ajaxurl="{!! url('manage/checkMobile') !!}" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字" >
+                    <input type="number" name="mobile" id="form-field-1"  class="col-xs-10 col-sm-5"  ajaxurl="{!! url('manage/checkMobile') !!}" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字" >
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
@@ -70,20 +70,20 @@
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1">企业账号：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*" nullmsg="请输入企业账号">
+                    <input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*" nullmsg="请输入企业账号">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1">企业法人：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="owner" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*2-5" errormsg="用户名长度为2到5个中文">
+                    <input type="text" name="owner" id="form-field-1"  class="col-xs-10 col-sm-5">
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1">企业电话：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="phone" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="n8-11" errormsg="企业电话输入有误">
+                    <input type="number" name="phone" id="form-field-1"  class="col-xs-10 col-sm-5">
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
@@ -96,7 +96,7 @@
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1">联系人电话：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="contactor_mobile" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="n8-11" nullmsg="请输入联系人电话" errormsg="联系人电话输入有误">
+                    <input type="number" name="contactor_mobile" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="m" nullmsg="请输入联系人电话" errormsg="联系人电话输入有误">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>            
@@ -153,7 +153,17 @@
     </div>
 </div>
 	<script>
-		
+		function validate(){
+			if($("input[name='account']").val()){
+				if(luhnCheck($("input[name='account']").val())){
+					return true;
+				}else{
+					popUpMessage('银行卡号校验失败！');
+					return false;
+				}
+			}
+			return true;
+		}
     </script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('back-stage-css', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}
@@ -162,3 +172,4 @@
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userManage-js', 'js/userManage.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/main.js') !!}
+{!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/tools.js') !!}

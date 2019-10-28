@@ -20,6 +20,7 @@ use App\Modules\User\Model\UserTagsModel;
 use App\Modules\User\Model\RealnameAuthModel;
 use App\Modules\User\Model\EnterpriseAuthModel;
 use App\Modules\Task\Model\WorkCommentModel;
+use App\Modules\User\Model\MessageReceiveModel;
 use Illuminate\Http\Request;
 /* use App\Modules\Manage\Model\AgreementModel;
 use App\Modules\Manage\Model\ConfigModel;
@@ -114,6 +115,18 @@ class jzTaskController extends TaskBasicController
         if (!$result) {
             return redirect()->back()->with('error', '创建任务失败！');
         }
+        
+        $messages = [
+            'message_title'=>$data['username'].'申请任务审核',
+            'code_name'=>'new_task',
+            'message_content'=>$data['username'].'于'.$data['created_at'].'提交任务审核申请！',
+            'js_id'=>'1',//暂时只有超级管理员接受
+            'fs_id'=>$data['uid'],
+            'message_type'=>1,
+            'receive_time'=>date('Y-m-d H:i:s',time()),
+            'status'=>0,
+        ];
+        MessageReceiveModel::create($messages);
         
         /* if($data['slutype']==3){
             return redirect()->to('user/unreleasedTasks');

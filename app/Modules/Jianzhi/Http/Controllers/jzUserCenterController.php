@@ -22,6 +22,9 @@ use App\Modules\Jianzhi\Http\Requests\EnterpriseInfoRequest;
 use Illuminate\Http\Request;
 use App\Modules\User\Http\Controllers\UserCenterController as BasicUserCenterController;
 use App\Modules\User\Model\EnterpriseAuthModel;
+use App\Modules\User\Model\MessageReceiveModel;
+use App\Modules\Manage\Model\HelpModel;
+use Illuminate\Support\Facades\DB;
 /* use App\Modules\Manage\Model\AgreementModel;
 use App\Modules\Manage\Model\ConfigModel;
 use App\Modules\User\Http\Requests\LoginRequest;
@@ -104,8 +107,9 @@ class jzUserCenterController extends BasicUserCenterController
                 return redirect('jz/auth');
             }else{
                 $userInfo  = UserModel::getUsersById($this->user['id']);
+                $account = RealnameAuthModel::select('account')->where('uid', $this->user['id'])->first()->toArray();
                 $data = [
-                    'uinfo' => ['realname'=>$userInfo[0]->realname,'card_number'=>$userInfo[0]->card_number,'mobile'=>$userInfo[0]->mobile],
+                    'uinfo' => ['realname'=>$userInfo[0]->realname,'card_number'=>$userInfo[0]->card_number,'account'=>$account['account'],'mobile'=>$userInfo[0]->mobile],
                 ];
             }
             
@@ -116,7 +120,16 @@ class jzUserCenterController extends BasicUserCenterController
         
     public function help(){
         $data = array();
+        
+        $articleList = HelpModel::whereRaw('1 = 1');
+        $list = $articleList->select('help.title', 'help.content','help.created_at')->where('status',1)->orderBy('help.created_at', 'desc')->get()->toArray();
+        
         $path = 'help';
+        
+        $data = [
+            'list' => $list
+        ];
+        
         return $this->theme->scope($path,$data)->render();
     }
     
@@ -252,9 +265,21 @@ class jzUserCenterController extends BasicUserCenterController
         $RealnameAuthModel = new RealnameAuthModel();
         $status = $RealnameAuthModel->createRealnameAuth($realnameInfo, $authRecordInfo);
         
-        if ($status)
+        if ($status){
+            $messages = [
+                'message_title'=>$realnameInfo['realname'].'申请个人认证',
+                'code_name'=>'realname_auth',
+                'message_content'=>$realnameInfo['realname'].'于'.$realnameInfo['created_at'].'提交个人认证申请！',
+                'js_id'=>'1',//暂时只有超级管理员接受
+                'fs_id'=>$realnameInfo['uid'],
+                'message_type'=>1,
+                'receive_time'=>date('Y-m-d H:i:s',time()),
+                'status'=>0,
+            ];
+            MessageReceiveModel::create($messages);
+            
             return redirect('jz/auth');
-        else
+        }else
             return redirect()->back()->with(['error'=>'提交认证失败']);
     }
     
@@ -354,6 +379,18 @@ class jzUserCenterController extends BasicUserCenterController
         
         if(!$result) return redirect()->back()->with('error','反馈提交失败！');
         
+        $messages = [
+            'message_title'=>$this->user['name'].'提交了反馈意见',
+            'code_name'=>'user_feedback',
+            'message_content'=>$this->user['name'].'于'.$data['created_at'].'提交了反馈意见！',
+            'js_id'=>'1',//暂时只有超级管理员接受
+            'fs_id'=>$data['uid'],
+            'message_type'=>1,
+            'receive_time'=>date('Y-m-d H:i:s',time()),
+            'status'=>0,
+        ];
+        MessageReceiveModel::create($messages);
+        
         return redirect()->to('jz/my');
     }
     
@@ -407,9 +444,21 @@ class jzUserCenterController extends BasicUserCenterController
         
         $status = EnterpriseAuthModel::createEnterpriseAuth($enterpriseInfo, $authRecordInfo);
         
-        if ($status)
+        if ($status){
+            $messages = [
+                'message_title'=>$enterpriseInfo['company_name'].'申请企业认证',
+                'code_name'=>'enterprise_auth',
+                'message_content'=>$enterpriseInfo['company_name'].'于'.$enterpriseInfo['created_at'].'提交企业认证申请！',
+                'js_id'=>'1',//暂时只有超级管理员接受
+                'fs_id'=>$enterpriseInfo['uid'],
+                'message_type'=>1,
+                'receive_time'=>date('Y-m-d H:i:s',time()),
+                'status'=>0,
+            ];
+            MessageReceiveModel::create($messages);
+            
             return redirect('jz/auth');
-        else
+        }else
             return redirect()->back()->with(['error'=>'提交认证失败']);
     }
     
@@ -471,10 +520,19 @@ class jzUserCenterController extends BasicUserCenterController
             return redirect()->back()->with(['error' => '手机号已注册！']);
         }
         
-        $result = UserModel::where('id', $this->user['id'])->update(['mobile'=>$mobile]);
-        UserDetailModel::where('uid', $this->user['id'])->update(['mobile'=>$mobile]);//同步一下
+        $param = [
+            'uid' => $this->user['id'],
+            'mobile' => $mobile,
+            'account' => $request->get('account')
+        ];
         
-        if (!$result) {
+        $result = DB::transaction(function () use ($param) {
+            UserModel::where('id', $param['uid'])->update(['mobile'=>$param['mobile']]);
+            RealnameAuthModel::where('uid', $param['uid'])->update(['account'=>$param['account']]);
+            UserDetailModel::where('uid', $param['uid'])->update(['mobile'=>$param['mobile']]);//同步一下
+        });
+        
+        if ($result) {
             return redirect()->back()->with(['error' => '修改失败！']);
         }
         

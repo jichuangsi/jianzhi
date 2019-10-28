@@ -7,6 +7,7 @@ use App\Modules\Manage\Model\MenuPermissionModel;
 use App\Modules\Manage\Model\Permission;
 use App\Modules\Manage\Model\ManagerModel;
 use App\Modules\Manage\Model\ConfigModel;
+use App\Modules\User\Model\MessageReceiveModel;
 use Illuminate\Support\Facades\Route;
 use Cache;
 use Exception;
@@ -15,7 +16,7 @@ use PHPExcel_Cell;
 use PHPExcel_Worksheet_Drawing;
 use PHPExcel_Worksheet_MemoryDrawing;
 use PHPExcel_Reader_Excel2007;
-
+use Illuminate\Http\Request;
 
 class ManageController extends BasicController
 {
@@ -82,8 +83,59 @@ class ManageController extends BasicController
             $kppwAuthCode = \CommonClass::starReplace($kppwAuthCode, 5, 4);
             $this->theme->set('kppw_auth_code',$kppwAuthCode);
         }
+        
+        
+        //获取通知
+        if($this->manager){
+            $messageCount = MessageReceiveModel::where('js_id', $this->manager->id)->where('message_type', 1)->where('status', 0)->count();
+            $this->theme->set('messageCount',$messageCount);
+            if($messageCount){
+                //企业认证消息
+                $eAuth_messageCount = MessageReceiveModel::where('js_id', $this->manager->id)->where('message_type', 1)->where('status', 0)->where('code_name', 'enterprise_auth')->count();
+                if($eAuth_messageCount) $this->theme->set('eAuth_messageCount',$eAuth_messageCount);
+                //个人认证消息
+                $uAuth_messageCount = MessageReceiveModel::where('js_id', $this->manager->id)->where('message_type', 1)->where('status', 0)->where('code_name', 'realname_auth')->count();
+                if($uAuth_messageCount) $this->theme->set('uAuth_messageCount',$uAuth_messageCount);
+                //任务审核消息
+                $newTask_messageCount = MessageReceiveModel::where('js_id', $this->manager->id)->where('message_type', 1)->where('status', 0)->where('code_name', 'new_task')->count();
+                if($newTask_messageCount) $this->theme->set('newTask_messageCount',$newTask_messageCount);
+                //意见反馈消息
+                $newFeedback_messageCount = MessageReceiveModel::where('js_id', $this->manager->id)->where('message_type', 1)->where('status', 0)->where('code_name', 'user_feedback')->count();
+                if($newFeedback_messageCount) $this->theme->set('newFeedback_messageCount',$newFeedback_messageCount);
+            }
+        }
 
     }
+    
+    protected function ajaxChangeMessageStatus(Request $request)
+    {
+        $type = $request->get('type');
+        if(!empty($type)){
+            $data = array(
+                'status' => 1,
+                'read_time' => date('Y-m-d H:i:s',time())
+            );
+            $res = MessageReceiveModel::where('code_name',$type)->where('status', 0)->update($data);
+            if(!empty($res)){
+                $data = array(
+                    'code' => 1,
+                    'msg' => '修改成功'
+                );
+            }else{
+                $data = array(
+                    'code' => 0,
+                    'msg' => '修改失败'
+                );
+            }
+        }else{
+            $data = array(
+                'code' => 0,
+                'msg' => '缺少参数'
+            );
+        }
+        return response()->json($data);
+    }
+    
     
     //Excel 相关方法
     /**

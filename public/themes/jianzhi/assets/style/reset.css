@@ -82,6 +82,7 @@ input {
 textarea {
   outline: none;
   border: none;
+  background-color: transparent;
 }
 
 select {
@@ -90,5 +91,6 @@ select {
   appearance:none; /*去掉下拉箭头*/
   outline: none;
   border: none;
+  background-color: transparent;
 }
 select::-ms-expand { display: none; }

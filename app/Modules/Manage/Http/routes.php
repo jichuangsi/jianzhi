@@ -76,6 +76,8 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/taskSettleDownload', 'TaskController@postTaskSettleDownload');//任务结算模板下载    
     Route::get('/taskSettleImport', 'TaskController@getTaskSettleImport')->name('taskSettleImportPage');//任务结算批量导入
     Route::post('/taskSettleImport', 'TaskController@postTaskSettleImport')->name('taskSettleImport');//任务结算批量导入   
+    Route::get('/changeMessageStatus', 'IndexController@ajaxChangeMessageStatus'); //改变信息读取状态
+    
     
 
     //财务管理路由
@@ -235,11 +237,14 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/userImport', 'UserController@postUserImport')->name('userImport');//个人用户批量导入      
     Route::get('/userInfo/{uid}', 'UserController@getUserInfo')->name('userInfo');//个人用户详情
     Route::get('/enterpriseInfo/{uid}', 'UserController@getEnterpriseInfo')->name('enterpriseInfo');//企业用户详情
+    Route::get('/userDelete/{uid}', 'UserController@userDelete');//普通个人单个删除       
+    
     
     //企业管理
     Route::get('/enterpriseList', 'UserController@getEnterpriseList')->name('enterpriseList');;//普通企业列表
     Route::post('/enterpriseAuthPassAll', 'UserController@postEnterpriseAuthPassAll');//普通企业批量批准认证
-    Route::post('/enterpriseAuthRejectAll', 'UserController@postEnterpriseAuthRejectAll');//普通企业批量拒绝认证    
+    Route::post('/enterpriseAuthRejectAll', 'UserController@postEnterpriseAuthRejectAll');//普通企业批量拒绝认证        
+    Route::get('/enterpriseDelete/{uid}', 'UserController@enterpriseDelete');//普通企业单个删除    
     Route::post('/enterpriseDeleteAll', 'UserController@postEnterpriseDeleteAll')->name('EnterpriseDeleteAll');//普通企业批量删除
     Route::get('/enterpriseAuthPass/{uid}', 'UserController@setEnterpriseAuthPass');//单个普通用户批准认证
     Route::get('/enterpriseAuthReject/{uid}', 'UserController@setEnterpriseAuthReject');//单个普通用户拒绝认证
@@ -250,9 +255,14 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::get('/enterpriseEdit/{uid}', 'UserController@getEnterpriseEdit')->name('enterpriseUpdatePage');//用户详情
     Route::post('/enterpriseEdit', 'UserController@postEnterpriseEdit')->name('enterpriseUpdate');//用户详情更新
     
-    
-    
-    
+    //帮助中心
+    Route::get('/helpList','HelpController@helpList')->name('helpList'); //帮助中心文章列表
+    Route::get('/addHelp','HelpController@addHelp')->name('addHelp'); //添加帮助中心文章视图
+    Route::post('/addHelp', 'HelpController@postHelp')->name('helpCreate'); //添加帮助中心文章
+    Route::get('/editHelp/{id}','HelpController@editHelp')->name('helpUpdate'); //编辑帮助中心文章视图
+    Route::post('/editHelp', 'HelpController@postEditHelp'); //编辑帮助中心文章
+    Route::get('/helpDelete/{id}','HelpController@helpDelete')->name('helpDelete'); //删除文章
+    Route::post('/allHelpDelete', 'HelpController@allHelpDelete')->name('allHelpDelete'); //批量删除文章
 
     Route::get('/rolesList', 'UserController@getRolesList')->name('rolesList');//用户组列表
     Route::get('/rolesAdd', 'UserController@getRolesAdd')->name('rolesCreatePage');//用户组添加视图

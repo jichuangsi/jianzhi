@@ -97,6 +97,21 @@
             top: 0px;
             border-color:transparent transparent transparent #f3f3f3;
         }
+        .bigimg {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            justify-content: center;
+            align-items: center;
+        }
+        .bigimg img {
+            transform: scale(1.5);
+            /* 放大倍数 */
+        }
     </style>
 <h3 class="header smaller lighter blue mg-top12 mg-bottom20">个人用户详情</h3>
     
@@ -151,7 +166,7 @@
 			<div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证正面：</label>
                 <div class="col-sm-4">
-                    <img alt="身份证正面" src="{!! url($info['card_front_side']) !!}">
+                    <img alt="身份证正面" src="{!! url($info['card_front_side']) !!}" onclick="bigimg(this)">
                 </div>
                 	
             </div>
@@ -159,7 +174,7 @@
             <div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证反面：</label>
                 <div class="col-sm-4">
-                    <img alt="身份证反面" src="{!! url($info['card_back_dside']) !!}">
+                    <img alt="身份证反面" src="{!! url($info['card_back_dside']) !!}"  onclick="bigimg(this)">
                 </div>
             </div>		
 		
@@ -200,10 +215,17 @@
 
 		</div>
 	</div>
+	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+        <img src="" alt="">
+    </div>
 	<script>
 		function toEdit(id){
 			window.location.href = "{!! url('manage/userEdit') !!}" + "/" + id;		
 		}
+		function bigimg(val){
+            $('.bigimg > img')[0].src = val.src
+            $('.bigimg').css('display','flex')
+        }
     </script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('back-stage-css', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}

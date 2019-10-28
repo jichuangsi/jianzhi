@@ -1,5 +1,5 @@
 <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-    <a href="{!! url('manage/financeList') !!}" class="btn btn-success">
+    <a href="{!! url('manage/') !!}" class="btn btn-success">
         <i class="ace-icon fa fa-bar-chart-o"></i>
     </a>
 
@@ -8,11 +8,11 @@
     </a>
 
     <!-- #section:basics/sidebar.layout.shortcuts -->
-    <a href="{!! url('manage/managerList') !!}" class="btn btn-warning">
+    <a href="{!! url('manage/userList') !!}" class="btn btn-warning">
         <i class="ace-icon fa fa-users"></i>
     </a>
 
-    <a href="{!! url('manage/config/site') !!}" class="btn btn-danger">
+    <a href="{!! url('manage/industry') !!}" class="btn btn-danger">
         <i class="ace-icon fa fa-cogs"></i>
     </a>
 

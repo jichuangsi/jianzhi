@@ -2,7 +2,7 @@
         企业认证
         <div class="out iconfont icon-fanhui" onclick="backToMy();"></div>
     </div>
-    <form action="/jz/user/enterpriseAuth" method="post" id="authform" enctype="multipart/form-data">
+    <form action="/jz/user/enterpriseAuth" method="post" id="authform" enctype="multipart/form-data" onsubmit='return validate()'>
     {!! csrf_field() !!}
     <div class="center">
         <div class="list">
@@ -34,7 +34,7 @@
             		@if($errors->first('contactor_mobile'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor_mobile') !!}</p>
         			@endif            
-            </span><input type="text" placeholder="请输入联系人电话" name="contactor_mobile" id="contactor_mobile" onkeydown='clearError(this)'>
+            </span><input type="number" placeholder="请输入联系人电话" name="contactor_mobile" id="contactor_mobile" onkeydown='clearError(this)'>
         </div>
         <div class="title">开票信息</div>
         <div class="list">
@@ -51,7 +51,7 @@
             		@if($errors->first('account'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('account') !!}</p>
         			@endif
-            </span><input type="text" placeholder="请输入企业账户" name="account" id="account" onkeydown='clearError(this)'>
+            </span><input type="number" placeholder="请输入企业账户" name="account" id="account" onkeydown='clearError(this)'>
         </div>
         <div class="list">
             	<span>
@@ -67,7 +67,7 @@
             			@if($errors->first('phone'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('phone') !!}</p>
             			@endif            		
-            	</span><input type="text" placeholder="请输入企业电话" name="phone" id="phone" onkeydown='clearError(this)'>
+            	</span><input type="number" placeholder="请输入企业电话" name="phone" id="phone" onkeydown='clearError(this)'>
         </div>
         <div class="list">
             <span>
@@ -121,6 +121,17 @@
     function clearError(obj){
 		//console.log(obj);
 		$(obj).parent().find('p').remove();
+    }
+    function validate(){
+		if($("#account").val()){
+			if(luhnCheck($("#account").val())){
+				return true;
+			}else{
+				popUpMessage('银行卡号校验失败！');
+				return false;
+			}
+		}
+		return true;
     }
     </script>
     {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_Authentication-style','style/enterprise_Authentication.css') !!}
