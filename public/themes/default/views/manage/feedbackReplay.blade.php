@@ -2,10 +2,10 @@
     {{--<div class="space-2"></div>
     <div class="page-header">
         <h1>
-            投诉建议
+            意见反馈
         </h1>
     </div><!-- /.page-header -->--}}
-    <h3 class="header smaller lighter blue mg-top12 mg-bottom20">投诉建议</h3>
+    <h3 class="header smaller lighter blue mg-top12 mg-bottom20">意见反馈</h3>
     {{--<div class="alert alert-success">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;投诉建议#{!! $feedbackDetail->id !!}</div>--}}
     <form  role="form" action="/manage/feedbackUpdate" class="form-inline search-group" method="get">
         <div class="g-backrealdetails clearfix bor-border">

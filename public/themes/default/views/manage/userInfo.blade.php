@@ -107,9 +107,13 @@
             top: 0px;
             justify-content: center;
             align-items: center;
+            overflow: auto;
+            z-index:9999;
         }
         .bigimg img {
-            transform: scale(1.5);
+            width: 60%;
+            /* height: 80%;
+            transform: scale(1.5); */
             /* 放大倍数 */
         }
     </style>
@@ -144,7 +148,7 @@
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</p>
 			<p class="col-sm-4">
-				
+				{{$info['account']}}
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
@@ -152,11 +156,13 @@
 			<p class="col-sm-4">
 				@if(isset($info['astatus']))
 					@if($info['astatus']===0)
-						未认证
+						待审核
 					@elseif($info['astatus']===1)
 						已认证
 					@elseif($info['astatus']===2)
 						已拒绝
+					@elseif($info['astatus']===NULL)
+						未认证
 					@else
 						未知状态
 					@endif

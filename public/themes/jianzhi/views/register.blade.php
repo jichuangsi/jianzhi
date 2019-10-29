@@ -4,10 +4,10 @@
     <form class="registerform" method="post" action="{!! url('jz/register') !!}" onsubmit="return validate()">
     	{!! csrf_field() !!}
         <div class="ipt">
-           <span class="iconfont icon-yonghu"></span><input type="text" name="username" placeholder="请输入用户名" ajaxurl="{!! url('checkUserName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
+           <span class="iconfont icon-yonghu"></span><input type="text" name="username" value="{{old('username')}}" placeholder="请输入用户名" ajaxurl="{!! url('checkUserName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
        	</div>
         <div class="ipt">
-           <span class="iconfont icon-youxiang"></span><input type="number" name="mobile" placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
+           <span class="iconfont icon-youxiang"></span><input type="number" name="mobile" value="{{old('mobile')}}"  placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
         </div>
         <div class="ipt">
            <span class="iconfont icon-mima"></span><input type="password" name="password" placeholder="请输入密码" datatype="*6-16" nullmsg="请输入密码" errormsg="密码长度为6-16位字符">
@@ -25,8 +25,8 @@
                 为了确保您的账户提现功能,请使用银行卡预留手机号注册
          </div>
          <div class="radio">
-         	    <input type="checkbox" name="agree" checked="checked" datatype="*" nullmsg="勾选及表示您已同意">
-         		勾选及表示您已同意
+         	    <input type="checkbox" name="agree" checked="checked" datatype="*" nullmsg="勾选即表示您已同意">
+         		勾选即表示您已同意
          </div>
          <div class="xy">
              	<span onclick="xy_one()">《平台注册认证协议》</span>

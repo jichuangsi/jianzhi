@@ -23,7 +23,7 @@ class MenuModel extends Model
         $uid = $manager->id;
         if($uid==1)
         {
-            $menu = self::orderBy('sort')->get()->toArray();
+            $menu = self::where('ban', 0)->orderBy('sort')->get()->toArray();
             $manageMenu = \CommonClass::listToTree($menu);
         }else{
             $role_id = \App\Modules\Manage\Model\RoleUserModel::where('user_id',$uid)->first();

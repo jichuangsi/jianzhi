@@ -31,9 +31,9 @@
         			<p class="Validform_checktip Validform_wrong">{!! $errors->first('begin_at') !!}</p>
         		@endif
             </span>
-            <span class="starTime_span"></span> <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
+            <span class="starTime_span">{{old('begin_at')}}</span> <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
             <div class="time" id="startDate"></div>
-            <input type="hidden" name="begin_at">
+            <input type="hidden" name="begin_at" value="{{old('begin_at')}}">
             </div>
             <div class="list Time">
             <span>结束时间
@@ -41,9 +41,9 @@
         			<p class="Validform_checktip Validform_wrong">{!! $errors->first('end_at') !!}</p>
         		@endif
             </span>
-            <span class="endTime_span"></span> <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
+            <span class="endTime_span">{{old('end_at')}}</span> <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
             <div class="time" id="endDate"></div>
-            <input type="hidden" name="end_at">
+            <input type="hidden" name="end_at" value="{{old('end_at')}}">
             </div>
             <div class="list">
                 <span>任务名称
@@ -51,7 +51,7 @@
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('title') !!}</p>
         			@endif
                 </span>                
-                <input type="text" name="title" id="title" placeholder="请输入任务名称" onkeydown='clearError(this)'>
+                <input type="text" name="title" id="title" placeholder="请输入任务名称" onkeydown='clearError(this)' value="{{old('title')}}">
             </div>
             <div class="list" onclick="$('.dzbj').css('display','block')">
             	<span>任务城市 
@@ -60,7 +60,7 @@
         			@endif
             	</span>
             	<span class="dz_span"></span><span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
-            	<input type="hidden" name="district">
+            	<input type="hidden" name="district" value="{{old('district')}}">
         	</div>
             <div class="list">
                 <span>服务地址
@@ -68,7 +68,7 @@
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('address') !!}</p>
         			@endif
                 </span>
-                <input type="text" name="address" id="address" placeholder="请输入服务地址" onkeydown='clearError(this)'>
+                <input type="text" name="address" id="address" placeholder="请输入服务地址" onkeydown='clearError(this)' value="{{old('address')}}">
             </div>
             <div class="xian"></div>
             <div class="list" onclick="jn()">
@@ -78,7 +78,7 @@
         			@endif
                 </span>                
                 <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
-                <input type="hidden" name="skill">
+                <input type="hidden" name="skill" value="{{old('skill')}}">
             </div>
             <div class="xian"></div>
             <div class="list">
@@ -87,7 +87,7 @@
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('bounty') !!}</p>
         			@endif
                 </span>                
-                <input type="number" name="bounty" id="bounty" placeholder="请输入任务预算" onkeydown='clearError(this)'>元
+                <input type="number" name="bounty" id="bounty" placeholder="请输入任务预算" onkeydown='clearError(this)'  value="{{old('bounty')}}">元
             </div>
             <div class="list">
                 <span>任务人数
@@ -100,7 +100,7 @@
                     <div class="number">1</div>
                     <div onclick="jia()">+</div>
                 </div>
-                <input type="hidden" name="worker_num" value="1">
+                <input type="hidden" name="worker_num" value="{{old('worker_num')}}">
             </div>
             <div class="list">
                 <span>任务描述
@@ -222,6 +222,9 @@
             </div>
         </div>
     </div>
+    	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+            <img src="" alt="">
+        </div>
     <script>
     var today=new Date()
     var date = new Array(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours()<10?("0"+today.getHours()):today.getHours(), today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes());
@@ -235,6 +238,75 @@
             'positive':/^[1-9]\d*$/,
         },
     });
+    $(function(){
+        //初始任务主类型
+		var old_mainType = "{{old('mainType')}}";
+		if(old_mainType){
+			var lx = $(".main").find("input[name='lx']");
+			for(var i = 0; i<lx.length; i++){
+				if($(lx[i]).val()===old_mainType){
+					//$(lx[i]).checked = true;
+					$('.main_span').text($(lx[i]).parent().text());  
+					$("input[name='mainType']").val(old_mainType);
+					checkTaskType(old_mainType, true);
+					break;
+				}
+			}
+		}
+		//初始任务城市
+		var old_district = "{{old('district')}}";
+		if(old_district){
+			var district_arr = old_district.split('-',3);
+			if(district_arr[0]){
+				$("select[name='province']").val(district_arr[0]);
+				if(district_arr[1]){
+					checkprovince($("select[name='province']")[0],district_arr);
+				}
+			}			
+		}
+		//初始技能选择
+		var old_skill = "{{old('skill')}}";
+		if(old_skill){
+			var jn_arr = $('.jnbox').find('.li').find('.right>span');
+			var skill_arr = old_skill.split(',')
+			
+			for(var i = 0; i < jn_arr.length; i++){
+				for(var j = 0; j < skill_arr.length; j++){
+					if($(jn_arr[i]).attr('data-id')===skill_arr[j]){
+						$(jn_arr[i]).addClass('jn_check')
+			            $(jn_arr[i]).append('<em></em>')
+			            $(jn_arr[i]).append('<i class="iconfont icon-dagou"></i>')
+					}
+				}
+			}
+		}
+		//初始任务人数
+		var old_worker_num = "{{old('worker_num')}}";
+		if(old_worker_num){
+			$('.number').text(old_worker_num);
+		}
+		//初始任务描述
+		var old_desc =  "{{old('desc')}}";
+		if(old_desc){
+			$("textarea[name='desc']").val(old_desc);
+		}
+    });
+
+	function initTaskSubType(){
+		var old_subType = "{{old('subType')}}";
+		if(old_subType){
+			var lx = $(".sub").find("input[name='lx']");
+			for(var i = 0; i<lx.length; i++){
+				if($(lx[i]).val()===old_subType){
+					//$(lx[i]).checked = true;
+					$('.sub_span').text($(lx[i]).parent().text());  
+					$("input[name='subType']").val(old_subType);
+					break;
+				}
+			}
+		}
+	}
+    
     function validate(){
 		var begintime = Date.parse($('input[name="begin_at"]').val());
 		var endtime = Date.parse($('input[name="end_at"]').val());
@@ -317,7 +389,7 @@
                 /* var img = document.createElement('img')
                 img.src = this.result;
                 $(".zs_img").append(img) */
-                var html = '<div onclick="delimg(this)" class="box_img"><img src ="'+this.result+'"><em>-</em></div>'
+                var html = '<div onclick="bigimg(this)" class="box_img"><img src ="'+this.result+'"><em onclick="delimg(this)">-</em></div>'
 				$(".zs_img").append(html)
                 uploadFile();
             };
@@ -327,11 +399,16 @@
         }
     }
     function delimg(val){
-    	$(val).remove()
+    	$(val).parent().remove()
+        event.stopPropagation()
     	if($(".zs_img").children().length == 0){
     		$(".zs_img").css("display", "none");
     	}
-    	deleteFile(val.id);
+    	deleteFile($(val).parent()[0].id);
+    }
+    function bigimg(val){
+        $('.bigimg').css('display','flex')
+        $('.bigimg > img')[0].src = $(val).find('img')[0].src
     }
     function leixing(type){
     	$('.lxbj').css('display','block')
@@ -375,7 +452,7 @@
             if(type==='main'){
             	$('input[name="subType"]').val('')
                 $('.sub_span').text('') 
-            	checkTaskType($("input[name='lx']:checked").val(), type);
+            	checkTaskType($("input[name='lx']:checked").val());
             }        	
         }
     }
@@ -410,7 +487,7 @@
      * 省级切换
      * @param obj
      */
-    function checkprovince(obj){
+    function checkprovince(obj, init){
         var id = obj.value;
         $.get('/jz/task/ajaxcity',{'id':id},function(data){
             var html = '';
@@ -424,13 +501,20 @@
             $('#province_check').html(html);
             $('#area_check').html(area);
             //$('#region-limit').attr('value',data.area[0].id);
+
+            if(init){
+            	$("select[name='city']").val(init[1]);
+            	if(init[2]){
+                	checkcity($("select[name='city']")[0], init);
+                }
+            }
         });
     }
     /**
      * 市级切换
      * @param obj
      */
-    function checkcity(obj){
+    function checkcity(obj, init){
         var id = obj.value;
         $.get('/jz/task/ajaxarea',{'id':id},function(data){
             var html = '';
@@ -439,6 +523,11 @@
             }
             $('#area_check').html(html);
             //$('#region-limit').attr('value',data[0].id);
+
+            if(init){
+            	$("select[name='area']").val(init[2]);
+            	$('.dz_span').text($("select[name='province'] option:selected").text() + '-' + $("select[name='city'] option:selected").text() + '-' + $("select[name='area'] option:selected").text())
+            }
         });
     }
 
@@ -453,7 +542,7 @@
      * 任务主类型切换
      * @param obj
      */
-    function checkTaskType(id){
+    function checkTaskType(id, init){
         if(!id) return;
         $('.lxbj').find('.sub').empty();
         $.get('/jz/task/ajaxSubTaskType',{'id':id},function(data){
@@ -464,6 +553,10 @@
             		options += '<label><input name="lx" type="radio" value="'+data.subTaskType[i].id+'" onclick="radio_check(this)" /><em>'+data.subTaskType[i].name+'</em><span class="iconfont icon-dagou"></span></label>';
                	}
             	$('.lxbj').find('.sub').append(options);
+
+            	if(init){
+					initTaskSubType();
+                }
             }
         });
     }

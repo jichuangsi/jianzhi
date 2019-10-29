@@ -10,6 +10,9 @@ use App\Modules\Manage\Role;
 use App\Modules\Task\Model\TaskModel;
 use App\Modules\User\Model\UserModel;
 use Theme;
+use App\Modules\User\Model\EnterpriseAuthModel;
+use App\Modules\User\Model\RealnameAuthModel;
+use App\Modules\Task\Model\WorkModel;
 
 class IndexController extends ManageController
 {
@@ -243,7 +246,18 @@ class IndexController extends ManageController
             ->leftJoin('users', 'financial.uid', '=', 'users.id')->orderBy('financial.created_at', 'desc')
             ->take(5)->get();
 
+        $enterpriseAuth = EnterpriseAuthModel::where('status', 0)->count();
+        $userAuth = RealnameAuthModel::where('status', 0)->count();
+        $taskAudit = TaskModel::where('status', 2)->count();
+        $workSettle = WorkModel::where('status', 3)->count();
         
+        $pendingCount = [
+            'enterpriseAuth' => $enterpriseAuth,
+            'userAuth' => $userAuth,
+            'taskAudit' => $taskAudit,
+            'workSettle' => $workSettle,
+        ];
+                
         $topCount = [
             'userTotal' => $userTotal,
             'todayUser' => $todayUser,
@@ -282,7 +296,8 @@ class IndexController extends ManageController
             'maxDay' => json_encode($maxDay),
             'topCount' => $topCount,
             'broken' => json_encode($broken),
-            'dateArr' => json_encode($dateArr)
+            'dateArr' => json_encode($dateArr),
+            'pendingCount' => $pendingCount,
         ];
         return $this->theme->scope('manage.index', $data)->render();
     }

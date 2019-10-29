@@ -19,7 +19,7 @@ class TaskTypeController extends ManageController
         parent::__construct();
 
         $this->initTheme('manage');
-        $this->theme->setTitle('任务类型管理');
+        $this->theme->setTitle('任务分类库');
         $this->theme->set('manageType', 'industry');
     }
     
@@ -33,15 +33,17 @@ class TaskTypeController extends ManageController
 
         return $this->theme->scope('manage.tasktypelist', $data)->render();
     }
-
+    
     private function iteratorChildrenTask($children){
         
         foreach($children as $k => $v){
-            if(isset($v['children_task'])&&!empty($v['children_task'])){
-                $this->iteratorChildrenTask($v['children_task']);
-            }else{
-                TaskTypeModel::destroy($v['id']);
+            $taskType = TaskTypeModel::where('id', $v['id'])->with('childrenTask')->get()->toArray();
+            $taskType = $taskType[0];
+            if(isset($taskType['children_task'])&&!empty($taskType['children_task'])){
+                $this->iteratorChildrenTask($taskType['children_task']);
             }
+            
+            $result = TaskTypeModel::destroy($v['id']);            
         }
     }
     
@@ -151,7 +153,7 @@ class TaskTypeController extends ManageController
             return response()->json(['errMsg'=>'参数错误！']);
         }
         $area = TaskTypeModel::findByPid([$id]);
-        $area = TaskCateModel::findByPid([$id]);
+        //$area = TaskCateModel::findByPid([$id]);
         /* $domain = \CommonClass::getDomain();
         if(!empty($area)){
             foreach($area as $k => $v){

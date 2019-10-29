@@ -18,7 +18,7 @@ class IndustryController extends ManageController
         parent::__construct();
 
         $this->initTheme('manage');
-        $this->theme->setTitle('行业管理');
+        $this->theme->setTitle('技能标签库');
         $this->theme->set('manageType', 'industry');
     }
     
@@ -35,10 +35,16 @@ class IndustryController extends ManageController
     private function iteratorChildrenTask($children){
         
         foreach($children as $k => $v){
-            if(isset($v['children_task'])&&!empty($v['children_task'])){
-                $this->iteratorChildrenTask($v['children_task']);
-            }else{
-                TaskCateModel::destroy($v['id']);
+            $taskCate = TaskCateModel::where('id', $v['id'])->with('childrenTask')->get()->toArray();
+            $taskCate = $taskCate[0];            
+            if(isset($taskCate['children_task'])&&!empty($taskCate['children_task'])){
+                $this->iteratorChildrenTask($taskCate['children_task']);
+            }
+            
+            $result = TaskCateModel::destroy($v['id']);
+            if($result){
+                $result1 = TagsModel::where('cate_id', $v['id'])->delete();
+                if($result1) TagsModel::betteringCache();
             }
         }
     }
@@ -48,7 +54,6 @@ class IndustryController extends ManageController
         
         $taskCate = TaskCateModel::where('id', $id)->with('childrenTask')->get()->toArray();
         $taskCate = $taskCate[0];
-        
         if(isset($taskCate['children_task'])&&!empty($taskCate['children_task'])){
             $this->iteratorChildrenTask($taskCate['children_task']);
         }

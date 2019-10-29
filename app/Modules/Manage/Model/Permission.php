@@ -16,7 +16,7 @@ class Permission extends EntrustPermission
     static public function getPermissionMenu()
     {
         
-        $menu_all = MenuModel::all()->toArray();
+        $menu_all = MenuModel::all()->where('ban', 0)->toArray();
         foreach($menu_all as $k=>$v)
         {
             $menu_all[$k]['fid'] = $v['id'];

@@ -9,9 +9,13 @@
             top: 0px;
             justify-content: center;
             align-items: center;
+            overflow: auto;
+            z-index: 9999;
         }
         .bigimg img {
-            transform: scale(1.5);
+            width: 60%;
+            /* height: 80%;
+            transform: scale(1.5); */
             /* 放大倍数 */
         }
     </style>
@@ -115,7 +119,7 @@
 			<div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 营业执副本：</label>
                 <div class="col-sm-4">
-                    <img alt="身份证正面" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                 
+                    <img alt="营业执副本" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                 
                 </div>
             </div> 
 		<div class="bankAuth-bottom clearfix col-xs-12">
@@ -125,6 +129,24 @@
     				@if($info['status']!=0)
     					{!! Theme::get('manager') !!}({!! $info['auth_time'] !!})		
     				@endif		
+				@endif
+			</p>
+		</div> 
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">认证状态：</p>
+			<p class="col-sm-4">
+				@if(isset($info['status']))
+					@if($info['status']===0)
+						待审核
+					@elseif($info['status']===1)
+						已认证
+					@elseif($info['status']===2)
+						已拒绝
+					@elseif($info['status']===NULL)
+						未认证
+					@else
+						未知状态
+					@endif
 				@endif
 			</p>
 		</div> 

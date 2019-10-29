@@ -1,3 +1,24 @@
+	<style>
+        .bigimg {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            z-index: 9999;
+        }
+        .bigimg img {
+            width: 60%;
+            /* height: 80%;
+            transform: scale(1.5); */
+            /* 放大倍数 */
+        }
+    </style>
 {{--<div class="well">
 	<h4 >编辑企业资料</h4>
 </div>--}}
@@ -125,6 +146,24 @@
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
 		</div>
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">认证状态：</p>
+			<p class="col-sm-4">
+				@if(isset($info['status']))
+					@if($info['status']===0)
+						待审核
+					@elseif($info['status']===1)
+						已认证
+					@elseif($info['status']===2)
+						已拒绝
+					@elseif($info['status']===NULL)
+						未认证
+					@else
+						未知状态
+					@endif
+				@endif
+			</p>
+		</div>
 		
 		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 出生日期：</p>
@@ -149,8 +188,12 @@
 			<div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 营业执副本：</label>
                 <div class="col-sm-5">
-                    <input type="file" name="business_license" id="business_license">                    
+                	<img alt="营业执副本" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                    
                 </div>
+                <div class="col-sm-5">
+                	<input type="file" name="business_license" id="business_license">                    
+                </div>
+                <div class="col-sm-5"></div>
                 		@if($errors->first('business_license'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('business_license') !!}</p>
             			@endif
@@ -169,7 +212,17 @@
 					<div class="col-md-1 text-right"></div>
 					<div class="col-md-10">
 						<button class="btn btn-primary btn-sm" type="submit">提交</button>
-						<div class="btn btn-primary btn-sm" style="margin-left: 50px" onclick="window.location.href = '{!! url('manage/enterpriseList') !!}'">返回</div>
+						@if(isset($info['status']))
+							@if($info['status']===0)
+								<a class="btn btn-sm btn-success" style="margin-left: 30px" href="{!! url('manage/enterpriseAuthPass/'.$info["id"]) !!}">
+                                    <!-- <i class="fa fa-check bigger-120"></i> -->通过
+                                </a>
+                                <a class="btn btn-sm btn-danger" style="margin-left: 30px" href="{!! url('manage/enterpriseAuthReject/' . $info["id"]) !!}">
+                                    <!-- <i class="fa fa-minus-circle bigger-120"></i> -->拒绝
+                                </a>
+							@endif							
+						@endif
+						<div class="btn btn-primary btn-sm" style="margin-left: 30px" onclick="window.location.href = '{!! url('manage/enterpriseList') !!}'">返回</div>
 					</div>
 				</div>
 			</div>
@@ -184,6 +237,9 @@
 		</div>
 	</div>
 </form>
+	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+        <img src="" alt="">
+    </div>
 	<script>
 	function validate(){
 		if($("input[name='account']").val()){
@@ -196,6 +252,10 @@
 		}
 		return true;
 	}
+	function bigimg(val){
+        $('.bigimg > img')[0].src = val.src
+        $('.bigimg').css('display','flex')
+    }
     </script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('back-stage-css', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}
@@ -204,4 +264,4 @@
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userManage-js', 'js/userManage.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/main.js') !!}
-{!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/tools.js') !!}
+{!! Theme::asset()->container('custom-js')->usePath()->add('tools-js', 'js/tools.js') !!}

@@ -774,7 +774,7 @@ class UserController extends ManageController
             ->first()->toArray();
             
             $province = DistrictModel::findTree(0);            
-            
+           
             $data = [
                 'info' => $info,
                 'province' => $province,
@@ -858,7 +858,7 @@ class UserController extends ManageController
      * @return mixed
      */
     public function getUserInfo($uid){
-        $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile',
+        $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile', 'realname_auth.account',
                     'user_detail.qq', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id',
                     'realname_auth.card_front_side','realname_auth.card_back_dside','realname_auth.status as astatus')
                     ->where('users.id', $uid)
@@ -885,7 +885,7 @@ class UserController extends ManageController
      */
     public function getUserEdit($uid)
     {
-        $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile', 
+        $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile', 'realname_auth.card_front_side' , 'realname_auth.card_back_dside','realname_auth.status',
                             'realname_auth.account', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id')
             ->where('users.id', $uid)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
@@ -1059,6 +1059,7 @@ class UserController extends ManageController
             'roles'=>$roles,
             'role_id'=>$request->get('role_id'),
        );
+        $this->theme->setTitle('账号分配');
 		return $this->theme->scope('manage.managerList',$data)->render();
    	}
 
@@ -1582,6 +1583,7 @@ class UserController extends ManageController
         $data = array(
             'list'=>$list
         );
+        $this->theme->setTitle('角色管理');
         return $this->theme->scope('manage.rolesList',$data)->render();
     }
 
@@ -1596,6 +1598,7 @@ class UserController extends ManageController
         $data = array(
             'list' =>$tree_menu,
         );
+        $this->theme->setTitle('角色管理');
         return $this->theme->scope('manage.rolesAdd',$data)->render();
     }
     /**
@@ -1716,7 +1719,8 @@ class UserController extends ManageController
     {
         $merge = $request->all();
         $list = Permission::select('permissions.id','permissions.name','permissions.display_name','permissions.module_type','menu.name as menu_name')
-            ->leftJoin('menu','menu.id','=','permissions.module_type');
+            ->leftJoin('menu','menu.id','=','permissions.module_type')
+            ->where('menu.ban', '0');
         if ($request->get('id')){
             $list = $list->where('permissions.id', $request->get('id'));
         }

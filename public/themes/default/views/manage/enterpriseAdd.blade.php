@@ -172,4 +172,4 @@
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userManage-js', 'js/userManage.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/main.js') !!}
-{!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/tools.js') !!}
+{!! Theme::asset()->container('custom-js')->usePath()->add('tools-js', 'js/tools.js') !!}

@@ -1,5 +1,11 @@
 
-        <h3 class="header smaller lighter blue mg-top12 mg-bottom20">广告管理</h3>
+        <h3 class="header smaller lighter blue mg-top12 mg-bottom20">
+        @if($ad_target_id==='1')
+        	{!! Theme::get('title') !!}
+        @else
+        	广告管理
+        @endif
+        </h3>
         {{--<div class="widget-box">--}}
         <div class="">
 

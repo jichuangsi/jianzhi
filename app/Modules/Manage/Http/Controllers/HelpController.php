@@ -17,9 +17,10 @@ class HelpController extends ManageController
 {
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct();        
         $this->initTheme('manage');
-        $this->theme->set('manageType', 'article');
+        $this->theme->setTitle('帮助中心');
+        $this->theme->set('manageType', 'help');
 
     }
 

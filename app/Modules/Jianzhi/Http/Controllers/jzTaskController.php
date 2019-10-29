@@ -412,7 +412,7 @@ class jzTaskController extends TaskBasicController
         if(!$result) return response()->json(['errMsg' => '报名失败！']);
         
         $data = [
-            'data' => $result
+            'data' => '报名成功，等待企业审核！'
         ];
         
         return response()->json($data);
@@ -701,7 +701,7 @@ class jzTaskController extends TaskBasicController
         //判断是否已经实名认证
         $authStatus = RealnameAuthModel::getRealnameAuthStatus2($this->user['id']);
         if($authStatus!=1){
-            return ['able' => false, 'errMsg' => '请完成实名认证再报名！'];
+            return ['able' => false, 'errMsg' => '暂未进行实名认证，请先进行实名认证后才可以报名任务！'];
         }
         //判断当前任务是否处于投稿期间
         $task_data = TaskModel::where('id',$task_id)->first();

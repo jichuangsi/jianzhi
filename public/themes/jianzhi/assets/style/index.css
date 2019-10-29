@@ -12,15 +12,18 @@
     align-items: center;
     text-align: center;
     border-bottom: 1px solid #ddd;
+    justify-content:space-between;
+    
 }
 .nav select {
     width: 20%;
     text-align: center;
     text-align-last: center;
+    width:auto !important;
 }
 .nav span {
-    padding-right: 0.1rem;
-    border-right: 1px solid #f2f2f2;
+    /* padding-right: 0.1rem;
+    border-right: 1px solid #f2f2f2; */
 }
 .nav div {
     font-size: 0.2rem;

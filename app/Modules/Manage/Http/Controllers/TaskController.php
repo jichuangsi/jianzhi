@@ -32,7 +32,7 @@ class TaskController extends ManageController
         parent::__construct();
 
         $this->initTheme('manage');
-        $this->theme->setTitle('任务列表');
+        $this->theme->setTitle('任务管理');
         $this->theme->set('manageType', 'task');
     }
      /**

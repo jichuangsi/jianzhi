@@ -43,7 +43,7 @@
                             <th>名称</th>
                             {{--<th>分类图标（App）</th>--}}
                             <th>排序</th>
-                            <th>图标</th>
+                            <!-- <th>图标</th> -->
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -59,17 +59,17 @@
                                 <td class="text-left">
                                     <input type="text" name="sort[{{ $v['id'] }}]" value="{{ $v['sort'] }}" area_id="{{ $v['id'] }}" onchange="area_change($(this))" />
                                 </td>
-                                <td class="text-left">
+                                <!-- <td class="text-left">
                                     <img src="{!! url($v['pic']) !!}" width="30px" height="30px">
-                                </td>
+                                </td> -->
                                 <td width="40%">
-                                    <a class="btn btn-xs btn-info" href="/manage/industryInfo/{{ $v['id'] }}">
+                                    <!-- <a class="btn btn-xs btn-info" href="/manage/industryInfo/{{ $v['id'] }}">
                                         <i class="fa fa-edit bigger-120"></i>编辑
-                                    </a>
+                                    </a> -->
                                     <span class="btn  btn-xs btn-danger" area_id="{{ $v['id'] }}"  onclick="area_delete($(this))" ><i class="ace-icon fa fa-trash-o bigger-120"></i>删除</span>
-                                    @if($v['pid']==0)
+                                    {{-- @if($v['pid']==0)
                                     <a class="btn  btn-xs btn-info" href="/manage/tasktemplate/{{ $v['id'] }}" ><i class="fa fa-edit bigger-120"></i>编辑实例模板</a>
-                                    @endif
+                                    @endif --}}
                                 </td>
                             </tr>
                         @endforeach
@@ -108,21 +108,21 @@
                             "<\/td><td class=\"text-left\">" +
                             "<input type=\"text\" name=\"sort[" + data.province[i].id + "]\"  value=\"" + data.province[i].sort + "\" area_id=\"" + data.province[i].id + "\" onchange=\"area_change($(this))\">" +
                             "<\/td>" +
-                            "<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
+                            //"<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
                             "<td width=\"40%\">" +
-                            " <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
-                            "<span class=\"btn btn-sm btn-primary\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\">删除<\/span> " +
-                            "<a  class='btn  btn-sm btn-primary' href='/manage/tasktemplate/"+data.province[i].id+"'>编辑实例模板</a><\/td><\/tr>";
+                            //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
+                            "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span> <\/td><\/tr>";
+                            //+"<a  class='btn  btn-sm btn-primary' href='/manage/tasktemplate/"+data.province[i].id+"'>编辑实例模板</a><\/td><\/tr>";
                 }else{
                     area += "<tr id='area-delete-" + data.province[i].id + "'  area_id=\"" + data.province[i].id + "\">" +
                             "<td class=\"text-left\"><input type=\"text\" name=\"name[" + data.province[i].id + "]\"  value=\"" + data.province[i].name + "\" area_id=\"" + data.province[i].id + "\" onchange=\"area_change($(this))\">" +
                             "<\/td><td class=\"text-left\">" +
                             "<input type=\"text\" name=\"sort[" + data.province[i].id + "]\"  value=\"" + data.province[i].sort + "\" area_id=\"" + data.province[i].id + "\" onchange=\"area_change($(this))\">" +
                             "<\/td>" +
-                            "<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
+                            //"<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
                             "<td width=\"40%\">" +
-                            " <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
-                            "<span class=\"btn btn-sm btn-primary\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\">删除<\/span><\/td><\/tr>";
+                            //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
+                            "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span><\/td><\/tr>";
 
                 }
             }
@@ -153,10 +153,10 @@
                         "<td class=\"text-left\"><input type=\"text\" name=\"name["+data[i].id+"]\" value=\""+ data[i].name+"\" area_id=\""+data[i].id+"\" onchange=\"area_change($(this))\">" +
                         "<\/td><td class=\"text-left\"><input type=\"text\" name=\"sort["+data[i].id+"]\" value=\""+ data[i].sort+"\" area_id=\""+data[i].id+"\" onchange=\"area_change($(this))\">" +
                         "<\/td>" +
-                        "<td class=\"text-left\"><img src=\""+ data[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
+                        //"<td class=\"text-left\"><img src=\""+ data[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
                         "<td width=\"40%\">" +
-                        " <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
-                        "<span class=\"btn btn-sm btn-primary\" area_id=\""+data[i].id+"\" onclick=\"area_delete($(this))\">删除<\/span><\/td><\/tr>";
+                        //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
+                        "<span class=\"btn  btn-xs btn-danger\" area_id=\""+data[i].id+"\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span><\/td><\/tr>";
             }
             $('#area_data_change').html(area);
             $('#area-change').attr('value','');

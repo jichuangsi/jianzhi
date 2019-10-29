@@ -15,7 +15,7 @@
     <a href="/manage" class="navbar-brand">
         {{--<img src="{!! url(Theme::get('site_config')['site_logo_2'])!!}"/>--}}
         @if(Theme::get('site_config')['site_logo_2'])
-            <img src="{!! url(Theme::get('site_config')['site_logo_2'])!!}">
+            <!-- <img src="{!! url(Theme::get('site_config')['site_logo_2'])!!}"> -->
         @else
             <img src="{!! Theme::asset()->url('images/logo.png') !!}">
         @endif

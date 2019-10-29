@@ -14,12 +14,28 @@
             </div>
             <textarea name="desc" id="desc" cols="30" rows="10" nullmsg="描述不能为空" errormsg="字数超过限制" onkeydown='clearError(this)'></textarea>
         </div>
-        <div class="text_box">
+        <!-- <div class="text_box">
             <div>上传验收材料：</div>
             <div class="scbtn">选择文件<input type="file" name="file" id="file" multiple onchange="addfile()"></div>
         </div>
         <div class="text_box file_box">
+        </div> -->
+        
+        <div class="img_box">
+            	上传验收材料：
+            <div class="img">
+                <div class="zs_img">
+                    <!-- <img src="" id="img" alt=""> -->
+                </div>
+                <div class="add">
+                    +
+                    <input type="file" name="file" id="file" onchange="imgfile()">
+                </div>
+            </div>
         </div>
+        
+        
+        
         <input type="hidden" name="file_id">
         <div class="text_box">
             若您的文件过大，可以和企业联系通过邮箱发送，并在这里提交发送截图的文件即可。
@@ -27,7 +43,17 @@
     </div>
     <button class="btn">提交验收</button>
     </form>
+    	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+            <img src="" alt="">
+        </div>
     <script type="text/javascript">
+    $(function(){
+		var old_desc = "{{old('desc')}}";
+		if(old_desc){
+			$("textarea[name='desc']").val(old_desc);
+		}
+
+    });
     var deliverform=$("#deliverform").Validform({
         tiptype:3,
         label:".label",
@@ -54,6 +80,35 @@
         $(val).remove()
     	deleteFile(val.id);
     }
+
+    function imgfile(){
+        if($(".zs_img").children().length < 3){
+            var reads = new FileReader();
+            f = document.getElementById('file').files[0];
+            reads.readAsDataURL(f);
+            reads.onload = function(e) {
+                $(".zs_img").css("display", "flex");
+                var html = '<div onclick="bigimg(this)" class="box_img"><img src ="'+this.result+'"><em onclick="delimg(this)">-</em></div>'
+                $(".zs_img").append(html)
+                //$('#img_file').val('')
+                uploadFile();
+            };
+        }else{
+        	popUpMessage('最多上传三个文件')
+        }
+    }
+    function delimg(val){
+        $(val).parent().remove()
+        event.stopPropagation()
+        if($(".zs_img").children().length == 0){
+            $(".zs_img").css("display", "none");
+        } 
+        deleteFile($(val).parent()[0].id);
+    }
+    function bigimg(val){
+        $('.bigimg').css('display','flex')
+        $('.bigimg > img')[0].src = $(val).find('img')[0].src
+    }
     
     /**
     	上传文件
@@ -76,7 +131,7 @@
             	if(ret&&ret.id){
             		var attachmentId = $("input[name='file_id']").val();
             		$("input[name='file_id']").val(attachmentId+(attachmentId?",":"")+ret.id);     
-            		var files = $(".file_box").children();	
+            		var files = $(".zs_img").children();	
             		if(files&&files.length>0){
             			files[files.length-1].id = 'file_'+ret.id;
                 	}

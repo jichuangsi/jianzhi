@@ -110,7 +110,7 @@
                             //"<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
                             "<td width=\"40%\">" +
                             //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
-                            "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\">删除<\/span> ";
+                            "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span> <\/td><\/tr>";
                             //"<a  class='btn  btn-sm btn-primary' href='/manage/tasktemplate/"+data.province[i].id+"'>编辑实例模板</a><\/td><\/tr>";
                 }else{
                     area += "<tr id='area-delete-" + data.province[i].id + "'  area_id=\"" + data.province[i].id + "\">" +
@@ -121,7 +121,7 @@
                             //"<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
                             "<td width=\"40%\">" +
                             //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
-                            "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\">删除<\/span><\/td><\/tr>";
+                            "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span><\/td><\/tr>";
 
                 }
             }
@@ -155,7 +155,7 @@
                         //"<td class=\"text-left\"><img src=\""+ data[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
                         "<td width=\"40%\">" +
                         //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
-                        "<span class=\"btn  btn-xs btn-danger\" area_id=\""+data[i].id+"\" onclick=\"area_delete($(this))\">删除<\/span><\/td><\/tr>";
+                        "<span class=\"btn  btn-xs btn-danger\" area_id=\""+data[i].id+"\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span><\/td><\/tr>";
             }
             $('#area_data_change').html(area);
             $('#area-change').attr('value','');

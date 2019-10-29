@@ -28,7 +28,7 @@
         <!-- <div class="swiper-scrollbar"></div> -->
     </div>
     <div class="nav">
-        <select name="taskCate" id="taskCate" style="width:30%" onchange="refreshTasks()">
+        <select name="taskCate" id="taskCate" style="width:35%" onchange="refreshTasks()">
         	<option value="">任务类别</option>
         	@if(!empty($taskType))
         		@foreach($taskType as $key => $value)
@@ -40,9 +40,9 @@
             <option value="">设计制作</option>
             <option value="">信息咨询</option> -->
         </select>
-        <span class="iconfont icon-jiantou9">
-        </span>
-        <select name="taskDura" id="taskDura" style="width:30%" onchange="refreshTasks()">
+        <!-- <span class="iconfont icon-jiantou9">
+        </span> --><span class="iconfont">|</span>
+        <select name="taskDura" id="taskDura" style="width:35%" onchange="refreshTasks()">
             <option value="">工作周期</option>
             <option value="1">0-1天</option>
             <option value="2">2-7天</option>
@@ -50,25 +50,26 @@
             <option value="4">16-30天</option>
             <option value="5">30-N天</option>
         </select>
-        <span class="iconfont icon-jiantou9">
-        </span>
+        <!-- <span class="iconfont icon-jiantou9">
+        </span> -->
+        <span class="iconfont">|</span>
         
-            <select name="province" style="width:40%"  onchange="checkprovince(this)">            
-            <option value="" id="province-back">-省份-</option>
+            <select name="province" style="width:35%"  onchange="checkprovince(this)">            
+            <option value="" id="province-back">省份</option>
             @if(!empty($province))
                 @foreach($province as $v)
                 	<option value="{{ $v['id'] }}">{{ $v['name'] }}</option>
                 @endforeach
             @endif
             </select>
-            <span class="iconfont icon-jiantou9">
-            </span>
+            <!-- <span class="iconfont icon-jiantou9">
+            </span> --> <span class="iconfont">|</span>
             <!-- 城市 -->
-            <select  id="province_check" name="city" style="width:40%" onchange="refreshTasks()">
-                <option value="" id="city-back">-城市-</option>
+            <select  id="province_check" name="city" style="width:35%" onchange="refreshTasks()">
+                <option value="" id="city-back">城市</option>
             </select>            
-            <span class="iconfont icon-jiantou9">
-        	</span>
+            <!-- <span class="iconfont icon-jiantou9">
+        	</span> --> <span class="iconfont">|</span>
             <!-- <select name="city" style="width:40%"data-city="福州市"></select> -->
     	
         <select name="status" id="status" onchange="refreshTasks()">
@@ -77,12 +78,12 @@
             <option value="4">进行中</option>
             <option value="7">已结算</option>
         </select>
-        <span class="iconfont icon-jiantou9">
-        </span>
+        <!-- <span class="iconfont icon-jiantou9">
+        </span> -->
     </div>
     <div class="center">
         <div class="center_top">
-            任务集市
+            任务大厅
         </div>
         <div class="center_box mescroll" id="mescroll">
             <div class="center_kong">
@@ -287,7 +288,7 @@
             refreshTasks();
             $('#province-back').val(0);
             $.get('/jz/task/ajaxcity',{'id':id},function(data){
-                var html = '<option value=\"'+data.id+'\">-城市-</option>';
+                var html = '<option value=\"'+data.id+'\">城市</option>';
                 var area = '';
                 for(var i in data.province){
                     html+= "<option value=\""+data.province[i].id+"\">"+data.province[i].name+"<\/option>";
@@ -296,7 +297,7 @@
                 if(data.id!=0){
                     $('#province_check').html(html);
                 }else{
-                    html = '<option value=\"\">-城市-</option>';
+                    html = '<option value=\"\">城市</option>';
                     $('#province_check').html(html);
                 }
                 //替换数据列表

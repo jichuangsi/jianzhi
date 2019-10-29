@@ -17,7 +17,7 @@ class FeedbackController extends ManageController
     public function __construct()
     {
         parent::__construct();
-        $this->theme->setTitle('用户反馈');
+        $this->theme->setTitle('意见反馈');
         $this->initTheme('manage');
     }
 
@@ -73,7 +73,7 @@ class FeedbackController extends ManageController
             'feedbackList' => $feedbackList,
 
         );
-        $this->theme->setTitle('投诉建议列表');
+        $this->theme->setTitle('意见反馈');
         return $this->theme->scope('manage.feedbacklist', $view)->render();
     }
 

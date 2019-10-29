@@ -1,407 +1,195 @@
-<div class="page-content-area">
-    <div class="row">
-        <div class="col-xs-12">
-
-            <div class="row">
-                <div class="space-6"></div>
-
-                <div class="col-sm-3 infobox-container">
-                    <!-- #section:pages/dashboard.infobox -->
-                    <div class="infobox infobox-green clearfix" style="width: 100%;">
-                        <div class="infobox-icon">
-                            <i class="ace-icon fa fa-users"></i>
-                        </div>
-
-                        <div class="infobox-data">
-                            <span class="infobox-data-number">{!! $topCount['todayUser'] !!}</span>
-                            <div class="infobox-content">用户数（人）</div>
-                        </div>
-
-                        <!-- #section:pages/dashboard.infobox.stat -->
-                        <div @if($topCount['userScale'] > 0 || $topCount['userScale'] == 0)class="stat stat-success"@elseif($topCount['userScale'] < 0)class="stat stat-important"@endif>
-                            {!! abs($topCount['userScale']) !!}%
-                        </div>
-
-                        <!-- /section:pages/dashboard.infobox.stat -->
-                    </div>
-                    <!-- /section:pages/dashboard.infobox.dark -->
+	<style>
+        .nav {
+            width: 100%;
+            border-bottom: 1px solid #e6e6e6;
+        }
+        .nav_title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .nav_ul {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+        .nav_ul_excel {
+            justify-content: flex-start;
+        }
+        .nav_ul .nav_li {
+            width: 20%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 20px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 20px;
+            margin: 0px 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .nav_ul .nav_li:hover {
+            box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+        }
+        .nav_ul .nav_li_column {
+            width: 10%;
+            /* height: 120px; */
+            padding: 20px 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 5px;
+            margin: 0px 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: 1px solid #f2f2f2;
+        }
+        .nav_ul .nav_li_column:hover {
+            box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+        }
+        .nav_ul .nav_li_column div {
+            margin-top: 10px;
+        }
+        .nav_ul .nav_li_column img {
+            /* transform: scale(0.3); */
+            width: 40%;
+        }
+        .nav_ul .nav_li_excel {
+            width: 13%;
+            /* height: 120px; */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .nav_ul .nav_li_excel div {
+            margin-top: 10px;
+        }
+        .nav_ul .nav_li_excel img {
+            width: 60%;
+            height: 70px;
+        }
+        .nav_ul .nav_li div {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+            /* align-items: center; */
+        }
+        .nav_ul .nav_li img {
+            transform: scale(0.8);
+        }
+        .nav_ul .nav_li:nth-child(1) {
+            background-image: linear-gradient(to right,#0E90FE,#12B7F9);
+        }
+        .nav_ul .nav_li:nth-child(2) {
+            background-image: linear-gradient(to right,#21D095,#2DE2B6);
+        }
+        .nav_ul .nav_li:nth-child(3) {
+            background-image: linear-gradient(to right,#FFBE3E,#FFE33E);
+        }
+        .nav_ul .nav_li:nth-child(4) {
+            background-image: linear-gradient(to right,#FC5452,#F79064);
+        }
+    </style>
+	<div class="nav_box">
+        <div class="nav_title">
+            待处理事项
+        </div>
+        <div class="nav_ul">
+            <div class="nav_li" onclick="window.location.href = '{!! url('manage/enterpriseList') !!}'">
+                <div>
+                    <span>{{$pendingCount['enterpriseAuth']}}</span>
+                    <span>企业认证</span>
                 </div>
-                <div class="col-sm-3 infobox-container">
-
-                    <div class="infobox infobox-blue" style="width: 100%;">
-                        <div class="infobox-icon">
-                            <i class="ace-icon fa fa-cubes"></i>
-                        </div>
-
-                        <div class="infobox-data">
-                            <span class="infobox-data-number">{!! $topCount['todayTask'] !!}</span>
-                            <div class="infobox-content">任务数（条）</div>
-                        </div>
-
-                        <div @if($topCount['taskScale'] > 0 || $topCount['taskScale'] == 0)class="stat stat-success"@elseif($topCount['taskScale'] < 0)class="stat stat-important"@endif>
-                            {!! abs($topCount['taskScale']) !!}%
-                        </div>
-                    </div>
-
-                    <!-- /section:pages/dashboard.infobox.dark -->
-                </div>
-                <div class="col-sm-3 infobox-container">
-
-                    <div class="infobox infobox-pink" style="width: 100%;">
-                        <div class="infobox-icon">
-                            <i class="ace-icon fa fa-credit-card"></i>
-                        </div>
-
-                        <div class="infobox-data">
-                            <span class="infobox-data-number">{!! $topCount['todayRecharge'] !!}</span>
-                            <div class="infobox-content">充值金额（元）</div>
-                        </div>
-                        <div @if($topCount['rechargeScale'] > 0 || $topCount['rechargeScale'] == 0)class="stat stat-success"@elseif($topCount['rechargeScale'] < 0)class="stat stat-important"@endif>
-                            {!! abs($topCount['todayRecharge']) !!}%
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-sm-3 infobox-container">
-                    <!-- #section:pages/dashboard.infobox -->
-
-                    <div class="infobox infobox-red" style="width: 100%;">
-                        <div class="infobox-icon">
-                            <i class="ace-icon fa fa-rmb"></i>
-                        </div>
-
-                        <div class="infobox-data">
-                            <span class="infobox-data-number">{!! $topCount['todayCashout'] !!}</span>
-                            <div class="infobox-content">提现金额（元）</div>
-                        </div>
-                        <div @if($topCount['cashoutScale'] > 0 || $topCount['cashoutScale'] == 0)class="stat stat-success"@elseif($topCount['cashoutScale'] < 0)class="stat stat-important"@endif>
-                            {!! abs($topCount['cashoutScale']) !!}%
-                        </div>
-                    </div>
-
-                    <!-- /section:pages/dashboard.infobox.dark -->
-                </div>
-
-                <div class="vspace-12-sm"></div>
-
-            </div><!-- /.row -->
-
-            <!-- #section:custom/extra.hr -->
-            <div class="space"></div>
-
-            <!--任务统计-->
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="widget-box clearfix">
-                        <div class="widget-header widget-header-flat widget-header-small">
-                            <h5 class="widget-title">
-                                <i class="ace-icon fa fa-signal"></i>
-                                任务统计
-                            </h5>
-                        </div>
-
-                        <div class="widget-body">
-                            <div class="widget-main padding-4 clearfix">
-                                <div class="clearfix">
-                                    <div class="col-lg-10 col-md-12 col-sm-12">
-                                        <div id="sales-charts"></div>
-                                    </div>
-                                    <div class="space-16"></div>
-                                    <div class="infobox-container">
-                                        <div class="infobox infobox-orange2">
-                                            <!-- #section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-chart">
-                                                <span class="sparkline sparklineBar-blue" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                            </div>
-
-                                            <!-- /section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-data">
-                                                <span class="infobox-data-number">{!! $topCount['taskCount'] !!}</span>
-                                                <div class="infobox-content">总任务数</div>
-                                            </div>
-                                        </div>
-                                        <div class="infobox infobox-orange2">
-                                            <!-- #section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-chart">
-                                                <span class="sparkline sparklineLine-gray" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                            </div>
-
-                                            <!-- /section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-data">
-                                                <span class="infobox-data-number">{!! $topCount['successTaskCount'] !!}</span>
-                                                <div class="infobox-content">完成的任务</div>
-                                            </div>
-                                        </div>
-                                        <div class="infobox infobox-orange2">
-                                            <!-- #section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-chart">
-                                                <span class="sparkline sparklineBar-red" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                            </div>
-
-                                            <!-- /section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-data">
-                                                <span class="infobox-data-number">{!! $topCount['failTaskCount'] !!}</span>
-                                                <div class="infobox-content">失败的任务</div>
-                                            </div>
-                                        </div>
-                                        <div class="infobox infobox-orange2">
-                                            <!-- #section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-chart">
-                                                <span class="sparkline sparklineLine-gray" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                            </div>
-
-                                            <!-- /section:pages/dashboard.infobox.sparkline -->
-                                            <div class="infobox-data">
-                                                <span class="infobox-data-number">{!! $topCount['doingTaskCount'] !!}</span>
-                                                <div class="infobox-content">进行的任务</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!-- /.widget-main -->
-
-                        </div><!-- /.widget-body -->
-
-                    </div><!-- /.widget-box -->
-                </div>
-            </div><!-- /.row -->
-            <div class="space"></div>
-
-            <!--用户统计-财务统计-->
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="widget-box">
-                        <div class="widget-header widget-header-flat widget-header-small">
-                            <h5 class="widget-title">
-                                <i class="ace-icon fa fa-signal"></i>
-                                用户统计
-                            </h5>
-                        </div>
-
-                        <div class="widget-body clearfix padding-8">
-                            <div class="widget-main clearfix padding-14">
-                                <!-- #section:plugins/charts.flotchart -->
-                                <div id="sales-charts1"></div>
-                                <div class="space-6"></div>
-                                <div class="infobox-container">
-                                    <div class="infobox infobox-orange2">
-                                        <!-- #section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-chart">
-                                            <span class="sparkline sparklineBar-blue" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                        </div>
-
-                                        <!-- /section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-data">
-                                            <span class="infobox-data-number">{!! $topCount['userTotal'] !!}</span>
-                                            <div class="infobox-content">总用户数</div>
-                                        </div>
-
-                                    </div>
-                                    <div class="infobox infobox-orange2">
-                                        <!-- #section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-chart">
-                                            <span class="sparkline sparklineLine-gray" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                        </div>
-
-                                        <!-- /section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-data">
-                                            <span class="infobox-data-number">{!! $topCount['todayUser'] !!}</span>
-                                            <div class="infobox-content">今日用户数</div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div><!-- /.widget-main -->
-                        </div><!-- /.widget-body -->
-                    </div><!-- /.widget-box -->
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <div class="widget-box ">
-                        <div class="widget-header widget-header-flat widget-header-small">
-                            <h4 class="widget-title lighter">
-                                <i class="ace-icon fa fa-signal"></i>
-                                财务统计
-                            </h4>
-                        </div>
-
-                        <div class="widget-body clearfix">
-                            <div class="widget-main padding-14 clearfix">
-                                <div id="sales-charts2"></div>
-                                <div class="space-6"></div>
-                                <div class="infobox-container">
-                                    <div class="infobox infobox-orange2">
-                                        <!-- #section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-chart">
-                                            <span class="sparkline sparklineBar-blue" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                        </div>
-
-                                        <!-- /section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-data">
-                                            <span class="infobox-data-number">{!! $topCount['rechargeTotal'] !!}</span>
-                                            <div class="infobox-content">充值总金额</div>
-                                        </div>
-
-                                    </div>
-                                    <div class="infobox infobox-orange2">
-                                        <!-- #section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-chart">
-                                            <span class="sparkline sparklineLine-gray" data-values="196,128,202,177,154,94,100,170,224"></span>
-                                        </div>
-
-                                        <!-- /section:pages/dashboard.infobox.sparkline -->
-                                        <div class="infobox-data">
-                                            <span class="infobox-data-number">{!! $topCount['cashoutTotal'] !!}</span>
-                                            <div class="infobox-content">提现总金额</div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div><!-- /.widget-main -->
-                        </div><!-- /.widget-body -->
-                    </div><!-- /.widget-box -->
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-            <div class="space"></div>
-            <!--提醒-->
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="widget-box">
-                        <div class="widget-header widget-header-flat">
-                            <h5 class="widget-title"><i class="fa fa-clock-o"></i> 任务时间提醒</h5>
-                            <div class="widget-toolbar no-border">
-                                <a href="{!! url('manage/taskList') !!}">
-                                    查看更多>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="widget-body">
-                            <div class="widget-main" style="height:271px;">
-                                <div class="table-responsive">
-                                    <table id="sample-table-1" class="table table-striped table-bordered table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th class="center">
-                                                <i class="fa fa-caret-right"></i> 任务名称
-                                            </th>
-                                            <th>
-                                                <i class="fa fa-caret-right"></i> 任务金额
-                                            </th>
-                                            <th>
-                                                <i class="fa fa-caret-right"></i> 任务状态
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @if(!empty($topCount['recentlyTask']))
-                                        @foreach($topCount['recentlyTask'] as $item)
-                                        <tr>
-                                            <td class="center">
-                                                {!! $item->title !!}
-                                            </td>
-
-                                            <td>
-                                                <span class="green">￥{!! $item->bounty !!}</span>
-                                            </td>
-                                            <td>
-                                                <span class="label label-success">
-                                                    @if($item->status == 0)未发布@elseif($item->status == 1)待托管@elseif($item->status == 2)待审核@elseif($item->status > 2 && $item->status < 9)进行中
-                                                    @elseif($item->status == 9)已结束@elseif($item->status == 10)已失败@elseif($item->status == 11)维权中@endif
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="3">暂无数据</td>
-                                        </tr>
-                                        @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="widget-box">
-                        <div class="widget-header widget-header-flat">
-                            <h5 class="widget-title"><i class="fa fa-clock-o"></i> 财务事件提醒</h5>
-                            <div class="widget-toolbar no-border">
-                                <a href="{!! url('manage/financeList') !!}">
-                                    查看更多>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="widget-body">
-                            <div class="widget-main" style="height:271px;">
-                                <div class="table-responsive">
-                                    <table id="sample-table2" class="table table-striped table-bordered table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th class="center">
-                                                <i class="fa fa-caret-right"></i> 流水
-                                            </th>
-                                            <th>
-                                                <i class="fa fa-caret-right"></i> 金额
-                                            </th>
-                                            <th>
-                                                <i class="fa fa-caret-right"></i> 申请人
-                                            </th>
-                                            <th>
-                                                <i class="fa fa-caret-right"></i> 交易平台
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @if(!empty($topCount['recentlyFinance']))
-                                        @foreach($topCount['recentlyFinance'] as $item)
-                                        <tr>
-                                            <td class="center">
-                                                @if($item->action == 1)发布任务
-                                                @elseif($item->action == 1)任务佣金
-                                                @elseif($item->action == 3)充值
-                                                @elseif($item->action == 4)提现
-                                                @elseif($item->action == 5)增值服务
-                                                @elseif($item->action == 6)购买作品
-                                                @elseif($item->action == 7)任务退款
-                                                @elseif($item->action == 8)提现退款
-                                                @elseif($item->action == 9)出售商品
-                                                @elseif($item->action == 10)维权退款
-                                                @elseif($item->action == 11)服务退款
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <span class="green">￥{!! $item->cash !!}</span>
-                                            </td>
-                                            <td>
-                                                {!! $item->name !!}
-                                            </td>
-                                            <td>
-                                                @if($item->pay_type == 1)余额@elseif($item->pay_type == 2)支付宝@elseif($item->pay_type == 3)微信@elseif($item->pay_type == 4)银联@endif
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="4">暂无数据</td>
-                                        </tr>
-                                        @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <img src="/themes/default/assets/img/qyrz_index.png" alt="">
             </div>
-            <!-- PAGE CONTENT ENDS -->
-        </div><!-- /.col -->
-    </div><!-- /.row -->
-</div><!-- /.page-content-area -->
-
-<div id="broken" data-data='{!! $broken !!}'></div>
-<div id="maxDay" data-data='{!! $maxDay !!}'></div>
-<div id="dateArr" data-data='{!! $dateArr !!}'></div>
+            <div class="nav_li"  onclick="window.location.href = '{!! url('manage/userList') !!}'">
+                <div>
+                    <span>{{$pendingCount['userAuth']}}</span>
+                    <span>个人认证</span>
+                </div>
+                <img src="/themes/default/assets/img/grrz_index.png" alt="">
+            </div>
+            <div class="nav_li"  onclick="window.location.href = '{!! url('manage/taskList') !!}'">
+                <div>
+                    <span>{{$pendingCount['taskAudit']}}</span>
+                    <span>任务审核</span>
+                </div>
+                <img src="/themes/default/assets/img/rwsh_index.png" alt="">
+            </div>
+            <div class="nav_li" onclick="window.location.href = '{!! url('manage/taskSettle') !!}'">
+                <div>
+                    <span>{{$pendingCount['workSettle']}}</span>
+                    <span>任务结算</span>
+                </div>
+                <img src="/themes/default/assets/img/rwjs_index.png" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="nav_box">
+        <div class="nav_title">
+            常用工具
+        </div>
+        <div class="nav_ul">
+            <div class="nav_li_column" onclick="window.location.href = '{!! url('manage/enterpriseList') !!}'">
+                <img src="/themes/default/assets/img/company.png" alt="">
+                <div>企业管理</div>
+            </div>
+            <div class="nav_li_column" onclick="window.location.href = '{!! url('manage/userList') !!}'">
+                <img src="/themes/default/assets/img/personal.png" alt="">
+                <div>个人管理</div>
+            </div>
+            <div class="nav_li_column" onclick="window.location.href = '{!! url('manage/taskList') !!}'">
+                <img src="/themes/default/assets/img/task.png" alt="">
+                <div>任务管理</div>
+            </div>
+            <div class="nav_li_column" onclick="window.location.href = '{!! url('manage/taskDispatch') !!}'">
+                <img src="/themes/default/assets/img/pass.png" alt="">
+                <div>任务派单</div>
+            </div>
+            <div class="nav_li_column" onclick="window.location.href = '{!! url('manage/taskCheck') !!}'">
+                <img src="/themes/default/assets/img/task_ys.png" alt="">
+                <div>任务验收导入</div>
+            </div>
+            <div class="nav_li_column" onclick="window.location.href = '{!! url('manage/taskSettle') !!}'">
+                <img src="/themes/default/assets/img/task_js.png" alt="">
+                <div>任务状态同步</div>
+            </div>
+            <div class="nav_li_column">
+                <img src="/themes/default/assets/img/fp.png" alt="">
+                <div>分配渠道商</div>
+            </div>
+        </div>
+    </div>
+    <div class="nav_box">
+        <div class="nav_title">
+            表格下载
+        </div>
+        <div class="nav_ul nav_ul_excel">
+            <div class="nav_li_excel" onclick="window.location.href = '{!! url('/attachment/sys/templates/template_company.xlsx') !!}'">
+                <img src="/themes/default/assets/img/excel.png" alt="">
+                <div>企业导入模板</div>
+            </div>
+            <div class="nav_li_excel" onclick="window.location.href = '{!! url('/attachment/sys/templates/template_personal.xlsm') !!}'">
+                <img src="/themes/default/assets/img/excel.png" alt="">
+                <div>个人导入模板</div>
+            </div>
+            <div class="nav_li_excel">
+                <img src="/themes/default/assets/img/excel.png" alt="">
+                <div>便签导入模板</div>
+            </div>
+        </div>
+    </div>
+    <script>
+    </script>
 
 
 {!! Theme::asset()->container('specific-js')->usePath()->add('excanvas-js', 'plugins/ace/js/jquery.min.js') !!}

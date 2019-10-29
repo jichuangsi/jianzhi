@@ -97,6 +97,25 @@
             top: 0px;
             border-color:transparent transparent transparent #f3f3f3;
         }
+        .bigimg {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            z-index:9999;
+        }
+        .bigimg img {
+            width: 60%;
+            /* height: 80%;
+            transform: scale(1.5); */
+            /* 放大倍数 */
+        }
     </style>
 <h3 class="header smaller lighter blue mg-top12 mg-bottom20">编辑个人用户资料</h3>
 
@@ -181,17 +200,24 @@
 				</select>
 			</div>
 		</div>
-		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 出生日期：</p>
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 认证状态：</p>
 			<div class="col-sm-4">
-				<p class="input-group input-group-sm col-xs-10 col-sm-5">
-					<input type="text" id="datepicker" class="form-control hasDatepicker">
-					<span class="input-group-addon">
-						<i class="ace-icon fa fa-calendar"></i>
-					</span>
-				</p>
+				@if(isset($info['status']))
+					@if($info['status']===0)
+						待审核
+					@elseif($info['status']===1)
+						已认证
+					@elseif($info['status']===2)
+						已拒绝
+					@elseif($info['status']===NULL)
+						未认证
+					@else
+						未知状态
+					@endif
+				@endif
 			</div>
-		</div> -->
+		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密&nbsp;&nbsp;码：</p>
 			<p class="col-sm-5">
@@ -204,6 +230,9 @@
 			<div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证正面：</label>
                 <div class="col-sm-4">
+                    <img alt="身份证正面" src="{!! url($info['card_front_side']) !!}" onclick="bigimg(this)">
+                </div>
+                <div class="col-sm-4">
                     <input type="file" name="card_front_side" id="card_front_side">
                 </div>
                 	@if($errors->first('card_front_side'))
@@ -213,6 +242,9 @@
             
             <div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证反面：</label>
+                <div class="col-sm-4">
+                    <img alt="身份证反面" src="{!! url($info['card_back_dside']) !!}"  onclick="bigimg(this)">
+                </div>
                 <div class="col-sm-4">
                     <input type="file" name="card_back_dside" id="card_back_dside">
                 </div>
@@ -267,7 +299,17 @@
 					<div class="col-md-1 text-right"></div>
 					<div class="col-md-10">
 						<button class="btn btn-primary btn-sm" type="submit">提交</button>
-						<div class="btn btn-primary btn-sm" style="margin-left: 50px" onclick="window.location.href = '{!! url('manage/userList') !!}'">返回</div>
+						@if(isset($info['status']))
+							@if($info['status']===0)
+								<a class="btn btn-sm btn-success" style="margin-left: 30px" href="{!! url('manage/userAuthPass/' . $info["id"]) !!}">
+                                    <!-- <i class="fa fa-check bigger-120"></i> -->通过
+                                </a>
+                                <a class="btn btn-sm btn-danger" style="margin-left: 30px" href="{!! url('manage/userAuthReject/' . $info["id"]) !!}">
+                                    <!-- <i class="fa fa-minus-circle bigger-120"></i> -->拒绝
+                                </a>
+							@endif							
+						@endif
+						<div class="btn btn-primary btn-sm" style="margin-left: 30px" onclick="window.location.href = '{!! url('manage/userList') !!}'">返回</div>
 					</div>
 				</div>
 			</div>
@@ -282,6 +324,9 @@
 		</div>
 	</div>
 </form>
+	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+        <img src="" alt="">
+    </div>
 	<script>
 		$(function(){
 			var skills = $(".jn_box").children();
@@ -341,6 +386,10 @@
     		}
     		return true;
     	}
+		function bigimg(val){
+            $('.bigimg > img')[0].src = val.src
+            $('.bigimg').css('display','flex')
+        }
     </script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('back-stage-css', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}
@@ -349,4 +398,4 @@
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userManage-js', 'js/userManage.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/main.js') !!}
-{!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/tools.js') !!}
+{!! Theme::asset()->container('custom-js')->usePath()->add('tools-js', 'js/tools.js') !!}

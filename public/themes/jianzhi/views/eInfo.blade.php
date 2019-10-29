@@ -45,7 +45,11 @@
             <div class="img">
                	 营业执照副本
                 <div class="img_file">
-                    <img src="/themes/jianzhi/assets/images/fm.jpg" alt="">
+                	@if($einfo['business_license'])
+                		<img src="{!! url($einfo['business_license']) !!}" alt="">
+                	@else
+                		<img src="/themes/jianzhi/assets/images/fm.jpg" alt="">
+                	@endif                    
                     <input type="file" name="business_license" id="business_license"  onchange="zzfile()">
                 </div>
             </div>

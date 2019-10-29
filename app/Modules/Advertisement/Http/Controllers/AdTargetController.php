@@ -45,6 +45,7 @@ class AdTargetController extends ManageController
 
     
     public function adListById(Request $request,$target_id){
+        
         $where = '1 = 1';
 
         if ($request->get('ad_name')) {
@@ -89,6 +90,9 @@ class AdTargetController extends ManageController
             'adTargetInfo' => $adTargetInfo
         );
 
+        if($target_id==="1"){
+            $this->theme->setTitle('轮播图设置');
+        }
         return $this->theme->scope('manage.adlistById', $view)->render();
     }
 

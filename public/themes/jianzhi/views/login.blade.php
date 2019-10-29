@@ -11,18 +11,24 @@
         </div> -->
         <div class="ipt">
            <span class="iconfont icon-yonghu">           		           
-           </span><input type="text" name="username" placeholder="请输入用户名/手机" onkeydown='clearError(this)'>
-           		@if($errors->first('username'))
-        			<p class="Validform_checktip Validform_wrong">{!! $errors->first('username') !!}</p>
-        		@endif
+           </span><input type="text" name="username" placeholder="请输入用户名/手机" onkeydown='clearError(this)'>           		
         </div>
         <div class="ipt">
            <span class="iconfont icon-mima">
-           </span><input type="password" name="password" placeholder="请输入密码" onkeydown='clearError(this)'>           		
-           		@if($errors->first('password'))
-        			<p class="Validform_checktip Validform_wrong">{!! $errors->first('password') !!}</p>
-        		@endif            
+           </span>
+           <input type="password" name="password" placeholder="请输入密码" onkeydown='clearError(this)'>  
+           		
         </div>
+        		@if($errors->first('username'))
+        			<div style="padding-left:10%">
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('username') !!}</p>
+        			</div>
+        		@endif
+        		@if($errors->first('password'))
+        			<div style="padding-left:10%">
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('password') !!}</p>
+        			</div>
+        		@endif
         <!-- <div class="btn" onclick="btn()">登录</div> -->
         <button class="btn" type="submit">登录</button>
     </form>

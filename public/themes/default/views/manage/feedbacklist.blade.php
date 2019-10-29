@@ -5,7 +5,7 @@
             搜索
         </h1>
     </div><!-- /.page-header -->--}}
-    <h3 class="header smaller lighter blue mg-bottom20 mg-top12">投诉建议</h3>
+    <h3 class="header smaller lighter blue mg-bottom20 mg-top12">意见反馈</h3>
     <div class="row">
         <div class="col-xs-12">
             <div class="well">

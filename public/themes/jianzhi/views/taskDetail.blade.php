@@ -54,10 +54,8 @@
             <div>图片展示：
             								@foreach($attatchment as $v)
                                                 <li>
-                                                    <div>
-                                                        <a href="{{ URL('jz/task/fileDownload',['id'=>$v['id']]) }}" target="#">
-                                                        <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 1.2rem;height: 1.2rem;"></a>
-                                                    </div>
+                                                        <!-- <a href="{{ URL('jz/task/fileDownload',['id'=>$v['id']]) }}" target="#"></a> -->
+                                                        <img alt="{{$v['name']}}" src="{!! url($v['url']) !!}" style="width: 1.2rem;height: 1.2rem;" onclick="bigimg(this)">
                                                 </li>
                                             @endforeach
             
@@ -73,7 +71,8 @@
 									<div>验收材料	({{ count($v['attachments']) }})：
 									@if(isset($v['attachments']))                   	
 												@foreach($v['attachments'] as $v1)
-													<li><a href="{{ URL('jz/task/fileDownload',['id'=>$v1['id']]) }}" target="#">{{ $v1['name'] }}</a>
+													<li><!-- <a href="{{ URL('jz/task/fileDownload',['id'=>$v1['id']]) }}" target="#">{{ $v1['name'] }}</a> -->
+													<img alt="{{$v1['name']}}" src="{!! url($v1['url']) !!}" style="width: 1.2rem;height: 1.2rem;" onclick="bigimg(this)">
 													</li>
 												@endforeach
 									@endif
@@ -130,6 +129,9 @@
                 <iframe src="{!! url('jz/task/contract') !!}" frameborder="0"></iframe>
             </div>
         </div>
+    	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+            <img src="" alt="">
+        </div>
         <script>
             function readyxy(){
                 $('.xybox').find('iframe').css('display','block').siblings().css('display','none')
@@ -147,6 +149,7 @@
                     console.log(status);
     				if(status==='success'&&ret.data&&!ret.errMsg){
     					$('.xybj').css('display','none');
+    					popUpMessage(ret.data);
     					backToList();
         			}else{
             			if(ret.errMsg) popUpMessage(ret.errMsg);
@@ -156,6 +159,10 @@
             function backToList(){
             	window.location.href = "{!! url('jz/task') !!}";
             }
+    		function bigimg(val){
+    	        $('.bigimg').css('display','flex')
+    	        $('.bigimg > img')[0].src = $(val)[0].src
+    	    }
         </script>
     
     {!! Theme::asset()->container('specific-css')->usepath()->add('details-style','style/details.css') !!}
