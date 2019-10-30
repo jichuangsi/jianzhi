@@ -9,7 +9,7 @@ class RegisterRequest extends FormRequest
 	public function rules()
 	{
 		return [
-            'username' => 'required|between:4,15|string|unique:users,name',
+            //'username' => 'required|between:4,15|string|unique:users,name',
 		    'mobile' => 'required|mobilePhone',
             'password' => 'required|between:6,16|string',
             'confirmPassword' => 'required|same:password',
@@ -27,10 +27,10 @@ class RegisterRequest extends FormRequest
     public function messages()
     {
         return [
-            'username.required' => '请输入用户名',
+            /* 'username.required' => '请输入用户名',
             'username.between' => '用户名应该在:min - :max 个字符',
             'username.string' => '用户名格式错误',
-            'username.unique' => '用户名已注册',
+            'username.unique' => '用户名已注册', */
 
             'mobile.required' => '手机号码不能为空',
             'mobile.mobile_phone' => '请填写正确的手机号码',

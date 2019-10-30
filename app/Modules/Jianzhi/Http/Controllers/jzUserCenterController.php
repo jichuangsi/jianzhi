@@ -158,16 +158,17 @@ class jzUserCenterController extends BasicUserCenterController
                     if($v['task']['type_id']){
                          $type_name = TaskTypeModel::findById($v['task']['type_id']);
                          $v['task']['type_name'] = $type_name['name'];
+                         $v['task']['type_icon'] = $type_name['pic'];
                     }
                     if($v['task']['sub_type_id']){
                         $sub_type_name = TaskTypeModel::findById($v['task']['sub_type_id']);
                         $v['task']['sub_type_name'] = $sub_type_name['name'];
                     }            
                     
-                    $detail = UserDetailModel::findByUid($v['task']['uid']);
+                    /* $detail = UserDetailModel::findByUid($v['task']['uid']);
                     if($detail&&$detail['avatar']){
                         $v['task']['avatar'] = $detail['avatar'];
-                    }
+                    } */
                     
                     array_push($works, $v);
                 }

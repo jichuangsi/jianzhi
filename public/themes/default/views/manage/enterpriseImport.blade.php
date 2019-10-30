@@ -128,9 +128,9 @@
             @if(isset($enterprises))
             	@foreach($enterprises as $item)
             		<tr>
-            			<td>{{$item['num']}}</td>
             			<td>{{$item[0]}}</td>
             			<td>{{$item[1]}}</td>
+            			<td>{{$item[2]}}</td>
             			<td>{{$item[7]}}</td>
             			<td>
             			@if(isset($item['msg']))

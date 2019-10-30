@@ -210,27 +210,27 @@ class TaskTypeController extends ManageController
 
 
     
-    public function industryInfo($id)
+    public function taskTypeInfo($id)
     {
-        $cate = TaskCateModel::findById($id);
-        if(!empty($cate)){
+        $taskType = TaskTypeModel::findById($id);
+        if(!empty($taskType)){
             
-            $parentCate = TaskCateModel::findById($cate['pid']);
+            $parentTaskType = TaskCateModel::findById($taskType['pid']);
             $view = array(
-                'cate'        => $cate,
-                'parent_cate' => $parentCate
+                'taskType'        => $taskType,
+                'parent_taskType' => $parentTaskType
             );
         }
-        return $this->theme->scope('manage.industryInfo', $view)->render();
+        return $this->theme->scope('manage.tasktypeInfo', $view)->render();
     }
 
     
-    public function postIndustryInfo(Request $request)
+    public function postTaskTypeInfo(Request $request)
     {
         $file = $request->file('pic');
         if (!$file) {
-            $cate = TaskCateModel::findById($request->get('id'));
-            $pic = $cate->pic;
+            $taskType = TaskTypeModel::findById($request->get('id'));
+            $pic = $taskType->pic;
         }else{
             $result = \FileClass::uploadFile($file,'sys');
             $result = json_decode($result,true);
@@ -239,12 +239,13 @@ class TaskTypeController extends ManageController
         $arr = array(
             'pic' => $pic
         );
-        $res = TaskCateModel::where('id',$request->get('id'))->update($arr);
+        $res = TaskTypeModel::where('id',$request->get('id'))->update($arr);
 
-        if($res){
-            
-            Cache::forget('task_cate');
-            return redirect('manage/industry')->with(array('message' => '操作成功'));
+        if($res){            
+            Cache::forget('task_type');
+            return redirect('manage/taskType')->with(array('message' => '操作成功'));
+        }else{
+            return redirect('manage/taskType')->with(array('message' => '操作失败'));
         }
 
     }

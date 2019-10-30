@@ -153,7 +153,7 @@
                     <button type="button" onclick="refuse()" class="btn btn-primary btn-sm">批量拒绝</button>
                     <button type="button" onclick="refdel()" class="btn btn-primary btn-sm">批量删除</button>
                     <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/manage/taskAdd'">添加</button>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/themes/default/assets/template_task.xlsx'"  >模板下载</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/attachment/sys/templates/template_task.xlsx'"  >模板下载</button>
                     <button type="button"  onclick="window.location.href='/manage/taskListImport'" class="btn btn-primary btn-sm" >批量导入</button>
                     <!--<button type="button"  onclick="fileipt()" class="btn btn-primary btn-sm" >批量导入</button>-->
                 </div>

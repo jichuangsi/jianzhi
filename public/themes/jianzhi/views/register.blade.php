@@ -3,11 +3,11 @@
     </div>
     <form class="registerform" method="post" action="{!! url('jz/register') !!}" onsubmit="return validate()">
     	{!! csrf_field() !!}
-        <div class="ipt">
+        <!-- <div class="ipt">
            <span class="iconfont icon-yonghu"></span><input type="text" name="username" value="{{old('username')}}" placeholder="请输入用户名" ajaxurl="{!! url('checkUserName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
-       	</div>
+       	</div> -->
         <div class="ipt">
-           <span class="iconfont icon-youxiang"></span><input type="number" name="mobile" value="{{old('mobile')}}"  placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
+           <span class="iconfont icon-shouji"></span><input type="number" name="mobile" value="{{old('mobile')}}"  placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
         </div>
         <div class="ipt">
            <span class="iconfont icon-mima"></span><input type="password" name="password" placeholder="请输入密码" datatype="*6-16" nullmsg="请输入密码" errormsg="密码长度为6-16位字符">
@@ -28,12 +28,17 @@
          	    <input type="checkbox" name="agree" checked="checked" datatype="*" nullmsg="勾选即表示您已同意">
          		勾选即表示您已同意
          </div>
-         <div class="xy">
-             	<span onclick="xy_one()">《平台注册认证协议》</span>
-                <span onclick="xy_two()">《平台合作伙伴协议协议》</span>
-                <span onclick="xy_three()">《平台接包须知》</span>
-                <span onclick="xy_four()">《平台任务承揽协议》</span>
-         </div>
+        <div class="xy xy_one">
+            <span onclick="xy_one()">《平台注册认证协议》</span>
+            <span onclick="xy_two()">《平台合作伙伴协议》</span>
+            <span onclick="xy_three()">《平台接包须知》</span>
+            <span onclick="xy_four()">《平台任务承揽协议》</span>
+        </div>
+        <div class="xy xy_two" style="display:none;">
+            <span onclick="xy_one()">《平台注册认证协议》</span>
+            <span onclick="xy_five()">《平台服务协议》</span>
+            <span onclick="xy_six()">《平台发包协议》</span>
+        </div>
         <div class="radio">
             <!-- <div class="radio_check" onclick="radio_check(this)"><span><em class="iconfont icon-dagou"></em></span>个人注册</div>
             <div onclick="radio_check(this)"><span></span>企业注册</div> -->
@@ -52,6 +57,8 @@
             <iframe id="zc_two" src="{!! url('jz/partner') !!}" frameborder="0"></iframe>
             <iframe id="zc_three" src="{!! url('jz/notice') !!}" frameborder="0"></iframe>
             <iframe id="zc_four" src="{!! url('jz/taskContract') !!}" frameborder="0"></iframe>
+            <iframe id="zc_five" src="{!! url('jz/serviceContract') !!}" frameborder="0"></iframe>
+			<iframe id="zc_six" src="{!! url('jz/dispatchContract') !!}" frameborder="0"></iframe>
         </div>
     </div>
     
@@ -109,7 +116,11 @@
             $(val).siblings().addClass('radio_check')
             if($(val).val() == '2'){
                 $('.bs').children().remove()
+                $('.xy_one').css('display','none')
+				$('.xy_two').css('display','flex')
             }else{
+            	$('.xy_one').css('display','flex')
+            	$('.xy_two').css('display','none')
                 $('.bs').append('<div class="ipt" onclick="jn()"><div>技能选择<em class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></em></div></div>')
             }
         }
@@ -151,6 +162,22 @@
     	$('.xybj').css('display','block');
     	$('.xybj').find('iframe').css('display','none');
     	$('#zc_four').css('display','block')
+    	setTimeout(function(){
+    		$('.xybox').css('bottom','10%');
+    	},500)
+    }
+    function xy_five(){
+    	$('.xybj').css('display','block');
+    	$('.xybj').find('iframe').css('display','none');
+    	$('#zc_five').css('display','block')
+    	setTimeout(function(){
+    		$('.xybox').css('bottom','10%');
+    	},500)
+    }
+    function xy_six(){
+    	$('.xybj').css('display','block');
+    	$('.xybj').find('iframe').css('display','none');
+    	$('#zc_six').css('display','block')
     	setTimeout(function(){
     		$('.xybox').css('bottom','10%');
     	},500)

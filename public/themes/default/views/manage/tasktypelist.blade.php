@@ -5,7 +5,7 @@
             行业配置
         </h1>
     </div> <!--  /.page-header -->--}}
-    <h3 class="header smaller lighter blue mg-bottom20 mg-top12">任务类型配置</h3>
+    <h3 class="header smaller lighter blue mg-bottom20 mg-top12">任务分类库</h3>
     <form action="{{ URL('manage/taskTypeCreate') }}" method="post" id="form-data">
         {{ csrf_field() }}
         <input type="hidden" name="change_ids" id="area-change" value="" />
@@ -18,7 +18,7 @@
                     </div>
                     <ul >
                         <li>您可以自己编辑任务类型数据</li>
-                        <li>添加，编辑或删除操作后需要点击“提交”按钮才生效</li>
+                        <li>添加，编辑操作后需要点击“提交”按钮才生效</li>
                     </ul>
                     <div class="chose-area">
                         选择任务类型
@@ -42,7 +42,7 @@
                         <tr>
                             <th>名称</th>                            
                             <th>排序</th>
-                            <!-- <th>图标</th> -->
+                            <th>图标</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -58,13 +58,17 @@
                                 <td class="text-left">
                                     <input type="text" name="sort[{{ $v['id'] }}]" value="{{ $v['sort'] }}" area_id="{{ $v['id'] }}" onchange="area_change($(this))" />
                                 </td>
-                                {{-- <td class="text-left">
+                                <td class="text-left">
+                                	@if($v['pic'])
                                     <img src="{!! url($v['pic']) !!}" width="30px" height="30px">
-                                </td> --}}
+                                    @else
+                                    -
+                                    @endif
+                                </td>
                                 <td width="40%">
-                                    <!-- <a class="btn btn-xs btn-info" href="/manage/industryInfo/{{ $v['id'] }}">
+                                    <a class="btn btn-xs btn-info" href="/manage/taskTypeInfo/{{ $v['id'] }}">
                                         <i class="fa fa-edit bigger-120"></i>编辑
-                                    </a> -->
+                                    </a>
                                     <span class="btn  btn-xs btn-danger" area_id="{{ $v['id'] }}"  onclick="area_delete($(this))" ><i class="ace-icon fa fa-trash-o bigger-120"></i>删除</span>
                                     <!-- @if($v['pid']==0)
                                     <a class="btn  btn-xs btn-info" href="/manage/tasktemplate/{{ $v['id'] }}" ><i class="fa fa-edit bigger-120"></i>编辑实例模板</a>
@@ -108,6 +112,7 @@
                             "<input type=\"text\" name=\"sort[" + data.province[i].id + "]\"  value=\"" + data.province[i].sort + "\" area_id=\"" + data.province[i].id + "\" onchange=\"area_change($(this))\">" +
                             "<\/td>" +
                             //"<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
+                            "<td class=\"text-left\">-<\/td>"+
                             "<td width=\"40%\">" +
                             //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
                             "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span> <\/td><\/tr>";
@@ -119,6 +124,7 @@
                             "<input type=\"text\" name=\"sort[" + data.province[i].id + "]\"  value=\"" + data.province[i].sort + "\" area_id=\"" + data.province[i].id + "\" onchange=\"area_change($(this))\">" +
                             "<\/td>" +
                             //"<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
+                            "<td class=\"text-left\">-<\/td>"+
                             "<td width=\"40%\">" +
                             //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
                             "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span><\/td><\/tr>";
@@ -153,6 +159,7 @@
                         "<\/td><td class=\"text-left\"><input type=\"text\" name=\"sort["+data[i].id+"]\" value=\""+ data[i].sort+"\" area_id=\""+data[i].id+"\" onchange=\"area_change($(this))\">" +
                         "<\/td>" +
                         //"<td class=\"text-left\"><img src=\""+ data[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
+                        "<td class=\"text-left\">-<\/td>"+
                         "<td width=\"40%\">" +
                         //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
                         "<span class=\"btn  btn-xs btn-danger\" area_id=\""+data[i].id+"\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span><\/td><\/tr>";

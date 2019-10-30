@@ -16,6 +16,8 @@ Route::group(['prefix' => 'jz'], function () {
     Route::get('notice', 'Auth\jzAuthController@getNotice');
     Route::get('partner', 'Auth\jzAuthController@getPartner');
     Route::get('taskContract', 'Auth\jzAuthController@getTaskContract');
+    Route::get('serviceContract', 'Auth\jzAuthController@getServiceContract');
+    Route::get('dispatchContract', 'Auth\jzAuthController@getDispatchContract');
     
     //首页面路由
     Route::get('home', 'jzHomeController@home');

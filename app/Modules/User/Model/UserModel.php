@@ -89,7 +89,7 @@ class UserModel extends Model implements AuthenticatableContract,
         $date = date('Y-m-d H:i:s');
         $now = time();
         $userArr = array(
-            'name' => $data['username'],
+            'name' => isset($data['username'])?$data['username']:(isset($data['mobile'])?$data['mobile']:''),
             'mobile' => $data['mobile'],
             'password' => UserModel::encryptPassword($data['password'], $salt),
             'alternate_password' => UserModel::encryptPassword($data['password'], $salt),
@@ -205,22 +205,22 @@ class UserModel extends Model implements AuthenticatableContract,
             $status = DB::transaction(function () use ($data){
                 if(isset($data['password'])&&!empty($data['password'])){
                     UserModel::where('id', $data['uid'])->update([
-                        'mobile' => $data['mobile'],
+                        //'mobile' => $data['mobile'],
                         'password' => $data['password'],
                         'salt' => $data['salt'],
                         'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
-                }else{
+                }/* else{
                     UserModel::where('id', $data['uid'])->update([
                         'mobile' => $data['mobile'],                       
                         'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
-                }
+                } */
                 
                 UserDetailModel::where('uid', $data['uid'])->update([
                     'realname' => $data['realname'],
                     'qq' => isset($data['qq'])?$data['qq']:'',
-                    'mobile' => $data['mobile'],
+                    'mobile' => isset($data['mobile'])?$data['mobile']:'',
                     'card_number' => $data['card_number'],
                     'province' => $data['province'],
                     'city' => $data['city'],
@@ -422,7 +422,7 @@ class UserModel extends Model implements AuthenticatableContract,
                         'bank' => $data['bank'],
                         'account' => $data['account'],
                         'owner' => $data['owner'],
-                        'company_email' => $data['company_email'],
+                        'company_email' => isset($data['company_email'])?$data['company_email']:'',
                         'business_license' => $data['business_license'],
                         'created_at' => date('Y-m-d H:i:s', time()),
                         'updated_at' => date('Y-m-d H:i:s', time()),
@@ -481,12 +481,12 @@ class UserModel extends Model implements AuthenticatableContract,
                     'salt' => $data['salt'],
                     'updated_at' => date('Y-m-d H:i:s', time()),
                 ]);
-            }else{
+            }/* else{
                 UserModel::where('id', $data['uid'])->update([
                 'mobile' => $data['mobile'],
                 'updated_at' => date('Y-m-d H:i:s', time()),
                 ]);
-            }
+            } */
             
             /* UserDetailModel::where('uid', $data['uid'])->update([
                 'realname' => $data['realname'],

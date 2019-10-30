@@ -124,11 +124,18 @@
 	<div class="g-backrealdetails clearfix bor-border">
 		<input type="hidden" name="uid" value="{!! $info['id'] !!}">
 		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
+			<p class="col-sm-4">
+				<input type="number" name="mobile" id="form-field-1" disabled="disabled"  class="col-xs-10 col-sm-5" value="{!! $info['mobile'] !!}" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>		
+			</p>
+		</div>
+		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</p>
 			<p class="col-sm-4">
 				<input type="text" disabled="disabled" id="form-field-1" class="col-xs-10 col-sm-5" value="{!! $info['name'] !!}">				
 			</p>
-		</div>
+		</div> -->
 		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册邮箱：</p>
 			<p class="col-sm-4">
@@ -139,31 +146,25 @@
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 真实姓名：</p>
 			<p class="col-sm-4">
-				<input type="text" name="realname" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! $info['realname'] !!}" datatype="*2-5" nullmsg="请输入真实姓名" errormsg="用户名长度为2到5个中文">
+				<input type="text" name="realname" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('realname')) value="{!! old('realname') !!}" @else value="{!! $info['realname'] !!}" @endif datatype="*2-5" nullmsg="请输入真实姓名" errormsg="用户名长度为2到5个中文">
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证号码：</p>
 			<p class="col-sm-4">
-				<input type="number" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! $info['card_number'] !!}" datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符">
+				<input type="number" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('card_number')) value="{!! old('card_number') !!}" @else value="{!! $info['card_number'] !!}" @endif datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符">
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+						@if($errors->first('card_number'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_number') !!}</p>
+            			@endif	
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
-			<p class="col-sm-4">
-				<input type="number" name="mobile" id="form-field-1"   class="col-xs-10 col-sm-5" value="{!! $info['mobile'] !!}" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>	
-						@if($errors->first('mobile'))
-            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('mobile') !!}</p>
-            			@endif					
-			</p>
-		</div>
+		
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</p>
 			<p class="col-sm-4">
-				<input type="text" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! $info['account'] !!}">
+				<input type="text" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('account')) value="{!! old('account') !!}" @else value="{!! $info['account'] !!}" @endif>
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
@@ -233,7 +234,7 @@
                     <img alt="身份证正面" src="{!! url($info['card_front_side']) !!}" onclick="bigimg(this)">
                 </div>
                 <div class="col-sm-4">
-                    <input type="file" name="card_front_side" id="card_front_side">
+                    <input type="file" name="card_front_side" id="card_front_side" onchange="imgfile(this)">
                 </div>
                 	@if($errors->first('card_front_side'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_front_side') !!}</p>
@@ -246,7 +247,7 @@
                     <img alt="身份证反面" src="{!! url($info['card_back_dside']) !!}"  onclick="bigimg(this)">
                 </div>
                 <div class="col-sm-4">
-                    <input type="file" name="card_back_dside" id="card_back_dside">
+                    <input type="file" name="card_back_dside" id="card_back_dside" onchange="imgfile(this)">
                 </div>
                 		@if($errors->first('card_back_dside'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_back_dside') !!}</p>
@@ -386,6 +387,14 @@
     		}
     		return true;
     	}
+        function imgfile(val){
+			var reads = new FileReader();
+            var f = $(val)[0].files[0];            
+            reads.readAsDataURL(f);
+            reads.onload = function(e) {
+            	$(val).parent().parent().find('img')[0].src = this.result;     
+            };
+	    }
 		function bigimg(val){
             $('.bigimg > img')[0].src = val.src
             $('.bigimg').css('display','flex')

@@ -11,7 +11,7 @@ class TaskTypeModel extends Model
     
     protected $table = 'task_type';
     public  $timestamps = false;  
-    public $fillable = ['id','name','status','desc','created_at','alias','pid', 'path','sort'];
+    public $fillable = ['id','name','status','desc','created_at','alias','pid', 'path','sort','pic'];
     
     public function parentTask()
     {
@@ -166,7 +166,7 @@ class TaskTypeModel extends Model
     }
     
     static function findAllCache()
-    {
+    {   
         if(Cache::has('task_type')){
             $taskType = Cache::get('task_type');
         }else{

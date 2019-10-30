@@ -120,6 +120,9 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::get('/taskTypeDelete/{id}','TaskTypeController@taskTypeDelete')->name('taskTypeDelete');//行业管理删除
     Route::get('/taskType/ajaxSecond','TaskTypeController@ajaxSecond')->name('ajaxSecond');//行业管理筛选（城市）
     Route::get('/taskType/ajaxThird','TaskTypeController@ajaxThird')->name('ajaxThird');//行业管理筛选（地区）
+    Route::get('/taskTypeInfo/{id}','TaskTypeController@taskTypeInfo')->name('taskTypeInfo');//编辑行业分类图标
+    Route::post('/taskTypeInfo','TaskTypeController@postTaskTypeInfo')->name('posttaskTypeInfo');//编辑行业分类图标
+    
     
     Route::get('/userFinance', 'FinanceController@userFinance')->name('userFinanceCreate');//用户流水记录
     Route::get('/cashoutList', 'FinanceController@cashoutList')->name('cashoutList');//提现审核列表
@@ -222,6 +225,8 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('checkUserName', 'UserController@checkUserName')->name('checkUserName');//检测用户名是否存在
     Route::post('checkEmail', 'UserController@checkEmail')->name('checkEmail');//检测邮箱
     Route::post('checkMobile', 'UserController@checkMobile')->name('checkMobile');//检测手机
+    Route::post('checkIDCard', 'UserController@checkIDCard')->name('checkIDCard');//检测身份证
+    Route::post('checkTaxCode', 'UserController@checkTaxCode')->name('checkTaxCode');//检测纳税人识别号
     Route::get('/userEdit/{uid}', 'UserController@getUserEdit')->name('userUpdatePage');//用户详情
     Route::post('/userEdit', 'UserController@postUserEdit')->name('userUpdate');//用户详情更新
     Route::get('/managerList', 'UserController@getManagerList')->name('managerList');//系统用户列表

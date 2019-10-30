@@ -62,13 +62,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($list as $v)
+                @foreach($list as $k => $v)
                 <tr>
                     <td class="center">
                         <label>
                             <input type="checkbox" class="ace" name="chk"/>
                             <span class="lbl"></span>
-                            {{ $v['id'] }}
+                            @if(intval($listArr['current_page'])>1)
+                            	{{ $listArr['per_page']*$listArr['current_page']+($k + 1)  }}
+                            @else
+                            	{{ $k + 1 }}                            
+                            @endif
                         </label>
                     </td>
 

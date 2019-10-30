@@ -79,8 +79,8 @@ class SystemLog
                 if($path == 'managerCreate'){
                     $name = $params['username'];
                 }
-                else if($path == 'userCreate'){
-                    $name = $params['name'];
+                else if($path == 'userCreate'||$path='enterpriseCreate'){
+                    $name = isset($params['name'])?$params['name']:(isset($params['mobile'])?$params['mobile']:'');
                 }
                 $log_content = $common_content .'创建用户'.$name;
                 break;

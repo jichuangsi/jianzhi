@@ -13,8 +13,8 @@
                     <div class="list_box" onclick="details({{ $v['task']['id'] }})">
                         <div class="list_box_top">
                             <div class="img">
-                                @if(isset($v['task']['avatar']))
-                                    <img src=" {!! url($v['task']['avatar']) !!}  " alt="">
+                                @if(isset($v['task']['type_icon']))
+                                    <img src=" {!! url($v['task']['type_icon']) !!}  " alt="">
                                 @else
                                 	<img src="/themes/jianzhi/assets/images/xxjs.png" alt="">
                                 @endif

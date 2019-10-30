@@ -1,0 +1,1 @@
+alter table `kppw_task_type` add `pic` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '分类图标';

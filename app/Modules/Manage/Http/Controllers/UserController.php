@@ -335,7 +335,7 @@ class UserController extends ManageController
         
         $salt = \CommonClass::random(4);
         $data = [
-            'name' => $request->get('name'),
+            'name' => $request->get('mobile'),
             'mobile' => $request->get('mobile'),
             'tax_code' => $request->get('tax_code'),
             'password' => UserModel::encryptPassword($request->get('password'), $salt),
@@ -420,7 +420,7 @@ class UserController extends ManageController
         
         $salt = \CommonClass::random(4);
         $data = [
-            'name' => $request->get('name'),
+            'name' => $request->get('mobile'),
             'realname' => $request->get('realname'),
             'card_number' => $request->get('card_number'),
             'email_status' => 2,
@@ -474,13 +474,57 @@ class UserController extends ManageController
      * @param Request $request
      * @return string
      */
-    public function checkUserName2($username){
+    private function checkUserName2($username){
         $status = UserModel::where('name', $username)->first();
         if (empty($status)){
             $status = true;
             $info = '';
         } else {
-            $info = '用户名不可用';
+            $info = '该手机已注册';
+            $status = false;
+        }
+        $data = array(
+            'info' => $info,
+            'status' => $status
+        );
+        return $data;
+    }
+    
+    /**
+     * 检查身份证号
+     *
+     * @param Request $request
+     * @return string
+     */
+    private function checkIDCard2($cardNumber){
+        $status = RealnameAuthModel::where('card_number', $cardNumber)->first();
+        if (empty($status)){
+            $status = true;
+            $info = '';
+        } else {
+            $info = '该身份证号已注册';
+            $status = false;
+        }
+        $data = array(
+            'info' => $info,
+            'status' => $status
+        );
+        return $data;
+    }
+    
+    /**
+     * 检查纳税人识别号
+     *
+     * @param Request $request
+     * @return string
+     */
+    private function checkTaxCode2($taxCode){
+        $status = EnterpriseAuthModel::where('tax_code', $taxCode)->first();
+        if (empty($status)){
+            $status = true;
+            $info = '';
+        } else {
+            $info = '该纳税人识别号已登记';
             $status = false;
         }
         $data = array(
@@ -537,6 +581,54 @@ class UserController extends ManageController
         );
         return json_encode($data);
     }
+    
+    /**
+     * 检测身份证是否登记
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function checkIDCard(Request $request){
+        $card_number = $request->get('param');
+        
+        $status = RealnameAuthModel::where('card_number', $card_number)->first();
+        if (empty($status)){
+            $status = 'y';
+            $info = '';
+        } else {
+            $info = '身份证已登记';
+            $status = 'n';
+        }
+        $data = array(
+            'info' => $info,
+            'status' => $status
+        );
+        return json_encode($data);
+    }
+    
+    /**
+     * 检测纳税人识别号是否登记
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function checkTaxCode(Request $request){
+        $tax_code = $request->get('param');
+        
+        $status = EnterpriseAuthModel::where('tax_code', $tax_code)->first();
+        if (empty($status)){
+            $status = 'y';
+            $info = '';
+        } else {
+            $info = '纳税人识别号已登记';
+            $status = 'n';
+        }
+        $data = array(
+            'info' => $info,
+            'status' => $status
+        );
+        return json_encode($data);
+    }
 
     //个人用户导入视图
     public function getUserImport(){
@@ -562,12 +654,28 @@ class UserController extends ManageController
         //dump($data);
         $users = array();
         foreach($data as $k => &$v){
-            if($k === 0 || empty($v[0]) || empty($v[2])) continue;
+            if($k === 0 || empty($v[0])) continue;
             
             $v['num'] = $k;
+            
+            if(empty($v[2])||empty($v[1])){                
+                $v['msg'] = '手机号/身份证号码为必填项';
+                array_push($users, $v);
+                continue;
+            }
+            
             $v[2] = strval($v[2]);
             
             $usable = $this->checkUserName2($v[2]);
+            
+            if(!$usable['status']){
+                $v['msg'] = $usable['info'];
+                array_push($users, $v);
+                continue;
+            }
+            
+            unset($usable);
+            $usable = $this->checkIDCard2($v[1]);
             
             if(!$usable['status']){
                 $v['msg'] = $usable['info'];
@@ -659,12 +767,28 @@ class UserController extends ManageController
         $enterprises = array();
         
         foreach($data as $k => &$v){
-            if($k === 0 || empty($v[0]) || empty($v[7])) continue;
+            if($k === 0 || empty($v[0])) continue;
             
             $v['num'] = $k;
+            
+            if(empty($v[7])||empty($v[2])){
+                $v['msg'] = '纳税人识别号/联系人电话为必填项';
+                array_push($enterprises, $v);
+                continue;
+            }
+                        
             $v[7] = strval($v[7]);
             
             $usable = $this->checkUserName2($v[7]);
+            
+            if(!$usable['status']){
+                $v['msg'] = $usable['info'];
+                array_push($enterprises, $v);
+                continue;
+            }
+            
+            unset($usable);            
+            $usable = $this->checkTaxCode2($v[2]);
             
             if(!$usable['status']){
                 $v['msg'] = $usable['info'];
@@ -806,10 +930,10 @@ class UserController extends ManageController
             }
         }
         
-        $cnt = UserModel::where('id', '<>', $request->get('uid'))->where('mobile', $request->get('mobile'))->count();
+        $cnt = EnterpriseAuthModel::where('uid', '<>', $request->get('uid'))->where('tax_code', $request->get('tax_code'))->count();
         
         if($cnt>0){
-            $error['mobile'] = '手机号已注册！';
+            $error['tax_code'] = '该纳税人识别号已登记！';
         }
         
         if (!empty($error)) {
@@ -818,7 +942,7 @@ class UserController extends ManageController
         
         $data = [
             'uid' => $request->get('uid'),
-            'mobile' => $request->get('mobile'),
+            //'mobile' => $request->get('mobile'),
             'tax_code' => $request->get('tax_code'),
             'company_name' => $request->get('company_name'),
             'bank' => $request->get('bank'),
@@ -954,10 +1078,10 @@ class UserController extends ManageController
             }
         }
         
-        $cnt = UserModel::where('id', '<>', $request->get('uid'))->where('mobile', $request->get('mobile'))->count();
+        $cnt = RealnameAuthModel::where('uid', '<>', $request->get('uid'))->where('card_number', $request->get('card_number'))->count();
         
         if($cnt>0){
-            $error['mobile'] = '手机号已注册！';
+            $error['card_number'] = '该身份证号已登记！';
         }
         
         if (!empty($error)) {
@@ -967,7 +1091,7 @@ class UserController extends ManageController
         $data = [
             'uid' => $request->get('uid'),
             'realname' => $request->get('realname'),
-            'mobile' => $request->get('mobile'),
+            //'mobile' => $request->get('mobile'),
             'card_number' => $request->get('card_number'),
             'account' => $request->get('account'),
             //'email' => $request->get('email'),
@@ -1007,7 +1131,7 @@ class UserController extends ManageController
    	public function getManagerList(Request $request)
    	{
         $merge = $request->all();
-        $list = ManagerModel::select('manager.id','manager.username','roles.display_name','manager.status','manager.email','manager.telephone','manager.QQ')->leftJoin('role_user','manager.id','=','role_user.user_id')
+        $list = ManagerModel::select('manager.id','manager.username','manager.realname','roles.display_name','manager.status','manager.email','manager.telephone','manager.QQ')->leftJoin('role_user','manager.id','=','role_user.user_id')
            ->leftJoin('roles','roles.id','=','role_user.role_id');
         $roles = Role::get();
         if($request->get('uid')){
@@ -1464,6 +1588,8 @@ class UserController extends ManageController
 
         if (is_null($status))
             return redirect()->to('manage/managerList')->with(['message' => '操作成功']);
+        else
+            return redirect()->to('manage/managerList')->with(['message' => '操作失败']);
     }
     /**
      * 添加用户视图
@@ -1486,7 +1612,7 @@ class UserController extends ManageController
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postManagerAdd(Request $request)
-    {
+    {   
         $status = DB::transaction(function () use ($request) {
             $salt = \CommonClass::random(4);
             $data = [
@@ -1508,6 +1634,8 @@ class UserController extends ManageController
         });
         if (is_null($status))
             return redirect('manage/managerList')->with(['message' => '操作成功']);
+        else
+            return back()->withInput()->with(['message' => '操作失败']);
     }
 
     /**
@@ -1518,7 +1646,7 @@ class UserController extends ManageController
      */
    	public function managerDetail($id)
    	{
-        $info = ManagerModel::select('manager.id','manager.username','manager.status','manager.email','manager.telephone','manager.QQ','manager.password')->leftJoin('role_user','manager.id','=','role_user.user_id')
+   	    $info = ManagerModel::select('manager.id','manager.username','manager.realname','manager.status','manager.email','manager.telephone','manager.QQ','manager.password')->leftJoin('role_user','manager.id','=','role_user.user_id')
             ->leftJoin('roles','roles.id','=','role_user.role_id')->where('manager.id',$id)->first();
         $roles = Role::get();
         $data = array(
@@ -1539,7 +1667,29 @@ class UserController extends ManageController
     {
         $status = DB::transaction(function () use ($request) {
             $id = $request->get('uid');
-            if(!ManagerModel::where('id',$id)->where('password',$request->get('password'))->first()) {
+            /* if(!ManagerModel::where('id',$id)->where('password',$request->get('password'))->first()) {
+                $salt = \CommonClass::random(4);
+                $data = array(
+                    'realname' => $request->get('realname'),
+                    'telephone' => $request->get('telephone'),
+                    'QQ' => $request->get('QQ'),
+                    'password' => ManagerModel::encryptPassword($request->get('password'), $salt),
+                    'birth' => $request->get('birth'),
+                    'salt' => $salt,
+                    'created_at' => date('Y-m-d H:i:s', time()),
+                    'updated_at' => date('Y-m-d H:i:s', time())
+                );
+            }else{
+                $data = array(
+                    'realname' => $request->get('realname'),
+                    'telephone' => $request->get('telephone'),
+                    'QQ' => $request->get('QQ'),
+                    'birth' => $request->get('birth'),
+                    'created_at' => date('Y-m-d H:i:s', time()),
+                    'updated_at' => date('Y-m-d H:i:s', time())
+                );
+            } */
+            if(!empty($request->get('password'))) {
                 $salt = \CommonClass::random(4);
                 $data = array(
                     'realname' => $request->get('realname'),
@@ -1569,6 +1719,8 @@ class UserController extends ManageController
         });
        if (is_null($status))
             return redirect('manage/managerList')->with(['message' => '操作成功']);
+       else 
+           return back()->withInput()->with(['message' => '操作失败']);
     }
 
 

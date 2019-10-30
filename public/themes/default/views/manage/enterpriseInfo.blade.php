@@ -26,12 +26,12 @@
 
 	<div class="g-backrealdetails clearfix bor-border">
 		<input type="hidden" name="uid" value="{!! $info['id'] !!}">
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</p>
 			<p class="col-sm-4">
 				{!! $info['name'] !!}				
 			</p>
-		</div>
+		</div> -->
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
 			<p class="col-sm-4">

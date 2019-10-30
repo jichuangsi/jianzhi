@@ -256,7 +256,7 @@
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"></label>
                 <div class="col-sm-3 text-center">
                     <button class="btn btn-primary btn-sm">提交</button>
-                    <div class="btn btn-primary btn-sm" style="margin-left: 50px" onclick="window.location.href = '{!! url('manage/userList') !!}'">返回</div>
+                    <div class="btn btn-primary btn-sm" style="margin-left: 50px" onclick="window.location.href = '{!! url('manage/taskList') !!}'">返回</div>
                 </div>
             </div>
         </form>

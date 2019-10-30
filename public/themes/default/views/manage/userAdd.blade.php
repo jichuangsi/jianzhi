@@ -94,6 +94,30 @@
             top: 0px;
             border-color:transparent transparent transparent #f3f3f3;
         }
+        .bigimg {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            z-index: 9999;
+        }
+        .bigimg img {
+            width: 60%;
+            /* height: 80%;
+            transform: scale(1.5); */
+            /* 放大倍数 */
+        }        
+        .zs_img img {
+        	width: 60%;
+        	/* height: 10rem; */
+        	margin-right: 0.2rem;
+        }
     </style>
 <div class="well">
     <h4 >新增个人用户资料</h4>
@@ -103,13 +127,13 @@
 
         <form class="form-horizontal registerform" role="form" action="{!! url('manage/userAdd') !!}" method="post" enctype="multipart/form-data" onsubmit="return validate()">
             {!! csrf_field() !!}
-            <div class="form-group basic-form-bottom">
+            <!-- <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</label>
                 <div class="col-sm-4">
                     <input type="text" name="name" id="form-field-1" class="col-xs-10 col-sm-5"  ajaxurl="{!! url('manage/checkUserName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
-            </div>            
+            </div>   -->          
             <!-- <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册邮箱：</label>
                 <div class="col-sm-4">
@@ -120,28 +144,28 @@
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 真实姓名：</label>
                 <div class="col-sm-4">
-                    <input type="text" name="realname" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*2-5" nullmsg="请输入真实姓名" errormsg="用户名长度为2到5个中文">
+                    <input type="text" name="realname" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*2-5" nullmsg="请输入真实姓名" errormsg="名字长度为2到5个中文" value="{!! old('realname') !!}">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证号码：</label>
                 <div class="col-sm-4">
-                    <input type="number" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符">
+                    <input type="number" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkIDCard') !!}" datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符"  value="{!! old('card_number') !!}">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 手机号码：</label>
                 <div class="col-sm-4">
-                    <input type="number" name="mobile" id="form-field-1"   class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkMobile') !!}"  datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字">
+                    <input type="number" name="mobile" id="form-field-1"   class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkMobile') !!}"  datatype="m" nullmsg="请输入手机号码" errormsg="手机号码输入有误" value="{!! old('mobile') !!}">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</label>
                 <div class="col-sm-4">
-                    <input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" >
+                    <input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! old('account') !!}">
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
@@ -191,18 +215,26 @@
             
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证正面：</label>
-                <div class="col-sm-4">
-                    <input type="file" name="card_front_side" id="card_front_side" datatype="*">
+                <div class="col-sm-4 zs_img">
+                	<img alt="身份证正面"  id="img" src="/themes/jianzhi/assets/images/fm.jpg"  onclick="bigimg(this)">
+                    <input type="file" name="card_front_side" id="card_front_side" datatype="*"  onchange="imgfile(this)">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
+                	@if($errors->first('card_front_side'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_front_side') !!}</p>
+        			@endif
             </div>
             
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证反面：</label>
-                <div class="col-sm-4">
-                    <input type="file" name="card_back_dside" id="card_back_dside" datatype="*">
+                <div class="col-sm-4 zs_img">
+                	<img alt="身份证反面"  id="img" src="/themes/jianzhi/assets/images/fm.jpg"  onclick="bigimg(this)">
+                    <input type="file" name="card_back_dside" id="card_back_dside" datatype="*" onchange="imgfile(this)">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
+                		@if($errors->first('card_back_dside'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_back_dside') !!}</p>
+            			@endif
             </div>
             
             <div class="jnbox">
@@ -247,7 +279,10 @@
             </div>
         </form>
     </div>
-</div>
+</div>	
+	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+        <img src="" alt="">
+    </div>
 	<script>
 		$(function(){
 			var skills = $(".jn_box").children();
@@ -295,6 +330,18 @@
     		}
     		return true;
     	}
+        function imgfile(val){
+			var reads = new FileReader();
+            var f = $(val)[0].files[0];            
+            reads.readAsDataURL(f);
+            reads.onload = function(e) {
+            	$(val).parent().find('img')[0].src = this.result;     
+            };
+	    }
+		function bigimg(val){
+	        $('.bigimg > img')[0].src = val.src
+	        $('.bigimg').css('display','flex')
+	    }
     </script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('back-stage-css', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}

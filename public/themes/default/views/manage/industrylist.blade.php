@@ -5,7 +5,7 @@
             行业配置
         </h1>
     </div> <!--  /.page-header -->--}}
-    <h3 class="header smaller lighter blue mg-bottom20 mg-top12">技能配置</h3>
+    <h3 class="header smaller lighter blue mg-bottom20 mg-top12">技能标签库</h3>
     <form action="{{ URL('manage/industryCreate') }}" method="post" id="form-data">
         {{ csrf_field() }}
         <input type="hidden" name="change_ids" id="area-change" value="" />
@@ -18,7 +18,7 @@
                     </div>
                     <ul >
                         <li>您可以自己编辑技能数据</li>
-                        <li>添加，编辑或删除操作后需要点击“提交”按钮才生效</li>
+                        <li>添加，编辑操作后需要点击“提交”按钮才生效</li>
                     </ul>
                     <div class="chose-area">
                         选择技能

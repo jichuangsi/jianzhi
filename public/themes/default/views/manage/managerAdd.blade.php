@@ -1,5 +1,5 @@
 
-<h3 class="header smaller lighter blue mg-top12 mg-bottom20">添加系统用户资料</h3>
+<h3 class="header smaller lighter blue mg-top12 mg-bottom20">添加系统账号</h3>
 
 
 <form class="form-horizontal clearfix registerform" role="form" action="managerAdd" method="post">
@@ -8,23 +8,23 @@
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</p>
 			<p class="col-sm-4">
-				<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="username" ajaxurl="{!! url('manage/checkManageName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
+				<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="username" ajaxurl="{!! url('manage/checkManageName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符" value="{!! old('username') !!}">
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 真实姓名：</p>
 			<p class="col-sm-4">
-				<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="realname">
+				<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="realname" value="{!! old('realname') !!}">
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 手机号码：</p>
 			<p class="col-sm-4">
-				<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="telephone">
+				<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="telephone" value="{!! old('telephone') !!}">
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> QQ号码：</p>
 			<p class="col-sm-4">
 				<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="QQ">
@@ -47,12 +47,12 @@
 					</span>
 				</p>
 			</div>
-		</div>
+		</div> -->
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1" > 密码：</p>
 			<p class="col-sm-5">
 				<input type="password" id="form-field-1"  class="col-xs-10 col-sm-5" name="password" datatype="*6-16">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i>（提示：更改此密码不会修改用户的支付密码）</span>
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i>（提示：此为用户初始密码）</span>
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
@@ -87,15 +87,16 @@
 					<div class="col-md-1 text-right"></div>
 					<div class="col-md-10">
 						<button class="btn btn-primary btn-sm" type="submit">提交</button>
+						<div class="btn btn-primary btn-sm" onclick="window.location.href = '{!! url('manage/managerList') !!}'">返回</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="space col-xs-12"></div>
-		<div class="col-xs-12">
+		<!-- <div class="col-xs-12">
 			<div class="col-md-1 text-right"></div>
 			<div class="col-md-10"><a href="">上一项</a>　　<a href="">下一项</a></div>
-		</div>
+		</div> -->
 		<div class="col-xs-12 space">
 
 		</div>

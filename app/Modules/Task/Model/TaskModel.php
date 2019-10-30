@@ -112,7 +112,7 @@ class TaskModel extends Model
     {   
         
         $query = self::select('task.*', 'work.created_at as work_created_at', 'work.status as work_status', 'work.uid as work_uid',
-                                'tt.name as type_name', 'stt.name as sub_type_name', 'us.name as nickname', 'ud.avatar', 'tc.name as cate_name',
+                                'tt.name as type_name','tt.pic as type_icon', 'stt.name as sub_type_name', 'us.name as nickname', 'ud.avatar', 'tc.name as cate_name',
                                 'province.name as province_name','city.name as city_name','area.name as area_name')
                 ->where('task.status', '>', 1)
                 ->where('task.status', '<=', 11)
@@ -260,7 +260,7 @@ class TaskModel extends Model
      */
     static function findBy2($data)
     {
-        $query = self::select('task.*', 'b.name as type_name', 'sb.name as sub_type_name', 'us.name as user_name', 'ud.avatar','province.name as province_name','city.name as city_name','area.name as area_name')
+        $query = self::select('task.*', 'b.name as type_name', 'b.pic as type_icon', 'sb.name as sub_type_name', 'us.name as user_name', 'ud.avatar','province.name as province_name','city.name as city_name','area.name as area_name')
                 ->where('task.status', '>', 2)
                 ->where('task.bounty_status', 1)
                 ->where('task.status', '<=', 9)

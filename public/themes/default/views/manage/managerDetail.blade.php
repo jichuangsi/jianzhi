@@ -1,7 +1,7 @@
 {{--<div class="well">
-	<h4 >编辑系统用户资料</h4>
+	<h4 >编辑系统账号</h4>
 </div>--}}
-<h3 class="header smaller lighter blue mg-top12 mg-bottom20">编辑系统用户资料</h3>
+<h3 class="header smaller lighter blue mg-top12 mg-bottom20">编辑系统账号</h3>
 
 
 <form class="form-horizontal clearfix registerform" role="form" action="{!! url('manage/managerDetail') !!}" method="post">
@@ -16,12 +16,18 @@
 		</p>
 	</div>
 	<div class="bankAuth-bottom clearfix col-xs-12">
-		<p class="col-sm-1 control-label no-padding-left" for="form-field-1" > 手机号码：</p>
+		<p class="col-sm-1 control-label no-padding-left" for="form-field-1" > 真实姓名：</p>
 		<p class="col-sm-4">
-			<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" value="{{ $info['telephone'] }}" name="telephone">
+			<input type="text" id="form-field-1" name="realname" class="col-xs-10 col-sm-5" @if(old('realname')) value="{!! old('realname') !!}" @else value="{!! $info['realname'] !!}" @endif name="telephone">
 		</p>
 	</div>
 	<div class="bankAuth-bottom clearfix col-xs-12">
+		<p class="col-sm-1 control-label no-padding-left" for="form-field-1" > 手机号码：</p>
+		<p class="col-sm-4">
+			<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('telephone')) value="{!! old('telephone') !!}" @else value="{!! $info['telephone'] !!}" @endif name="telephone">
+		</p>
+	</div>
+	<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 		<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> QQ号码：</p>
 		<p class="col-sm-4">
 			<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" value="{{ $info['QQ'] }}" name="QQ">
@@ -44,12 +50,12 @@
 				</span>
 			</p>
 		</div>
-	</div>
+	</div> -->
 	<div class="bankAuth-bottom clearfix col-xs-12">
 		<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密码：</p>
 		<p class="col-sm-4">
-			<input type="password" id="form-field-1"  class="col-xs-10 col-sm-5"  name="password" datatype="*" value="{{ $info['password'] }}">
-			<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			<input type="password" id="form-field-1"  class="col-xs-10 col-sm-5"  name="password">（提示：若填写则重置用户密码）
+			<!-- <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span> -->
 		</p>
 	</div>
 <!-- 	<div class="form-group">
@@ -96,15 +102,16 @@
 					<div class="col-md-1 text-right"></div>
 					<div class="col-md-10">
 						<button class="btn btn-primary btn-sm" type="submit">提交</button>
+						<div class="btn btn-primary btn-sm" onclick="window.location.href = '{!! url('manage/managerList') !!}'">返回</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="space col-xs-12"></div>
-		<div class="col-xs-12">
+		<!-- <div class="col-xs-12">
 			<div class="col-md-1 text-right"></div>
 			<div class="col-md-10"><a href="">上一项</a>　　<a href="">下一项</a></div>
-		</div>
+		</div> -->
 		<div class="col-xs-12 space">
 
 		</div>

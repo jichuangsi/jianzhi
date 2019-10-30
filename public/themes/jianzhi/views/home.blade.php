@@ -265,7 +265,7 @@
 					if(curPageData[i].sub_type_name) tType += '/'+ curPageData[i].sub_type_name;
 				}
 				html += '<div class="list_box" onclick="taskDetail('+curPageData[i].id+')"><div class="list_box_top">';
-				html += '<div class="img"><img src="/'+curPageData[i].avatar+'" alt=""></div>';
+				html += '<div class="img"><img src="/'+curPageData[i].type_icon+'" alt=""></div>';
 				html += '<div class="text_box"><div class="title">'+curPageData[i].title+'</div>';
 				html += '<div class="text">任务类型：'+tType+'</div>';
 				html += '<div class="money">预算：'+curPageData[i].bounty+' 元<span>人数：'+curPageData[i].delivery_count+'/'+curPageData[i].worker_num+'</span></div>';

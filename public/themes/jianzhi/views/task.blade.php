@@ -196,7 +196,7 @@
 				var html = '';
 				html += '<div class="list_box" onclick="taskDetail('+curPageData[i].id+')">';
 				html += '<div class="list_box_title">报名时间：'+wStartDate+' <span>'+tStatus+'</span></div>';
-				html += '<div class="list_box_top"><div class="img"><img src="/'+curPageData[i].avatar+'" alt=""></div>';
+				html += '<div class="list_box_top"><div class="img"><img src="/'+curPageData[i].type_icon+'" alt=""></div>';
 				html += '<div class="text_box"><div class="title">'+curPageData[i].title+'</div><div class="text">任务类型：'+tType+'</div><div class="money">预算：'+curPageData[i].bounty+' 元</div></div></div>';
 				html += '<div class="list_box_bottom"><div>服务时间：'+tDuration+'</div><div>服务地点：'+tDistrict+'</div>';
 				if(wAction) html +='<div class="qxbtn" data-id="'+wActionData+'" onclick="takeWorkAction(event,'+curPageData[i].id+')">'+wAction+'</div>';

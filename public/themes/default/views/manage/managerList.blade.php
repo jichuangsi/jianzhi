@@ -3,7 +3,7 @@
               搜索
         </h3>
     </div><!-- /.page-header -->--}}
-<h3 class="header smaller lighter blue mg-bottom20 mg-top12">系统用户</h3>
+<h3 class="header smaller lighter blue mg-bottom20 mg-top12">账号分配</h3>
 <div class="row">
     <div class="col-xs-12">
         <div class="clearfix  well">
@@ -13,9 +13,9 @@
                     <label for="">用户名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <input type="text" name="username" @if(isset($username))value="{!! $username !!}"@endif/>
                 </div>
-                <div class="form-group search-list">
+                <!-- <div class="form-group search-list">
                     <label for="">QQ　　　　</label><input type="text" name="QQ" @if(isset($QQ))value="{!! $QQ !!}"@endif/>
-                </div>
+                </div> -->
                 <div class="form-group search-list width285">
                     <label>用户状态</label>　
                     <select name="status">
@@ -30,17 +30,17 @@
             </div>
             <div class="space"></div>
             <div class="">
-                <div class="form-group search-list">
+                <!-- <div class="form-group search-list">
                     <label>
                         电子邮箱　
                     </label>
                     <input type="text" name="email" @if(isset($email))value="{!! $email !!}"@endif/>
-                </div>
+                </div> -->
                 <div class="form-group search-list">
                     <label>联系电话　</label><input type="text" name="telephone" @if(isset($telephone))value="{!! $telephone !!}"@endif/>
                 </div>
                 <div class="form-group search-list width285">
-                    <label for="">用户组&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <label for="">角色&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <select name="role_id">
                         <option value="">全部</option>
                         @foreach($roles as $v)
@@ -66,15 +66,16 @@
 
                         <input type="checkbox" class="ace" />
                         <span class="lbl"></span>
-                        UID
+                        编号
                     </label>
                 </th>
-                <th>用户名</th>
-                <th>用户组</th>
+                <th>姓名</th>
+                <th>登陆账号</th>
+                <th>角色</th>
                 <th>用户状态</th>
-                <th>电子邮箱</th>
+                <!-- <th>电子邮箱</th> -->
                 <th>联系电话</th>
-                <th>QQ</th>
+                <!-- <th>QQ</th> -->
                 <th>操作</th>
             </tr>
             </thead>
@@ -90,7 +91,10 @@
                         </label>
                     </td>
                     <td>
-                        <a href="#">{{ $v->username}}</a>
+                        {{ $v->realname}}
+                    </td>
+                    <td>
+                        {{ $v->username}}
                     </td>
                     <td>{{ $v['display_name'] }}</td>
                     <td> @if($v->status == 1)
@@ -100,13 +104,13 @@
                                                 禁用
                         @endif</td>
 
-                    <td>{{ $v->email }}</td>
+                    <!-- <td>{{ $v->email }}</td> -->
                     <td>
                         <span class=>{{ $v->telephone }}</span>
                     </td>
-                    <td>
+                   <!--  <td>
                        {{ $v->QQ }}
-                    </td>
+                    </td> -->
                     <td>
                         <div class="btn-group">
                             <a class="btn btn-xs btn-info" href="managerDetail/{{ $v->id }}">
@@ -137,7 +141,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="dataTables_info" id="sample-table-2_info" role="status" aria-live="polite">
-                        <a href="/manage/managerAdd" target="_blank">添加</a>
+                        <a href="/manage/managerAdd" target="_Self">添加</a>
                         <button class="btn btn-primary btn-sm" id="largeDel">批量删除
 
                         </button>

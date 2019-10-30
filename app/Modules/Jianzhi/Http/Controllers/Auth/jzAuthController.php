@@ -72,13 +72,23 @@ class jzAuthController extends AuthController
         return $this->theme->scope('taskContract', $view)->render();
     }  
     
+    public function getServiceContract(){
+        $view = array();
+        return $this->theme->scope('serviceContract', $view)->render();
+    }      
+    
+    public function getDispatchContract(){
+        $view = array();
+        return $this->theme->scope('dispatchContract', $view)->render();
+    }   
+    
     public function postRegister(RegisterRequest $request){
         
         if ($this->create($request->all())){
             $throttles = $this->isUsingThrottlesLoginsTrait();
-            $user = UserModel::where('mobile', $request->get('mobile'))->orWhere('name', $request->get('username'))->first();            
+            $user = UserModel::where('mobile', $request->get('mobile'))->orWhere('name', $request->get('mobile'))->first();            
             Auth::loginUsingId($user->id);
-            UserModel::where('mobile', $request->get('mobile'))->orWhere('name', $request->get('username'))->update(['last_login_time' => date('Y-m-d H:i:s')]);
+            UserModel::where('mobile', $request->get('mobile'))->orWhere('name', $request->get('mobile'))->update(['last_login_time' => date('Y-m-d H:i:s')]);
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
         return back()->with(['message' => '注册失败']);
