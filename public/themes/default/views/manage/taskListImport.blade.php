@@ -116,7 +116,7 @@
             <div class="text">
                 <div class="btn_box">
                     <button class="dr_btn btn">导入</button>
-                    <div class="fh_btn btn" onclick="window.location.href = '{!! url('manage/tasklist') !!}'">返回</div>
+                    <div class="fh_btn btn" onclick="window.location.href = '{!! url('manage/taskList') !!}'">返回</div>
                 </div>
             </div>
             </form>

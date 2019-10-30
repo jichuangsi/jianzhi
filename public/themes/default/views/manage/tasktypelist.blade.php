@@ -110,11 +110,13 @@
                             "<input type=\"text\" name=\"name[" + data.province[i].id + "]\"  value=\"" + data.province[i].name + "\" area_id=\"" + data.province[i].id + "\" onchange=\"area_change($(this))\">" +
                             "<\/td><td class=\"text-left\">" +
                             "<input type=\"text\" name=\"sort[" + data.province[i].id + "]\"  value=\"" + data.province[i].sort + "\" area_id=\"" + data.province[i].id + "\" onchange=\"area_change($(this))\">" +
-                            "<\/td>" +
-                            //"<td class=\"text-left\"><img src=\""+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>"+
-                            "<td class=\"text-left\">-<\/td>"+
-                            "<td width=\"40%\">" +
-                            //" <a class=\"btn btn-xs btn-info\" href=\"/manage/industryInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
+                            "<\/td>";
+                    if(data.province[i].pic)
+                    	area += "<td class=\"text-left\"><img src=\"/"+ data.province[i].pic +"\" width=\"30px\" height=\"30px\"><\/td>";
+                    else
+                    	area += "<td class=\"text-left\">-<\/td>";
+                   area += "<td width=\"40%\">" +
+                            " <a class=\"btn btn-xs btn-info\" href=\"/manage/taskTypeInfo/" + data.province[i].id +"\"><i class=\"fa fa-edit bigger-120\"></i>编辑</a>&nbsp;&nbsp;"+
                             "<span class=\"btn  btn-xs btn-danger\" area_id=\"" + data.province[i].id + "\" onclick=\"area_delete($(this))\"><i class=\"ace-icon fa fa-trash-o bigger-120\"></i>删除<\/span> <\/td><\/tr>";
                             //"<a  class='btn  btn-sm btn-primary' href='/manage/tasktemplate/"+data.province[i].id+"'>编辑实例模板</a><\/td><\/tr>";
                 }else{
