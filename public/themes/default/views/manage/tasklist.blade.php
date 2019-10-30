@@ -51,7 +51,8 @@
                 <thead>
                 <tr>
                     <th class="center">
-                        
+                        <input type="checkbox" class="ace"/>
+                        <span class="lbl"></span>
                     </th>
                     <th>编号</th>
                     <!-- <th>用户名</th> -->
@@ -144,13 +145,17 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="dataTables_info" id="sample-table-2_info" role="status" aria-live="polite">
-                	<label class="position-relative mg-right10">
+                	<!--<label class="position-relative mg-right10">
                         <input type="checkbox" class="ace" />
                         <span class="lbl"> 全选</span>
-                    </label>
+                    </label>-->
                     <button type="submit" class="btn btn-primary btn-sm">批量审核</button>
                     <button type="button" onclick="refuse()" class="btn btn-primary btn-sm">批量拒绝</button>
+                    <button type="button" onclick="refdel()" class="btn btn-primary btn-sm">批量删除</button>
                     <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/manage/taskAdd'">添加</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/themes/default/assets/template_task.xlsx'"  >模板下载</button>
+                    <button type="button"  onclick="window.location.href='/manage/taskListImport'" class="btn btn-primary btn-sm" >批量导入</button>
+                    <!--<button type="button"  onclick="fileipt()" class="btn btn-primary btn-sm" >批量导入</button>-->
                 </div>
             </div>
             <div class="space-10 col-xs-12"></div>
@@ -162,11 +167,29 @@
         </div>
         </form>
     </div>
+    <form id="exceform" action="/manage/taskExcel" method="post" enctype="multipart/form-data">
+    	<input type="hidden" name="_token" value="{{ csrf_token() }}" />
+    	<input type="file" id="exce" name="tasklistexcel" style="display: none;" accept="xls" onchange="ss()" />
+    </form>
 </div><!-- /.row -->
+
 <script>
+	
 	function refuse(){
 		$("#rms").append('<input type="hidden" name="action" value="deny"/>');
 		$("#rms").submit();
+	}
+	function refdel(){
+		$("#rms").append('<input type="hidden" name="action" value="del"/>');
+		$("#rms").submit();
+	}
+	function fileipt(){
+		$('#exce').click();
+	}
+	function ss(){
+		$("#exceform").submit();
+		console.log(document.getElementById("exce").files[0]);
+		console.log(11111);
 	}
 </script>
 
@@ -176,3 +199,4 @@
 {!! Theme::asset()->container('specific-css')->usePath()->add('datepicker-css', 'plugins/ace/css/datepicker.css') !!}
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userfinance-js', 'js/userfinance.js') !!}
+{!! Theme::asset()->container('custom-js')->usePath()->add('checked-js', 'js/checkedAll.js') !!}

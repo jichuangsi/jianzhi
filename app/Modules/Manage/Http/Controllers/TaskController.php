@@ -15,6 +15,7 @@ use App\Modules\Task\Model\TaskTypeModel;
 use App\Modules\Task\Model\WorkCommentModel;
 use App\Modules\Task\Model\WorkModel;
 use App\Modules\User\Model\MessageReceiveModel;
+use App\Modules\User\Model\EnterpriseAuthModel;
 use App\Modules\User\Model\UserDetailModel;
 use App\Modules\User\Model\UserModel;
 use App\Modules\User\Model\AttachmentModel;
@@ -51,7 +52,7 @@ class TaskController extends ManageController
             $city = DistrictModel::findTree($province[0]['id']);
             //查询三级
             $area = DistrictModel::findTree($city[0]['id']);
-            $qiye = UserModel::getqiye();
+            $qiye = EnterpriseAuthModel::getqiye();
             $data = array(
                 'taskType' => $taskType,
                 'taskCate' => $taskCate,
@@ -63,7 +64,25 @@ class TaskController extends ManageController
             
         return $this->theme->scope("manage.taskAdd",$data)->render();
     }
-    
+    /**
+     * ajax获取任务子分类的数据
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ajaxSubTaskType(Request $request)
+    {
+        $id = intval($request->get('id'));
+        if(is_null($id)){
+            return response()->json(['errMsg'=>'参数错误！']);
+        }
+        $subTaskType = TaskTypeModel::findByPid([$id]);        
+        
+        $data = [
+            'subTaskType'=>$subTaskType,
+            'id'=>$id
+        ];
+        return response()->json($data);
+    }
      
     /**
      * 任务提交，创建一个新任务
@@ -71,10 +90,31 @@ class TaskController extends ManageController
      * @return $this|\Illuminate\Http\RedirectResponse
      */    
     public function postTaskAdd(Request $request)
-    {        
-        $data = $request->except('_token');
+    {       
+    	$file = $request->file('file');
+    	$data = $request->except('_token');
+    	//将文件上传的数据存入到attachment表中
+        $attachment = \FileClass::uploadFile($file, 'task');
+        $attachment = json_decode($attachment, true);
+        //判断文件是否上传
+//      return response()->json(['errCode' => 0, 'errMsg' => $id]);
+        if($attachment['code']!=200)
+        {
+//          return response()->json(['errCode' => 0, 'errMsg' => $attachment['message']]);
+            return redirect()->back()->with(['error'=>$attachment['message']]);
+        }
+        $attachment_data = array_add($attachment['data'], 'status', 1);
+        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+        $attachment_data['user_id']=$data['uids'];
+        //将记录写入到attchement表中
+        $result = AttachmentModel::create($attachment_data);
+        
+//      $result = json_decode($result, true);
+        
+        
         $data['uid'] = $data['uids'];
         $data['username'] ='ttt';
+        $data['file_id']=[$result['id']];
 //      $data['type_id'] = $data['mainType'];
 //      $data['sub_type_id'] = $data['subType'];
         $data['desc'] = \CommonClass::removeXss($data['desc']);
@@ -405,11 +445,18 @@ class TaskController extends ManageController
             case 'deny':
                 $status = 1;
                 break;
+            case 'del':
+                $status = 111;
+                break;    
             default:
                 $status = 3;
                 break;
         }
-
+		if($status==111){
+			 $status = TaskModel::whereIn('id', $request->get('ckb'))->delete();
+			 if ($status)
+            return back();
+		}
         $status = TaskModel::whereIn('id', $request->get('ckb'))->where('status', 2)->update(array('status' => $status));
         if ($status)
             return back();
@@ -891,6 +938,110 @@ class TaskController extends ManageController
         ];
         //dump($result);
         return $this->theme->scope('manage.taskDispatchImport', $result)->render();
+    }
+    //进入导入视图
+    public function getTaskListImport(){
+    	return $this->theme->scope('manage.taskListImport')->render();
+    }
+    //提交任务导入数据
+    public function postTaskExcel(Request $request){
+    	
+        $data = $this->fileImport($request->file('tasklistexcel'));
+        
+//      dump($data);exit;
+        
+        //dump($data);
+           
+        foreach($data as $k => $v){
+//      	$file = $request->file('file');
+	    	//将文件上传的数据存入到attachment表中
+	    	
+        	
+            if($k === 0 || empty($v[0])) continue;
+            	
+        		$autouid=EnterpriseAuthModel::getEnterpriseName($v[0]);//获取企业uid
+        		if($autouid==0){
+        			return redirect()->back()->with(['error'=>'没有该企业：'.$v[0].'，导入中断。']);
+        		}
+        		if(empty($v[1])){
+        			return redirect()->back()->with(['error'=>$v[0].'行，没有任务名称，导入中断。']);
+        		}
+        		$type_id=0;//任务主类型
+        		if(empty($v[2])){
+        			return redirect()->back()->with(['error'=>$v[0].'行，没有选择任务主类型，导入中断。']);
+        		}else{
+        			$type_id=TaskTypeModel::getTaskTypeName($v[2]);
+        			if($type_id==0){
+        				return redirect()->back()->with(['error'=>$v[0].'行，主类型错误，导入中断。']);
+        			}
+        		}
+        		$sub_type_id=0;//任务子类型
+        		if(!empty($v[3])){
+        			$aInfos = explode('-', $v[3]);
+                	$sub_type_id = $aInfos[0];
+        		}
+        		$province=0;//省份
+        		if(!empty($v[6])){
+        			$province=DistrictModel::getDistrictNames($v[6]);
+        		}
+        		$city=0;//城市
+        		if(!empty($v[7])){
+        			$city=DistrictModel::getDistrictNames($v[7]);
+        		}
+        		
+        		//------------------------------
+				$attachment_data['name'] = time();
+		        $attachment_data['status']=1;
+		        $attachment_data['url']=$v[11];
+		        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+		        $attachment_data['user_id']=$autouid;
+		        //将记录写入到attchement表中
+		        $result = AttachmentModel::create($attachment_data);
+	        
+	        
+                $salt = \CommonClass::random(4);
+                $skill=0;
+				$isskill=false;
+				
+                for ($x=14; $x<=32; $x++) {
+                if($x!=17 && $x!=21 && $x!=25 && $x!=29){
+					  if(!empty($v[$x]) && !$isskill){
+					  	$isskinfo = explode('-', $v[$x]);
+					  	$skill=$isskinfo[0];
+					  	$isskill=true;
+					  }
+					  if(!empty($v[$x]) && $isskill){
+					  	$isskinfo = explode('-', $v[$x]);
+					  	$skill=$skill.','.$isskinfo[0];
+					  }
+				  }
+				} 
+//				dump($skill);exit;
+                $param = [
+                    'uid' => $autouid,   //企业id
+                    'type_id'=>$type_id,  //主类型id
+                    'sub_type_id'=>$sub_type_id,   //子类型id
+                    'title' => $v[1],      //任务名称
+                    'begin_at' => date('Y-m-d H:i:s', strtotime($v[4])),  //开始时间
+                    'end_at' => date('Y-m-d H:i:s', strtotime($v[5])),    //结束时间
+                    'province' => $province,         //省份
+                    'city' => $city,             //城市
+                    'area' => 0,
+                    'bounty' => $v[8],
+                    'worker_num' => $v[9],
+                    'desc' => $v[10],
+                    'file_id'=>[$result['id']],
+                    'address' => $v[12],
+                    'skill'=>$skill,
+                    'status' => 2,
+                    'bounty_status' => 1,
+                    
+                ];
+                 $taskModel = new TaskModel();
+       		 	 $result = $taskModel->createTask($param);
+           
+        }
+        return redirect('manage/taskList')->with(['message' => '导入成功']);
     }
     
     /**

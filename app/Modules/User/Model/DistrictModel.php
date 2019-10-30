@@ -25,7 +25,17 @@ class DistrictModel extends Model
     {
         return DistrictModel::with('childrenArea')->where('type', '=', 3)->get()->toArray();
     }
-
+    /*
+     * 根据地区名称获取id
+     */
+	static function getDistrictNames($name)
+    {
+        $disinfo=DistrictModel::where('name', '=', $name)->first();
+        if ($disinfo) {
+            return $disinfo->id;
+        }
+        return 0;
+    }
     
     static function findTree($pid)
     {

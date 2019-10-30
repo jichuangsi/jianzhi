@@ -109,7 +109,7 @@
                 	<select name="uids" class="col-xs-10 col-sm-5" >
                 		<option  value="-1" >请选择用户</option>
                 		@foreach($qiye as $key => $value)
-                		<option  value="{{$value['id']}}" >{{$value['name']}}</option>
+                		<option  value="{{$value['uid']}}" >{{$value['company_name']}}</option>
             			@endforeach
                 	</select>
                 </div>
@@ -209,11 +209,12 @@
                 </div>
             </div>-->
             
-            <div class="form-group basic-form-bottom" style="display: none;">
+            <div class="form-group basic-form-bottom" >
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 上传图片：</label>
                 <div class="col-sm-4">
-                    <input type="file" id="file" name="card_front_side"  onchange="img()">
-                    	<input type="hidden" name="file_id" />
+                	<input type="file" name="file" id="file"  />
+                    <!--<input type="file" name="file" id="file" onchange="img()">-->
+                    <!--<input type="hidden" name="file_id" value="1112"/>-->
                 </div>
             </div>
             
@@ -271,17 +272,20 @@
                 uploadFile();
             };
     }
-     function uploadFile(){
-//  	$("body").mLoading({text:"上传中"});//显示loading组件
+ /**
+    	上传文件
+    */
+    function uploadFile(){
+    	$("body").mLoading({text:"上传中"});//显示loading组件
     	var headers = { "_token": "{{ csrf_token() }}"};
     	// 开始上传
         $.ajaxFileUpload({
             secureuri: false,// 是否启用安全提交，默认为 false
             type: "POST",
-            url: "/jz/task/fileUpload",
+            url: "/manage/fileUpload",
             fileElementId: "file",// input[type=file] 的 id
             dataType: "json",// 返回值类型，一般位 `json` 或者 `text`
-            //data: data,// 添加参数，无参数时注释掉
+            data: {'ffid':111},// 添加参数，无参数时注释掉
             header: headers,
             success: function (ret, status) {
                 // 成功
@@ -300,6 +304,9 @@
                 // 失败
             	console.log(data);
             },
+            complete: function(){
+            	$("body").mLoading("hide");//隐藏loading组件
+            }
         });
     }
 $(function(){
@@ -473,7 +480,7 @@ $(function(){
     	console.log(id);
         if(!id) return;
         $('#zileixing').find('.sub').empty();
-        $.get('/jz/task/ajaxSubTaskType',{'id':id},function(data){
+        $.get('/manage/ajaxSubTaskType',{'id':id},function(data){
             console.log(data);
             if(data&&data.subTaskType&&data.subTaskType.length>0){
             	var options = '';    

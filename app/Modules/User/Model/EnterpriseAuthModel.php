@@ -19,6 +19,15 @@ class EnterpriseAuthModel extends Model
     ];
 
 
+    /*
+     * 获取企业列表
+     */
+	static function getqiye()
+    {
+//  	 $taskType = TaskTypeModel::select('*')->where('status','!=',0)->orderBy('pid', 'ASC')->orderBy('sort', 'ASC')->get()->toArray();
+       $userInfo = EnterpriseAuthModel::select('*')->get()->toArray();
+        return $userInfo;
+    }
     
     static function isEnterpriseAuth($uid){
         $companyInfo = EnterpriseAuthModel::where('uid', $uid)->where('status',1)->first();
@@ -48,6 +57,17 @@ class EnterpriseAuthModel extends Model
             return $companyInfo->status;
         }
         return null;
+    }
+    /*
+     * 根据企业名称获取uid
+     */
+    static function getEnterpriseName($name)
+    {
+        $companyInfo = EnterpriseAuthModel::where('company_name', $name)->first();
+        if ($companyInfo) {
+            return $companyInfo->uid;
+        }
+        return 0;
     }
     
     static function getEnterpriseInfo($id)

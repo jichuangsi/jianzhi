@@ -44,6 +44,18 @@ class TaskTypeModel extends Model
         return $data;
     }
     
+    /*
+     * 根据主类型名称获取id
+     */
+	static function getTaskTypeName($name)
+    {
+        $disinfo=TaskTypeModel::where('name', '=', $name)->where('pid','=',0)->first();
+        if ($disinfo) {
+            return $disinfo->id;
+        }
+        return 0;
+    }
+    
     static function findTypeIds($pid)
     {
         $type_data = TaskTypeModel::findById($pid);
