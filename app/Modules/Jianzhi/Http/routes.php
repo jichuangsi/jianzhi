@@ -9,6 +9,8 @@
 Route::group(['prefix' => 'jz'], function () {
     //µÇÂ½×¢²áÂ·ÓÉ
     Route::post('login', 'Auth\jzAuthController@postLogin');
+    Route::post('wxlogin', 'Auth\jzAuthController@postWxLogin');    
+    Route::post('ajaxCheckOpenid', 'Auth\jzAuthController@ajaxCheckOpenid');
     Route::get('logout', 'Auth\jzAuthController@getLogout');
     Route::get('register', 'Auth\jzAuthController@getRegister');
     Route::post('register', 'Auth\jzAuthController@postRegister');

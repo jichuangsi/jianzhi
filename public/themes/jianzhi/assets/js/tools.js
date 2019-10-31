@@ -1,4 +1,5 @@
-        var df = "YYYY年mm月dd日 HH:MM";
+        //格式化日期
+		var df = "YYYY年mm月dd日 HH:MM";
         function dateFormat(fmt, date) {
             let ret;
             let opt = {
@@ -19,6 +20,16 @@
             return fmt;
         }
         
+        //是否微信环境
+        function isWeiXin() {
+            let ua = window.navigator.userAgent.toLowerCase();
+            console.log(ua);
+            if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            	return true;
+            } else {
+            	return false;
+            }
+        }
         
         //luhn校验规则：16位银行卡号（19位通用）:
 

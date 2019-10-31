@@ -105,7 +105,11 @@ class UserModel extends Model implements AuthenticatableContract,
             //ע�������û�����
             'type' => isset($data['type'])?$data['type']:'',
             //ע�����Ӽ��ܱ�ǩ
-            'skill' => isset($data['skill'])?$data['skill']:''
+            'skill' => isset($data['skill'])?$data['skill']:'',
+            //微信信息
+            'wechat' => isset($data['wx_openid'])?$data['wx_openid']:'',
+            'nickname' => isset($data['wx_nickname'])?$data['wx_nickname']:'',
+            'avatar' => isset($data['wx_headimgurl'])?$data['wx_headimgurl']:'',
         );
         $objUser = new UserModel();
         
@@ -124,13 +128,24 @@ class UserModel extends Model implements AuthenticatableContract,
 
 
     
-    public function initUser(array $data)
+    private function initUser(array $data)
     {       
         $status = DB::transaction(function() use ($data){
             $skill = $data['skill'];
             unset($data['skill']);
+            $wechat = $data['wechat'];
+            unset($data['wechat']);
+            $nickname = $data['nickname'];
+            unset($data['nickname']);
+            $avatar = $data['avatar'];
+            unset($data['avatar']);
             
             $data['uid'] = UserModel::insertGetId($data);
+            
+            if($wechat) $data['wechat'] = $wechat;
+            if($nickname) $data['nickname'] = $nickname;
+            if($avatar) $data['avatar'] = $avatar;
+            
             UserDetailModel::create($data);
             
             //ע�����Ӽ��ܱ�ǩ
@@ -539,6 +554,23 @@ class UserModel extends Model implements AuthenticatableContract,
                     //->leftjoin("user_detail", 'users.id', '=', 'user_detail.uid')
                     ->leftjoin("realname_auth", 'users.id', '=', 'realname_auth.uid')
                     ->get();
+        
+        return $data;
+    }
+    
+    static function getUsersByOpenid($openid){
+        $query = Self::select('users.name as u_name', 'users.mobile as u_mobile', 'realname_auth.card_number as u_card_number', 'realname_auth.realname as u_realname');
+        
+        if(is_array($openid)){
+            $query = $query->whereIn('user_detail.wechat', $openid);
+        }else{
+            $query = $query->where('user_detail.wechat', $openid);
+        }
+        
+        $data = $query
+                ->leftjoin("user_detail", 'users.id', '=', 'user_detail.uid')
+                ->leftjoin("realname_auth", 'users.id', '=', 'realname_auth.uid')
+                ->get();
         
         return $data;
     }

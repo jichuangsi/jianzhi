@@ -111,6 +111,11 @@ class IndexController extends BasicController
         }
         $this->theme->set('is_IM_open',$contact);
 
+        //获取微信配置
+        $weixinConfig = ConfigModel::getConfigByType('weixin');
+        if(!empty($weixinConfig)){
+            $this->theme->set('weixin_config',$weixinConfig);
+        }
 
         //查询自定义导航
         $navList = NavModel::orderBy('sort','ASC')->get()->toArray();

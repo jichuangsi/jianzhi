@@ -45,6 +45,9 @@
             <label><input name="type" type="radio" value="1" onclick="radio_check(this)" checked /><span class="radio_check iconfont"></span>个人注册 </label> 
         	<label><input name="type" type="radio" value="2" onclick="radio_check(this)" /><span class="iconfont"></span>企业注册</label> 
         </div>
+        <input type="hidden" name="wx_openid">
+        <input type="hidden" name="wx_nickname">
+        <input type="hidden" name="wx_headimgurl">
         <button class="btn" type="submit">注册</button>
     </form>
     <div class="tishi">
@@ -96,6 +99,26 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+        }
+    });
+
+    $(function(){
+    	if(isWeiXin()){
+    		var weixinUserStr = sessionStorage.getItem("wx_user");
+    		console.log(weixinUserStr);
+    		if(weixinUserStr){
+    			var weixinUser = JSON.parse(weixinUserStr); 
+    			console.log(weixinUser);
+    			if(weixinUser.openid){//微信openid
+					$("input[name='wx_openid']").val(weixinUser.openid);
+        		}
+    			if(weixinUser.nickname){//微信昵称
+					$("input[name='wx_nickname']").val(weixinUser.nickname);
+        		}
+    			if(weixinUser.headimgurl){//微信头像
+					$("input[name='wx_headimgurl']").val(weixinUser.headimgurl);
+        		}
+        	}
         }
     });
     
