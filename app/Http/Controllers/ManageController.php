@@ -16,6 +16,8 @@ use PHPExcel_Cell;
 use PHPExcel_Worksheet_Drawing;
 use PHPExcel_Worksheet_MemoryDrawing;
 use PHPExcel_Reader_Excel2007;
+use PHPExcel_Style_NumberFormat;
+use PHPExcel_Style_Color;
 use Illuminate\Http\Request;
 
 class ManageController extends BasicController
@@ -150,31 +152,134 @@ class ManageController extends BasicController
      * @throws PHPExcel_Exception
      * @throws PHPExcel_Reader_Exception
      */
-    protected function exportExcel($title=array(), $data=array(), $sheetName='sheet1', $fileName='', $savePath='./', $isDown=false){
+    protected function exportExcel($param = array()){
+    //protected function exportExcel($title=array(), $data=array(), $sheetName='sheet1', $fileName='', $savePath='./', $isDown=false, $tip = ''){
+        
+        if(empty($param)) return;
         
         $obj = new \PHPExcel();
         
         //横向单元格标识
         $cellName = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ');
         
-        $obj->getActiveSheet(0)->setTitle($sheetName);   //设置sheet名称
+        
+        $obj->getActiveSheet(0)->setTitle(isset($param['sheetName'])?$param['sheetName']:'sheet1');   //设置sheet名称
         $_row = 1;   //设置纵向单元格标识
-        if($title){
+        
+        if(isset($param['tip'])&&!empty($param['tip'])){
+            $obj->getActiveSheet(0)->setCellValue('A'.$_row, $param['tip']);
+            $obj->getActiveSheet(0)->getStyle( 'A'.$_row)->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_RED);
+            $obj->getActiveSheet(0)->getStyle('A'.$_row)->getAlignment()->setWrapText(true);
+            $len = 1;
+            if(isset($param['title'])&&is_array($param['title'])&&!empty($param['title'])){
+                $len = count($param['title']);
+            }
+            $obj->getActiveSheet(0)->mergeCells('A'.$_row.':'.$cellName[$len-1].$_row);
+            $obj->getActiveSheet(0)->getRowDimension($_row)->setRowHeight(100);
+            ++$_row;
+        }
+        
+        if(isset($param['title'])&&is_array($param['title'])){
             $i = 0;
-            foreach($title AS $v){   //设置列标题
-                $obj->setActiveSheetIndex(0)->setCellValue($cellName[$i].$_row, $v);
+            foreach($param['title'] AS $v){   //设置列标题
+                if(is_array($v)){
+                    $obj->setActiveSheetIndex(0)->setCellValue($cellName[$i].$_row, isset($v[0])?$v[0]:'');//默认数组第一个为标题
+                    if(isset($v[1])){//默认数组第二个为颜色
+                        $obj->getActiveSheet(0)->getStyle($cellName[$i].$_row)->applyFromArray(
+                            array(
+                                'fill' => array (
+                                    'type'       => \PHPExcel_Style_Fill::FILL_SOLID ,
+                                    'rotation'   => 90,
+                                    'startcolor' => array (
+                                        'rgb' => $v[1]
+                                    ),
+                                    'endcolor'   => array (
+                                        'rgb' => $v[1]
+                                    )
+                                )
+                            )
+                         );
+                    }
+                }else{
+                    $obj->setActiveSheetIndex(0)->setCellValue($cellName[$i].$_row, $v);
+                }
+                
+                $obj->setActiveSheetIndex(0)->getStyle($cellName[$i].$_row)->applyFromArray(
+                        array(
+                            'borders' => array (
+                                'outline'     => array (
+                                    'style' => \PHPExcel_Style_Border::BORDER_THIN
+                                )
+                            ),                        
+                        )                    
+                    );
                 $i++;
             }
             $_row++;
         }
         
         //填写数据
-        if($data){
+        if(isset($param['data'])&&is_array($param['data'])){
             $i = 0;
-            foreach($data AS $_v){
+            foreach($param['data'] AS $_v){
                 $j = 0;
                 foreach($_v AS $_cell){
-                    $obj->getActiveSheet(0)->setCellValue($cellName[$j] . ($i+$_row), $_cell);
+                    $style = PHPExcel_Style_NumberFormat::FORMAT_TEXT;
+                    if(is_array($_cell)){
+                        if(isset($_cell[0])){//默认数组第一个为值
+                            if(is_array($_cell[0])){
+                                $list = implode(',', $_cell[0]);
+                                $objValidation =$obj->getActiveSheet(0)->getCell($cellName[$j] . ($i+$_row))->getDataValidation(); //下拉样式
+                                $objValidation->setType(\PHPExcel_Cell_DataValidation::TYPE_LIST )                                
+                                                ->setErrorStyle(\PHPExcel_Cell_DataValidation::STYLE_INFORMATION )                                
+                                                ->setAllowBlank(false)                                
+                                                ->setShowInputMessage(true)                                
+                                                ->setShowErrorMessage(true)
+                                                ->setShowDropDown(true)
+                                                ->setErrorTitle('输入的值有误')
+                                                ->setError('您输入的值不在下拉框列表内.')        
+                                                ->setPromptTitle('')                                
+                                                ->setPrompt('')                                
+                                                ->setFormula1('"' . $list . '"');                                
+                            }else{
+                                $obj->getActiveSheet(0)->setCellValue($cellName[$j] . ($i+$_row), $_cell[0]);
+                            }
+                        }
+                        if(isset($_cell[1])){
+                            switch($_cell[1]){//默认数组第二个为类型
+                                case 'n': $style = PHPExcel_Style_NumberFormat::FORMAT_TEXT; break;
+                                case 'n00': $style = PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00; break;
+                            }
+                        }      
+                        if(isset($_cell[2])){//默认数组第三个为颜色                            
+                            $obj->getActiveSheet(0)->getStyle($cellName[$j] . ($i+$_row))->applyFromArray(
+                                    array(                                        
+                                        'fill' => array (
+                                            'type'       => \PHPExcel_Style_Fill::FILL_SOLID ,
+                                            //'rotation'   => 90,
+                                            'startcolor' => array (
+                                                'rgb' => $_cell[2]
+                                            ),
+                                            'endcolor'   => array (
+                                                'rgb' => $_cell[2]
+                                            )
+                                        )
+                                    )
+                               );
+                        }
+                    }else{
+                        $obj->getActiveSheet(0)->setCellValue($cellName[$j] . ($i+$_row), $_cell);
+                    }   
+                    $obj->getActiveSheet(0)->getStyle($cellName[$j] . ($i+$_row))->getNumberFormat()->setFormatCode($style);
+                    $obj->getActiveSheet(0)->getStyle($cellName[$j] . ($i+$_row))->applyFromArray(
+                        array(
+                            'borders' => array (
+                                'outline'     => array (
+                                    'style' => \PHPExcel_Style_Border::BORDER_THIN
+                                )
+                            ),
+                        )
+                    );
                     $j++;
                 }
                 $i++;
@@ -182,24 +287,28 @@ class ManageController extends BasicController
         }
         
         //文件名处理
-        if(!$fileName){
-            $fileName = uniqid(time(),true);
+        if(!isset($param['fileName'])||empty($param['fileName'])){
+            $param['fileName'] = uniqid(time(),true);
         }
         $objWrite = \PHPExcel_IOFactory::createWriter($obj, 'Excel2007');
         
-        if($isDown){   //网页下载
+        if(!isset($param['savePath'])||empty($param['savePath'])){
+            $param['savePath'] = './';
+        }
+        
+        if(isset($param['isDown'])&&$param['isDown']){   //网页下载
             //header('pragma:public');
-            header("Content-Disposition:attachment;filename=$fileName.xlsx");
+            header("Content-Disposition:attachment;filename=".$param['fileName'].".xlsx");
             $objWrite->save('php://output');
             exit;
         }
         
-        $_fileName = iconv("utf-8", "gb2312", $fileName);   //转码
+        $_fileName = iconv("utf-8", "gb2312", $param['fileName']);   //转码
         header('pragma:public');
         header("Content-Disposition:attachment;filename=$_fileName.xlsx");
         $objWrite->save('php://output');exit;
         
-        return $savePath.$fileName.'.xlsx';
+        return $param['savePath'].$param['fileName'].'.xlsx';
     }
     
     protected function fileImport($file, $allowExtension = array(), $template = ''){

@@ -50,6 +50,7 @@
             width: 100%;
             position: relative;
             height:21px;
+            border-bottom:1px solid #999;
         }
         .users ul{
             /* width: 60%;
@@ -83,6 +84,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            line-height: 30px;
         }
         .users ul li img {
             width: 24px;
@@ -390,7 +392,7 @@ function userscheck(val){
         var userIds = $("input[name='users_id']").val();
         text+=$(val).text() + '，'
 		$("input[name='users_id']").val(userIds+(userIds?",":"")+userId);
-        $(val).parent().parent().find('span').text(text.substr(0, text.length-1))
+        $(val).parent().parent().parent().find('span').text(text.substr(0, text.length-1))
         $(val).addClass('users_check')
     }
 }

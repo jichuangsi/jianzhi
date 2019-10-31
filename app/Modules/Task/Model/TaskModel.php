@@ -669,7 +669,7 @@ class TaskModel extends Model
     {
         $query = self::select('task.*', 'b.name as type_name', 'sb.name as sub_type_name',
             'enterprise_auth.company_name','province.name as province_name','city.name as city_name','area.name as area_name',
-            'wrn.realname as w_realname','wrn.card_number as w_card_number','wu.mobile as w_mobile','work.checked_at','work.payment','work.status as w_status')
+            'wrn.realname as w_realname','wrn.card_number as w_card_number','wrn.account as w_account','wu.mobile as w_mobile','work.checked_at','work.payment','work.status as w_status')
             ->where('task.id', '=', $id);
             //赏金已经托管
             $query = $query->where(function ($query) {

@@ -25,6 +25,7 @@ use App\Modules\Manage\Model\ConfigModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Theme;
+use App\Modules\User\Model\RealnameAuthModel;
 
 class TaskController extends ManageController
 {
@@ -799,19 +800,36 @@ class TaskController extends ManageController
                 'city' => $detail->province_name.$detail->city_name,
                 'address' => $detail->address,
                 'skills' => $skills?substr($skills,0,-1):'',
-                'bounty' => $detail->bounty,
-                'worker_num' => $detail->worker_num,
+                'bounty' => [$detail->bounty, 'n00'],
+                'worker_num' => [$detail->worker_num, 'n'],
                 'desc' => $detail->desc,
                 'created_at' => $detail->created_at,
+                'realname' => '',
+                'card_number' => '',
+                'mobile' => '',
+                'account' => '',
+                'card_front_side' => '',
+                'card_back_side' => '',
             ];            
             
             array_push($tasksDetail, $taskDetail);
         }
         
         $title = ['任务ID','任务名称','发布企业','任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址','技能要求','任务预算','任务人数','任务描述','发布时间','姓名','身份证号码','手机号','银行卡号','身份证正面','身份证反面'];
-        //dump($tasksDetail);        
+        //dump($tasksDetail);       
         
-        $this->exportExcel($title, $tasksDetail,'任务派单', 'template_taskDispatch_'.time(), './', true);
+        $param = [
+            'sheetName' => '任务派单',
+            'title' => $title,
+            'data' => $tasksDetail,
+            'fileName' => 'template_taskDispatch_'.time(),
+            'savePath' => './',
+            'isDown' => true
+        ];
+        
+        $this->exportExcel($param);
+        
+        //$this->exportExcel($title, $tasksDetail,'任务派单', 'template_taskDispatch_'.time(), './', true);
         
         return redirect()->to('manage/taskDispatch');        
     }
@@ -842,7 +860,10 @@ class TaskController extends ManageController
             if($k === 0 || empty($v[0])) continue;
             
             $v['num'] = $k;
+            $v[15] = strval($v[15]);
             $v[16] = strval($v[16]);
+            $v[17] = strval($v[17]);
+            $v[0] = intval($v[0]);
             
             if(empty($v[16])){
                 array_push($tasksDispatch, ['num'=>$k, 'msg'=>'接单人手机不能为空！']);
@@ -874,6 +895,7 @@ class TaskController extends ManageController
                     'status' => 1,
                     'type' => 1,
                     'mobile' => $v[16],
+                    'account' => $v[17],
                     'password' => UserModel::encryptPassword($v[16], $salt),
                     'salt' => $salt,
                     'card_front_side' => $v[18],
@@ -1135,7 +1157,7 @@ class TaskController extends ManageController
         }
         $status = DB::transaction(function () use ($data) {
             foreach ($data['chk'] as $id) {
-                WorkModel::where('id', $id)->update(['status' => 5]);
+                WorkModel::where('id', $id)->update(['status' => 5,'settle_at'=>date('Y-m-d H:i:d',time())]);
             }
         });
             if(is_null($status))
@@ -1157,14 +1179,27 @@ class TaskController extends ManageController
         if(is_string($data['chk'])){
             $data['chk'] = explode(',', $data['chk']);
         }
-        $status = DB::transaction(function () use ($data) {
-            foreach ($data['chk'] as $id) {
-                WorkModel::where('id', $id)->update(['status' => 4]);
+        $reject = array();
+        foreach ($data['chk'] as $id) {
+            $result = WorkModel::where('id', $id)->where('status', 2)->count();
+            if($result>0){
+                array_push($reject, $id);
             }
+        }
+        
+        $rest = array_diff($data['chk'], $reject);
+        
+        $status = DB::transaction(function () use ($reject) {
+            WorkModel::whereIn('id', $reject)->update(['status' => 4, 'checked_at' => date('Y-m-d H:i:d',time())]);
         });
             if(is_null($status))
             {
-                return redirect()->to('manage/taskCheck')->with(array('message' => '操作成功'));
+                if(empty($rest)){
+                    return redirect()->to('manage/taskCheck')->with(array('message' => '操作成功'));                    
+                }else{
+                    return redirect()->to('manage/taskCheck')->with(array('message' => '编号为：'.implode(',', $rest).' 的任务驳回失败！'));
+                }
+                
             }
             return  redirect()->to('manage/taskCheck')->with(array('message' => '操作失败'));
     }
@@ -1237,16 +1272,20 @@ class TaskController extends ManageController
                     'address' => $v1->address,
                     'skills' => $skills?substr($skills,0,-1):'',
                     'bounty' => $v1->bounty,
-                    'worker_num' => $v1->worker_num,
+                    'worker_num' => [$v1->worker_num, 'n', '9BC2E6'],
                     'desc' => $v1->desc,
                     'attachment' => '',
                     'created_at' => $v1->created_at,
-                    'worker_name' => $v1->w_realname,
-                    'worker_card_number' => $v1->w_card_number,
-                    'worker_mobile' => $v1->w_mobile,
-                    'worker_account' => '',
-                    'worker_front_id_side' => '',
-                    'worker_back_id_side' => '',
+                    'worker_name' => [$v1->w_realname, 'n', '9BC2E6'],
+                    'worker_card_number' => [$v1->w_card_number, 'n', '9BC2E6'],
+                    'worker_mobile' => [$v1->w_mobile, 'n', '9BC2E6'],
+                    'worker_account' => [$v1->w_account, 'n', '9BC2E6'],
+                    'worker_front_id_side' => ['', 'n', '9BC2E6'],
+                    'worker_back_id_side' => ['', 'n', '9BC2E6'],
+                    'check_status' => [['1-通过','2-驳回','3-任务终止'],'','FFE699'],
+                    'checked_at' => ['','','FFE699'],
+                    'payment' => ['', 'n00','FFE699'],
+                    'comment' => ['','','FFE699'],
                 ];  
                 
                 array_push($tasksDetail, $taskDetail);
@@ -1257,11 +1296,32 @@ class TaskController extends ManageController
         /* $template = $this->fileImport('',[],$_SERVER['DOCUMENT_ROOT'].'/attachment/sys/templates/template_taskys.xlsx');
         dump($template); */
         
-        $title = ['任务ID','任务名称','任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址','技能要求','任务预算','任务人数','任务描述','任务图片','发布时间'
-                    ,'姓名','身份证号码','手机号','银行卡号','身份证正面','身份证反面','验收状态(注：1-通过，2-驳回，3-任务终止)','验收时间','结算价格','评价及说明'];
+        $tip="验收表格填写说明：
+                        1、白底和蓝底的部分为系统导出模板时自带的信息，其中蓝底的部分可以修改，白底的部分不能修改，以免影响您的任务及付款，给您带来不必要的损失。
+                        2、橙色底部的部分为验收需要填写的部分；
+                        3、任务状态可选，分为1-通过，2-驳回，3-任务终止，驳回的状态是可以允许接单人继续提交验收的，任务终止则表示公司与该个人的业务强制停止，任务结束。
+                        4、停止合作的个人信息不能删除，必须保留，验收状态选择终止任务；
+                        5、如果该任务中途有人新增进来可以在表格里新增该个人的信息，以及验收情况；
+                        6、评价及说明非必填。";
+        
+        $title = ['任务ID','任务名称','任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址','技能要求','任务预算',['任务人数','9BC2E6'],'任务描述','任务图片','发布时间'
+            ,['姓名','9BC2E6'],['身份证号码','9BC2E6'],['手机号','9BC2E6'],['银行卡号','9BC2E6'],['身份证正面','9BC2E6'],['身份证反面','9BC2E6']
+            ,['验收状态(注：1-通过，2-驳回，3-任务终止)','FFE699'],['验收时间','FFE699'],['结算价格','FFE699'],['评价及说明','FFE699']];        
         
         
-        $this->exportExcel($title, $tasksDetail,'任务验收及结算', 'template_taskys_'.time(), './', true);
+        $param = [
+            'sheetName' => '任务验收及结算',
+            'title' => $title,
+            'data' => $tasksDetail,
+            'fileName' => 'template_taskys_'.time(),
+            'savePath' => './',
+            'tip' => $tip,
+            'isDown' => true
+        ];
+        
+        $this->exportExcel($param);
+        
+        //$this->exportExcel($title, $tasksDetail,'任务验收及结算', 'template_taskys_'.time(), './', true, $tip);
         
         return redirect()->to('manage/taskCheck');        
         
@@ -1284,12 +1344,11 @@ class TaskController extends ManageController
         
         if(isset($data['fail'])&&$data['fail']){
             return back()->with(['error' => $data['errMsg']]);
-        }
-                
-        //dump($data);
+        }                
+        
         $taskUpdate = array();
         foreach($data as $k => $v){
-            if($k === 0 || empty($v[0])) continue;            
+            if($k === 0 || $k === 1 || empty($v[0])) continue;            
             if (!array_key_exists(intval($v[0]),$taskUpdate)){
                 $taskUpdate[$v[0]] = intval($v[10]);
             }
@@ -1300,11 +1359,12 @@ class TaskController extends ManageController
         
         $tasksCheck = array();
         foreach($data as $k => &$v){
-            if($k === 0 || empty($v[0])) continue;
+            if($k === 0 || $k === 1 || empty($v[0])) continue;
         
             $v['num'] = $k;
             $v[15] = strval($v[15]);
             $v[16] = strval($v[16]);
+            $v[17] = strval($v[17]);
             $v[0] = intval($v[0]);
             
             if(empty($v[16])){
@@ -1340,6 +1400,7 @@ class TaskController extends ManageController
                     'status' => 1,
                     'type' => 1,
                     'mobile' => $v[16],
+                    'account' => $v[17],
                     'password' => UserModel::encryptPassword($v[16], $salt),
                     'salt' => $salt,
                     'card_front_side' => $v[18],
@@ -1360,18 +1421,31 @@ class TaskController extends ManageController
                     array_push($tasksCheck, $v);
                     continue;
                 }
+            }else{
+                if($v[17]&&$uid){
+                    RealnameAuthModel::where('uid', $uid->id)->where('account', '<>', $v[17])->update(['account'=>$v[17]]);
+                }
             }
             
             if($v[20]&&$uid){                
                 $status = explode('-', $v[20]);
                 
                 if($status[0]){
+                    unset($update);
                     $update = array();
                     switch(intval($status[0])){
                         case 1: $update['status'] = 3; $v['c_status']='验收通过'; break;
                         case 2: $update['status'] = 4; $v['c_status']='验收驳回'; break;
                         case 3: $update['status'] = 5; $v['c_status']='任务终止'; break;
                     }
+                    
+                    if(!isset($update['status'])){
+                        $v['msg'] = '验收状态设置异常！';
+                        $v['c_status']=$status[0];
+                        array_push($tasksCheck, $v);
+                        continue;
+                    }
+                    
                     if($v[21]){
                         $update['checked_at'] = date('Y-m-d H:i:s', strtotime($v[21]));
                     }
@@ -1575,14 +1649,27 @@ class TaskController extends ManageController
         if(is_string($data['chk'])){
             $data['chk'] = explode(',', $data['chk']);
         }
-        $status = DB::transaction(function () use ($data) {
-            foreach ($data['chk'] as $id) {
-                WorkModel::where('id', $id)->update(['status' => 5, 'settle_at'=>date('Y-m-d H:i:d',time())]);
+        
+        $settle = array();
+        foreach ($data['chk'] as $id) {
+            $result = WorkModel::where('id', $id)->where('status', 3)->count();
+            if($result>0){
+                array_push($settle, $id);
             }
+        }
+        
+        $rest = array_diff($data['chk'], $settle);
+        
+        $status = DB::transaction(function () use ($settle) {
+            WorkModel::whereIn('id', $settle)->update(['status' => 5, 'settle_at'=>date('Y-m-d H:i:d',time())]);
         });
             if(is_null($status))
             {
-                return redirect()->to('manage/taskSettle')->with(array('message' => '操作成功'));
+                if(empty($rest)){
+                    return redirect()->to('manage/taskSettle')->with(array('message' => '操作成功'));
+                }else{
+                    return redirect()->to('manage/taskSettle')->with(array('message' => '编号为：'.implode(',', $rest).' 的任务结算失败！'));
+                }
             }
             return  redirect()->to('manage/taskSettle')->with(array('message' => '操作失败'));
     }
@@ -1639,9 +1726,9 @@ class TaskController extends ManageController
                     'type_name' => $v1->type_name,
                     'checked_at' => $v1->checked_at,
                     'worker_name' => $v1->w_realname,
-                    'worker_account' => '',
+                    'worker_account' => $v1->w_account,
                     'worker_card_number' => $v1->w_card_number,
-                    'worker_payment' => $v1->payment,
+                    'worker_payment' => [$v1->payment,'n00'],
                     'worker_status' => '未结算',
                 ];
                 
@@ -1655,8 +1742,18 @@ class TaskController extends ManageController
         
         $title = ['企业ID','企业名称','任务ID','任务名称','任务主类别','验收时间','收款户名(真实姓名,必填)','收款账号(个人银行卡号)','身份证号(必填)','打款金额/元(四舍五入至分,必填)','结算状态'];
         
+        $param = [
+            'sheetName' => '任务结算',
+            'title' => $title,
+            'data' => $tasksDetail,
+            'fileName' => 'template_taskjs_'.time(),
+            'savePath' => './',
+            'isDown' => true
+        ];
         
-        $this->exportExcel($title, $tasksDetail,'任务结算', 'template_taskjs_'.time(), './', true);
+        $this->exportExcel($param);
+        
+        //$this->exportExcel($title, $tasksDetail,'任务结算', 'template_taskjs_'.time(), './', true);
         
         return redirect()->to('manage/taskCheck');        
         
@@ -1700,6 +1797,7 @@ class TaskController extends ManageController
             $v['num'] = $k;
             $v[0] = intval($v[0]);
             $v[2] = intval($v[2]);
+            $v[7] = strval($v[7]);
             $v[8] = strval($v[8]);
             
             $v['msg'] = '结算成功！';
