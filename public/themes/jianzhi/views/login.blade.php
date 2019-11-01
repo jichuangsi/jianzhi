@@ -11,7 +11,7 @@
         </div> -->
         <div class="ipt">
            <span class="iconfont icon-yonghu">           		           
-           </span><input type="text" name="username" placeholder="请输入用户名/手机" onkeydown='clearError(this)'>           		
+           </span><input type="text" name="username" placeholder="请输入用户名/手机" onkeydown='clearError(this)' value="{{old('username')}}">           		
         </div>
         <div class="ipt">
            <span class="iconfont icon-mima">
@@ -19,6 +19,9 @@
            <input type="password" name="password" placeholder="请输入密码" onkeydown='clearError(this)'>  
            		
         </div>
+        <input type="hidden" name="wx_openid" value="{{old('wx_openid')}}">
+        <input type="hidden" name="wx_nickname" value="{{old('wx_nickname')}}">
+        <input type="hidden" name="wx_headimgurl" value="{{old('wx_headimgurl')}}">
         		@if($errors->first('username'))
         			<div style="padding-left:10%">
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('username') !!}</p>
@@ -94,16 +97,24 @@
 														form.submit();
 														document.body.removeChild(form);
 													}else{
+														if(res.openid){//微信openid
+															$("input[name='wx_openid']").val(res.openid);
+										        		}
+										    			if(res.nickname){//微信昵称
+															$("input[name='wx_nickname']").val(res.nickname);
+										        		}
+										    			if(res.headimgurl){//微信头像
+															$("input[name='wx_headimgurl']").val(res.headimgurl);
+										        		}
 														var weixinUser = {'openid':res.openid,'nickname':res.nickname,'headimgurl':res.headimgurl};
 														sessionStorage.setItem("wx_user",JSON.stringify(weixinUser));
+														$("body").mLoading("hide");//隐藏loading组件
 													}
 												}else{
-													if(ret.errMsg) popUpMessage(ret.errMsg);
+													$("body").mLoading("hide");//隐藏loading组件
+													if(ret.errMsg) popUpMessage(ret.errMsg);													
 												}
-
-											}
-
-											$("body").mLoading("hide");//隐藏loading组件
+											}											
 										});
 									}								
 								},

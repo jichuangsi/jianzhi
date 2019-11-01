@@ -574,4 +574,15 @@ class UserModel extends Model implements AuthenticatableContract,
         
         return $data;
     }
+    
+    static function checkOpenid($username, $openid)
+    {        
+        $users = UserDetailModel::select('users.name','users.mobile')->where('wechat', $openid)->join('users', 'users.id', '=', 'user_detail.uid')->get();
+        
+        if(!$users||count($users)===0||($users&&count($users)===1&&($users->name===$username||$users->mobile===$username))){            
+            return true;
+        }
+        
+        return false;
+    }
 }

@@ -127,6 +127,10 @@ class jzAuthController extends AuthController
         
         $userInfo = UserModel::getUsersByOpenid($openid);
         
+        if(!$userInfo||count($userInfo)===0){
+            return response()->json(['mobile' => '']);
+        }
+        
         if(count($userInfo)>1){
             return response()->json(['errMsg' => '你的微信绑定多于一个账号，<br/>请用手机号登陆！']);
         }

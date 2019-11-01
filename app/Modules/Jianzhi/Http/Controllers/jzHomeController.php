@@ -115,7 +115,7 @@ class jzHomeController extends HomeController
             $path = 'my';
             
             $detail = UserDetailModel::findByUid($this->user->id);
-            $nickname = $this->user['name'];
+            $nickname = empty($detail->nickname)?$this->user['name']:$detail->nickname;
             $skills = UserTagsModel::getTagsByUserId($this->user->id);
             
             $data = [
