@@ -76,7 +76,7 @@ class TaskTagsModel extends Model
             
             $tag = TaskTagsModel::where('tag_task.task_id',$tid)
                 ->leftJoin('skill_tags','skill_tags.id','=','tag_task.tag_id')
-                ->select('skill_tags.tag_name','tag_task.tag_id')->get()->toArray();
+                ->select('skill_tags.tag_name','tag_task.tag_id','skill_tags.cate_id')->get()->toArray();
         }
         return $tag;
     }

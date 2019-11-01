@@ -103,12 +103,12 @@
                 </ul>
             </div>
         </div>
-        	<form action="{!! url('manage/taskExcel') !!}" method="post" enctype="multipart/form-data">
+        	<form action="{!! url('manage/taskExcel') !!}" method="post" enctype="multipart/form-data" onsubmit="return validate()">
             {!! csrf_field() !!}
         	<div class="text">
                 <div>文件选择</div>
                 <div class="ipt">
-                    <input type="file" name="tasklistexcel" id="file" onchange="uploadFile()">
+                    <input type="file" name="tasklistexcel" id="file" onchange="uploadFile()" >
                     <div>选择文件</div>
                     <input type="text" class="file_name">
                 </div>
@@ -121,19 +121,16 @@
             </div>
             </form>
     </div>
-    <div class="table_box" style="display: none;">
+    <div class="table_box" style="">
         <table style="table-layout: fixed;">
         	<thead>数据导入结果</thead>
             <tr>
                 <th>行号</th>
-                <th>任务ID</th>
+                <th>发布企业</th>
                 <th>任务名称	</th>
-                <th>接单人姓名</th>
-                <th>身份证号</th>
-                <th>手机号</th>
-                <th>验收状态</th>
-                <th>验收时间</th>
-                <th>结算金额</th>
+                <th>任务主类别</th>
+                <th>任务预算</th>
+                <th>任务人数</th>
                 <th>导入说明</th>
             </tr>
             @if(isset($tasksCheck))
@@ -142,16 +139,9 @@
             			<td>{{$item['num']}}</td>
             			<td>{{$item[0]}}</td>
             			<td>{{$item[1]}}</td>
-            			<td>{{$item[14]}}</td>
-            			<td>{{$item[15]}}</td>
-            			<td>{{$item[16]}}</td>
-            			<td>{{$item['c_status']}}</td>
-            			<td>
-            			{{$item[21]}}
-            			</td>
-            			<td>
-            			{{$item[22]}}
-            			</td>            			
+            			<td>{{$item[2]}}</td>
+            			<td>{{$item[8]}}</td>
+            			<td>{{$item[9]}}</td>
             			<td>
             			@if(isset($item['msg']))
             				{{$item['msg']}}
@@ -165,6 +155,15 @@
         </table>
     </div>
 	<script type="text/javascript">
+		function validate(){
+			var reads = new FileReader();
+	    	var f = document.getElementById('file').files[0]; 
+	    	if(f==null){
+	    		popUpMessage("请选择文件！");
+	    		return false;
+	    	}
+	    	return true;
+		}
 		function uploadFile(){
 	    	var reads = new FileReader();
 	    	var f = document.getElementById('file').files[0];

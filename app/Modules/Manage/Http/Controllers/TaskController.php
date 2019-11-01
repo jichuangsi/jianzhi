@@ -84,7 +84,37 @@ class TaskController extends ManageController
         ];
         return response()->json($data);
     }
-     
+    public function ajaxDelAtt($aid,$tid){
+    	$attret=AttachmentModel::where('id','=',$aid)->delete();
+    	if($attret){
+    		$attret1=TaskAttachmentModel::where('attachment_id','=',$aid)->where('task_id','=',$tid)->delete();
+    		if($attret1){
+    			return 1;
+    		}
+    	}
+    	return 0;
+    }
+    
+    /**
+     * 上传任务附件
+     */
+     public function addattachment($file,$uids){
+     	$attachment = \FileClass::uploadFile($file, 'task');
+	        $attachment = json_decode($attachment, true);
+	        //判断文件是否上传
+	//      return response()->json(['errCode' => 0, 'errMsg' => $id]);
+	        if($attachment['code']!=200)
+	        {
+	//          return response()->json(['errCode' => 0, 'errMsg' => $attachment['message']]);
+	            return redirect()->back()->with(['error'=>$attachment['message']]);
+	        }
+	        $attachment_data = array_add($attachment['data'], 'status', 1);
+	        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+	        $attachment_data['user_id']=$uids;
+	        //将记录写入到attchement表中
+	        $result = AttachmentModel::create($attachment_data);
+	        return $result['id'];
+     }
     /**
      * 任务提交，创建一个新任务
      * @param TaskRequest $request
@@ -93,29 +123,32 @@ class TaskController extends ManageController
     public function postTaskAdd(Request $request)
     {       
     	$file = $request->file('file');
+    	$file2 = $request->file('file2');
+    	$file3 = $request->file('file3');
     	$data = $request->except('_token');
     	//将文件上传的数据存入到attachment表中
-        $attachment = \FileClass::uploadFile($file, 'task');
-        $attachment = json_decode($attachment, true);
-        //判断文件是否上传
-//      return response()->json(['errCode' => 0, 'errMsg' => $id]);
-        if($attachment['code']!=200)
-        {
-//          return response()->json(['errCode' => 0, 'errMsg' => $attachment['message']]);
-            return redirect()->back()->with(['error'=>$attachment['message']]);
-        }
-        $attachment_data = array_add($attachment['data'], 'status', 1);
-        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
-        $attachment_data['user_id']=$data['uids'];
-        //将记录写入到attchement表中
-        $result = AttachmentModel::create($attachment_data);
-        
+		$attarr=array();
+		if(!empty($file)){
+			$atid=$this->addattachment($file,$data['uids']);
+			array_push($attarr,$atid);
+		}   
+		if(!empty($file2)){
+			$atid=$this->addattachment($file2,$data['uids']);
+			array_push($attarr,$atid);
+		}
+		if(!empty($file3)){
+			$atid=$this->addattachment($file3,$data['uids']);
+			array_push($attarr,$atid);
+		}     
 //      $result = json_decode($result, true);
         
         
         $data['uid'] = $data['uids'];
         $data['username'] ='ttt';
-        $data['file_id']=[$result['id']];
+        if(!empty($attarr)){
+        	$data['file_id']=$attarr;
+        }
+        
 //      $data['type_id'] = $data['mainType'];
 //      $data['sub_type_id'] = $data['subType'];
         $data['desc'] = \CommonClass::removeXss($data['desc']);
@@ -171,6 +204,132 @@ class TaskController extends ManageController
         //跳转至任务列表
         return redirect('manage/taskList')->with(['message' => '操作成功']);
     }
+    /*
+     * 进入任务修改
+     */
+    public function getTaskUpdate($id){
+    	$data = array();
+        //dump( TaskCateModel::findByPid([0]));exit;
+            //任务类型
+            $taskType = TaskTypeModel::findByPid([0]);
+            //技能标签     
+            $taskCate = TaskCateModel::findAll();
+            //查询地区一级数据
+            $province = DistrictModel::findTree(0);
+            //查询地区二级信息
+            $city = DistrictModel::findTree($province[0]['id']);
+            //查询三级
+            $area = DistrictModel::findTree($city[0]['id']);
+            $qiye = EnterpriseAuthModel::getqiye();
+            $taskinfo = $this->getTaskDetail($id);
+            $taTags=$taskinfo['tags'];
+            $skill = array();
+	        if($taTags&&count($taTags)>0){
+	            foreach($taskCate as $k => &$v){
+	                if(isset($v['children_task'])){
+	                    foreach($v['children_task'] as $k1 => &$v1){
+	                        foreach($taTags as $k2 => $v2){
+	                            if($v1['id']===$v2['cate_id']){
+	                                array_push($skill, ['cate_id' =>$v1['id'], 'cate_name' =>$v1['name'] ]);
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        }
+            $data = array(
+                'taskType' => $taskType,
+                'taskCate' => $taskCate,
+                'province' => $province,
+                'area' => $area,
+                'city' => $city,
+                'qiye' => $qiye,
+                'task' =>$taskinfo['task'],
+                'taskAttachment'=>$taskinfo['taskAttachment'],
+                'tags' =>$skill ,
+                'works' => $taskinfo['works'],
+                'taskcity' => DistrictModel::getDistrictName($taskinfo['task']['city']),
+            	'taskarea' => DistrictModel::getDistrictName($taskinfo['task']['area']),
+            );
+            
+        return $this->theme->scope("manage.taskUpdate",$data)->render();
+    }
+    /*
+     * 提交任务修改
+     */
+    public function postTaskUpdate(Request $request){
+		$data = $request->except('_token');
+		$file1 = $request->file('file1');
+		$attarr=array();
+		if(!empty($file1)){
+			if($data['aid1']>0){
+				$attret1=$this->ajaxDelAtt($data['aid1'],$data['task_id']);
+			}
+			$atid=$this->addattachment($file1,$data['uids']);
+			array_push($attarr,$atid);
+		}
+    	$file2 = $request->file('file2');
+    	if(!empty($file2)){
+			if($data['aid2']>0){
+				$attret1=$this->ajaxDelAtt($data['aid2'],$data['task_id']);
+			}
+			$atid=$this->addattachment($file2,$data['uids']);
+			array_push($attarr,$atid);
+		}
+    	$file3 = $request->file('file3');
+    	if(!empty($file3)){
+			if($data['aid3']>0){
+				$attret1=$this->ajaxDelAtt($data['aid3'],$data['task_id']);
+			}
+			$atid=$this->addattachment($file3,$data['uids']);
+			array_push($attarr,$atid);
+		}
+		if(!empty($attarr)){
+//      	$data['file_id']=$attarr;
+        	foreach ($attarr as $v) {
+                $attachment_data = [
+                    'task_id' => $data['task_id'],
+                    'attachment_id' => $v,
+                    'created_at' => date('Y-m-d H:i:s', time()),
+                ];
+                TaskAttachmentModel::create($attachment_data);
+            }
+        }
+		//修改任务数据
+        $task = [
+        	'uid'=>$data['uids'],
+            'title'=>$data['title'],
+            'desc'=>$data['desc'],
+            'type_id'=>$data['type_id'],
+            'sub_type_id'=>$data['sub_type_id'],
+            'begin_at'=>date('Y-m-d H:i:s', strtotime($data['begin_at'])),
+            'end_at'=>date('Y-m-d H:i:s', strtotime($data['end_at'])),
+            'title'=>$data['title'],
+            'province'=>$data['province'],
+            'city'=>$data['city'],
+            'area'=>$data['area'],
+            'address'=>$data['address'],
+            'bounty'=>$data['bounty'],
+            'worker_num'=>$data['worker_num'],
+            'skill'=>$data['skill'],
+        ];
+        
+        
+        $tid=$data['task_id'];
+        $result=TaskModel::updateTask($task,$tid);
+//      dump($result);exit;
+//      unset($result['skill']);
+//      dump($result);
+//      exit;
+//      //修改任务数据
+//      $task_result = TaskModel::where('id',$data['task_id'])->update($task);
+        if(!$result)
+        {
+            return redirect()->back()->with(['error'=>'更新失败！']);
+        }
+        return redirect('manage/taskList')->with(['message' => '更新成功']);
+	}
+    
     /**
      * 任务列表
      *
@@ -184,8 +343,8 @@ class TaskController extends ManageController
         $order = $request->get('order') ? $request->get('order') : 'desc';
         $paginate = $request->get('paginate') ? $request->get('paginate') : 10;
 
-        $taskList = TaskModel::select('task.id', 'us.name', 'task.title', 'task.created_at', 'task.status', 'task.verified_at', 'task.bounty', 'tt.name as cname','enterprise_auth.company_name')
-                        ->where('task.status', '<=', '3');
+        $taskList = TaskModel::select('task.id', 'us.name', 'task.title', 'task.created_at', 'task.status', 'task.verified_at', 'task.bounty', 'tt.name as cname','enterprise_auth.company_name');
+//                      ->where('task.status', '<=', '3');
 
         if ($request->get('task_title')) {
             $taskList = $taskList->where('task.title','like','%'.$request->get('task_title').'%');
@@ -341,10 +500,18 @@ class TaskController extends ManageController
                 $status = 3;
                 break;
             //审核失败
+            case 'del':
+                $status = 111;
+                break; 
             case 'deny':
                 $status = 1;
                 break;
         }
+        if($status==111){
+			 $status = TaskModel::where('id',$id)->delete();
+			 if ($status)
+            return back();
+		}
         //审核失败和成功 发送系统消息
         $task = TaskModel::where('id',$id)->first();
         $user = UserModel::where('id',$task['uid'])->first();
@@ -463,7 +630,53 @@ class TaskController extends ManageController
             return back();
 
     }
-
+	/**
+     * 后台任务详情信息
+     */
+	public function getTaskInfo($id){
+		$task=TaskModel::where('id',$id)->first();
+        if(!$task)
+        {
+            return redirect()->back()->with(['error'=>'当前任务不存在，无法查看稿件！']);
+        }
+        $query = TaskModel::select('task.*', 'ea.company_name as nickname', 'ud.avatar','ud.qq')->where('task.id', $id);
+        $taskDetail = $query->join('user_detail as ud', 'ud.uid', '=', 'task.uid')
+            ->leftjoin('enterprise_auth as ea','ea.uid','=','task.uid')
+            ->first()->toArray();
+        if(!$taskDetail)
+        {
+             return redirect()->back()->with(['error'=>'当前任务已经被删除！']);
+        }
+        $task_attachment = TaskAttachmentModel::select('task_attachment.*', 'at.url')->where('task_id', $id)
+            ->leftjoin('attachment as at', 'at.id', '=', 'task_attachment.attachment_id')->get()->toArray();
+        $myTags = TaskTagsModel::getTagsByTaskId($id);
+        $typename=TaskTypeModel::getTaskTypeid($taskDetail['type_id']);
+        $taskDetail['typename']=$typename['name'];   //任务主类别
+        $subtypename=TaskTypeModel::getTaskTypeid($taskDetail['sub_type_id']);
+        $taskDetail['subtypename']=$subtypename['name'];   //任务主类别
+        $works = WorkModel::findAll2($id);
+        
+        if($works&&count($works)>0){
+            foreach($works as $k => &$v){
+                $v['skills'] = UserTagsModel::getTagsByUserId($v['uid']);
+                
+                if($v['id']&&$v['status']>=2){
+                    $w_attatchment_ids = WorkAttachmentModel::findById($v['id']);
+                    $w_attatchment_ids = array_flatten($w_attatchment_ids);
+                    $v['attachments'] = AttachmentModel::whereIn('id',$w_attatchment_ids)->get();
+                }
+                
+                $v['comments'] = WorkCommentModel::where('work_id',$v['id'])->where('pid',0)->with('childrenComment')->get()->toArray();
+            }
+        }
+        $data = [
+            'task' => $taskDetail,
+            'taskAttachment' => $task_attachment,
+            'myTags'=>$myTags,
+            'works' =>$works,
+        ]; 
+        return $this->theme->scope("manage.taskinfo",$data)->render();
+	}
     /**
      * 任务详情
      * @param $id
@@ -973,53 +1186,123 @@ class TaskController extends ManageController
 //      dump($data);exit;
         
         //dump($data);
-           
+           $tasksCheck=array();
         foreach($data as $k => $v){
 //      	$file = $request->file('file');
 	    	//将文件上传的数据存入到attachment表中
-	    	
-        	
+	    	$v['num'] = $k;
+            
             if($k === 0 || empty($v[0])) continue;
             	
         		$autouid=EnterpriseAuthModel::getEnterpriseName($v[0]);//获取企业uid
         		if($autouid==0){
-        			return redirect()->back()->with(['error'=>'没有该企业：'.$v[0].'，导入中断。']);
+        			$v['msg'] = '没有该企业！';
+	                array_push($tasksCheck, $v);
+	                continue;
+//      			return redirect()->back()->with(['error'=>'没有该企业：'.$v[0].'，导入中断。']);
+        		}
+        		$checkuid=EnterpriseAuthModel::getcheckName($autouid);//获取企业uid
+        		if($checkuid==0){
+        			$v['msg'] = '该企业还没有认证！';
+	                array_push($tasksCheck, $v);
+	                continue;
         		}
         		if(empty($v[1])){
-        			return redirect()->back()->with(['error'=>$v[0].'行，没有任务名称，导入中断。']);
+        			$v['msg'] = '任务名称不能为空！';
+	                array_push($tasksCheck, $v);
+	                continue;
+//      			return redirect()->back()->with(['error'=>$v[0].'行，没有任务名称，导入中断。']);
         		}
         		$type_id=0;//任务主类型
         		if(empty($v[2])){
-        			return redirect()->back()->with(['error'=>$v[0].'行，没有选择任务主类型，导入中断。']);
+        			$v['msg'] = '请选择任务主类型';
+	                array_push($tasksCheck, $v);
+	                continue;
+//      			return redirect()->back()->with(['error'=>$v[0].'行，没有选择任务主类型，导入中断。']);
         		}else{
         			$type_id=TaskTypeModel::getTaskTypeName($v[2]);
         			if($type_id==0){
-        				return redirect()->back()->with(['error'=>$v[0].'行，主类型错误，导入中断。']);
+        				$v['msg'] = '主类型错误';
+		                array_push($tasksCheck, $v);
+		                continue;
+//      				return redirect()->back()->with(['error'=>$v[0].'行，主类型错误，导入中断。']);
         			}
         		}
         		$sub_type_id=0;//任务子类型
         		if(!empty($v[3])){
         			$aInfos = explode('-', $v[3]);
                 	$sub_type_id = $aInfos[0];
+        		}else{
+        			$v['msg'] = '请选择子类型';
+	                array_push($tasksCheck, $v);
+	                continue;
+        		}
+        		
+        		if(empty($v[4])){
+        			$v['msg'] = '开始日期不能为空！';
+	                array_push($tasksCheck, $v);
+	                continue;
+        		}
+        		
+        		if(empty($v[5])){
+        			$v['msg'] = '结束日期不能为空！';
+	                array_push($tasksCheck, $v);
+	                continue;
+        		}
+        		if(strtotime($v[4])>strtotime($v[5])){
+        			$v['msg'] = '结束时间不能比开始时间早！';
+	                array_push($tasksCheck, $v);
+	                continue;
         		}
         		$province=0;//省份
         		if(!empty($v[6])){
         			$province=DistrictModel::getDistrictNames($v[6]);
+        		}else{
+        			$v['msg'] = '请选择省份！';
+	                array_push($tasksCheck, $v);
+	                continue;
         		}
         		$city=0;//城市
         		if(!empty($v[7])){
         			$city=DistrictModel::getDistrictNames($v[7]);
+        		}else{
+        			$v['msg'] = '请选择城市！';
+	                array_push($tasksCheck, $v);
+	                continue;
         		}
-        		
+        		if(empty($v[8])){
+        			$v['msg'] = '请输入预算！';
+	                array_push($tasksCheck, $v);
+	                continue;
+        		}
+        		if(empty($v[9])){
+        			$v['msg'] = '请输入任务人数！';
+	                array_push($tasksCheck, $v);
+	                continue;
+        		}
+        		if(empty($v[10])){
+        			$v['msg'] = '请输入任务描述！';
+	                array_push($tasksCheck, $v);
+	                continue;
+        		}
+        		if(empty($v[12])){
+        			$v['msg'] = '请输入服务地址！';
+	                array_push($tasksCheck, $v);
+	                continue;
+        		}
         		//------------------------------
-				$attachment_data['name'] = time();
-		        $attachment_data['status']=1;
-		        $attachment_data['url']=$v[11];
-		        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
-		        $attachment_data['user_id']=$autouid;
-		        //将记录写入到attchement表中
-		        $result = AttachmentModel::create($attachment_data);
-	        
+        		$attresult;
+        		if(!empty($v[11])){
+        			$attachment_data['name'] = basename($v[11]);
+			        $attachment_data['status']=1;
+			        $type = explode('.', $v[11]);
+			        $attachment_data['type']=$type[1];
+			        $attachment_data['url']=$v[11];
+			        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+			        $attachment_data['user_id']=$autouid;
+			        //将记录写入到attchement表中
+			        $attresult = AttachmentModel::create($attachment_data);
+        		}
 	        
                 $salt = \CommonClass::random(4);
                 $skill=0;
@@ -1052,18 +1335,36 @@ class TaskController extends ManageController
                     'bounty' => $v[8],
                     'worker_num' => $v[9],
                     'desc' => $v[10],
-                    'file_id'=>[$result['id']],
+//                  'file_id'=>[$result['id']],
                     'address' => $v[12],
-                    'skill'=>$skill,
+//                  'skill'=>$skill,
                     'status' => 2,
                     'bounty_status' => 1,
                     
                 ];
+                if(!empty($skill)){
+                	 $param['skill']= $skill;
+                }
+                if(!empty($attresult)){
+                	$param['file_id']=[$attresult['id']];
+                }
+                
                  $taskModel = new TaskModel();
        		 	 $result = $taskModel->createTask($param);
-           
+       		 	 if($result){
+       		 	 	$v['msg'] = '添加任务成功！';
+	                array_push($tasksCheck, $v);
+       		 	 }else{
+       		 	 	$v['msg'] = '添加任务失败！';
+	                array_push($tasksCheck, $v);
+       		 	 }
         }
-        return redirect('manage/taskList')->with(['message' => '导入成功']);
+        $result = [
+            'tasksCheck' => $tasksCheck,
+        ];
+        //dump($result);
+        return $this->theme->scope('manage.taskListImport', $result)->render();
+//      return redirect('manage/taskList')->with(['message' => '导入成功']);
     }
     
     /**

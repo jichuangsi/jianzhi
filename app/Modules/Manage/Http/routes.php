@@ -49,6 +49,12 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::get('/taskAdd', 'TaskController@getTaskAdd')->name('totaskAdd');//进入任务添加
     Route::post('/taskAdd', 'TaskController@postTaskAdd')->name('taskAdd');//任务添加
     
+    Route::get('/taskInfo/{id}', 'TaskController@getTaskInfo')->name('taskInfo');//进入任务详情
+    Route::get('/taskUpdate/{id}', 'TaskController@getTaskUpdate')->name('taskInfoUpdate');//进入任务修改
+    Route::post('/taskUpdate', 'TaskController@postTaskUpdate')->name('taskInfoUpdatesubmit');//进入任务修改
+    Route::get('/ajaxDelAtt/{aid}/{tid}','TaskController@ajaxDelAtt');
+    
+    
     Route::get('/taskListImport', 'TaskController@getTaskListImport')->name('toTaskListImport');//进入任务导入视图
     //Route::post('/taskListImport', 'TaskController@postTaskListImport')->name('taskListImport');//任务导入
     Route::get('/ajaxSubTaskType','TaskController@ajaxSubTaskType');

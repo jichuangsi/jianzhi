@@ -380,7 +380,48 @@ class TaskModel extends Model
         
         return $data;
     }
-
+    /*
+     * 修改任务
+     */
+	static public function updateTask($data,$tid){
+		if(!empty($data['skill'])){
+                $skills = explode(",", $data['skill']);
+                TaskTagsModel::where('task_id','=',$tid)->delete();
+                $allTag = TagsModel::findAll();
+                $taskTags = array();
+                foreach($skills as $k => $v){
+                    foreach($allTag  as $k1 => $v1){
+                        if(intval($v) === $v1['cate_id']){
+                            array_push($taskTags, $v1['id']);
+                            break;
+                        }
+                    }
+                }
+                if(count($taskTags)>0){
+                    TaskTagsModel::insert($taskTags, $tid);
+                }
+        }
+//      if (!empty($data['file_id'])) {
+//          //查询用户的附件记录，排除掉用户删除的附件记录
+//          $file_able_ids = AttachmentModel::fileAble($data['file_id']);
+////          $file_able_ids = array_flatten($file_able_ids);
+//          foreach ($file_able_ids as $v) {
+//              $attachment_data = [
+//                  'task_id' => $tid,
+//                  'attachment_id' => $v['id'],
+//                  'created_at' => date('Y-m-d H:i:s', time()),
+//              ];
+//              TaskAttachmentModel::create($attachment_data);
+//          }
+//          //修改附件的发布状态
+//          $attachmentModel = new AttachmentModel();
+//          $attachmentModel->statusChange($file_able_ids);
+//      }
+//         unset($data['file_id']);
+           unset($data['skill']);
+           $result=TaskModel::where('id',$tid)->update($data);
+           return $result;
+	}
     /**
      * 创建一个任务
      * @param $data

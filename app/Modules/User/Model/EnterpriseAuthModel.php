@@ -25,7 +25,7 @@ class EnterpriseAuthModel extends Model
 	static function getqiye()
     {
 //  	 $taskType = TaskTypeModel::select('*')->where('status','!=',0)->orderBy('pid', 'ASC')->orderBy('sort', 'ASC')->get()->toArray();
-       $userInfo = EnterpriseAuthModel::select('*')->get()->toArray();
+       $userInfo = EnterpriseAuthModel::select('*')->where('status','=',1)->get()->toArray();
         return $userInfo;
     }
     
@@ -38,7 +38,6 @@ class EnterpriseAuthModel extends Model
             return false;
         }
     }
-
 
     
     static function getEnterpriseAuthStatus2($uid)
@@ -64,6 +63,17 @@ class EnterpriseAuthModel extends Model
     static function getEnterpriseName($name)
     {
         $companyInfo = EnterpriseAuthModel::where('company_name', $name)->first();
+        if ($companyInfo) {
+            return $companyInfo->uid;
+        }
+        return 0;
+    }
+    /*
+     * 根据uid判断企业是否认证
+     */
+    static function getcheckName($uid)
+    {
+        $companyInfo = EnterpriseAuthModel::where('uid', $uid)->where('status','=',1)->first();
         if ($companyInfo) {
             return $companyInfo->uid;
         }
