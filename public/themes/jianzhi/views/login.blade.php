@@ -10,13 +10,17 @@
            <span class="iconfont icon-shouji"></span><input type="text" placeholder="请输入手机号码">
         </div> -->
         <div class="ipt">
-           <span class="iconfont icon-yonghu">           		           
-           </span><input type="text" name="username" placeholder="请输入用户名/手机" onkeydown='clearError(this)' value="{{old('username')}}">           		
+           <span class="iconfont icon-shouji">           		           
+           </span><input type="text" name="username" placeholder="请输入手机号" onkeydown='clearError(this)' value="{{old('username')}}">           		
         </div>
         <div class="ipt">
-           <span class="iconfont icon-mima">
+           {{-- <span class="iconfont icon-mima">
            </span>
-           <input type="password" name="password" placeholder="请输入密码" onkeydown='clearError(this)'>  
+           <input type="password" name="password" placeholder="请输入密码" onkeydown='clearError(this)'>  --}}
+           
+           <span class="iconfont icon-dunpai1">
+           </span>           
+           <input type="number" name="code" placeholder="请输入验证码" onkeydown='clearError(this)'><em onclick="yzm(this)">获取验证码</em>
            		
         </div>
         <input type="hidden" name="wx_openid" value="{{old('wx_openid')}}">
@@ -30,6 +34,11 @@
         		@if($errors->first('password'))
         			<div style="padding-left:10%">
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('password') !!}</p>
+        			</div>
+        		@endif
+        		@if($errors->first('code'))
+        			<div style="padding-left:10%">
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('code') !!}</p>
         			</div>
         		@endif
         <!-- <div class="btn" onclick="btn()">登录</div> -->
@@ -141,6 +150,40 @@
         }
         function btn(){
             window.location.href = './index.html'
+        }
+        function yzm(val){ 
+        	if(val.className != 'yzm'){
+            	let m = 60;
+            	$(val).addClass('yzm')
+            	$(val).text('60s后重新获取')
+            	sendCode();
+        		var timer = setInterval(function(){
+                	m--;
+                	$(val).text(m+'s后重新获取')
+            		if(m == 0){
+            			$(val).removeClass('yzm')
+            			$(val).text('获取验证码')
+            			clearInterval(timer)
+            		}
+        		},1000)
+        	}
+        }
+        function sendCode(){
+            if(!$("input[name='username']").val()){
+				popUpMessage('请输入手机号！');
+				return;
+            }
+        	var url = '/jz/ajaxSendCode';
+			var data = {'_token': '{{ csrf_token() }}','mobile': $("input[name='username']").val()};
+			$.post(url,data,function(ret,status,xhr){
+				console.log(ret);
+                console.log(status);
+                if(ret&&ret.Code==="OK"){
+                	popUpMessage('验证码发送成功！');
+                }else{
+                	popUpMessage('验证码发送失败！');
+                }
+            });
         }
     </script>
     {!! Theme::asset()->container('specific-css')->usepath()->add('login-style','style/login.css') !!}

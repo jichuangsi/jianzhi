@@ -233,3 +233,12 @@
 .iconfont {
     font-size: 0.34rem;
 }
+.ipt em {
+	font-size: 0.28rem;
+	color: #0377bb;
+	font-style: normal;
+	white-space: nowrap;
+}
+.ipt .yzm {
+	color: #999;
+}

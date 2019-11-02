@@ -8,6 +8,7 @@ use App\Modules\User\Model\UserModel;
 use App\Modules\Task\Model\TaskCateModel;
 use Auth;
 use App\Modules\User\Model\UserDetailModel;
+use App\Modules\Manage\Model\ConfigModel;
 use Illuminate\Http\Request;
 /* use App\Modules\Manage\Model\AgreementModel;
 use App\Modules\Manage\Model\ConfigModel;
@@ -86,11 +87,15 @@ class jzAuthController extends AuthController
     
     public function postRegister(RegisterRequest $request){
         
+        if ($request->get('code') && !\CommonClass::checkCaptchaCode($request->get('code'))) {
+            return back()->withInput($request->except('_token','code'))->with(['message' => '验证码无效！']);
+        }
+        
         if($request->get('wx_openid')){
             $wx_openid = $request->get('wx_openid');
             $isExit = UserDetailModel::where('wechat',$wx_openid)->count();
             if($isExit>0){
-                return back()->withInput()->with(['message' => '该微信已绑定其他账号！']);
+                return back()->withInput($request->except('_token','code'))->with(['message' => '该微信已绑定其他账号！']);
             }
         }
         
@@ -137,4 +142,18 @@ class jzAuthController extends AuthController
         
         return response()->json(['mobile' => $userInfo[0]->u_mobile]);
     }
+    
+    public function ajaxSendCode(Request $request){
+        $mobile = $request->get('mobile');
+        
+        if(!$mobile){
+            return response()->json(['errMsg' => '缺少必要参数！']);
+        }
+        
+        $result = json_decode(\CommonClass::sendSms($mobile));
+        
+        return response()->json($result);
+    }
+    
+    
 }

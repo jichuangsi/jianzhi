@@ -89,9 +89,11 @@ class jzUserCenterController extends BasicUserCenterController
             if($authStatus!=1){
                 return redirect('jz/auth');
             }else{
-                $enterpriseInfo  = EnterpriseAuthModel::getEnterpriseInfoByUid($this->user['id']);
+                $userInfo  = UserModel::getUsersById($this->user['id']);
+                $enterpriseInfo  = EnterpriseAuthModel::getEnterpriseInfoByUid($this->user['id']);                
                 $data = [
-                    'einfo' => $enterpriseInfo
+                    'einfo' => $enterpriseInfo,
+                    'mobile'=>$userInfo[0]->mobile
                 ];
             }
             
@@ -255,6 +257,7 @@ class jzUserCenterController extends BasicUserCenterController
         $realnameInfo['username'] = $user->name;
         $realnameInfo['realname'] = $request->get('realname');
         $realnameInfo['card_number'] = $request->get('card_number');
+        $realnameInfo['account'] = $request->get('account');
         $realnameInfo['created_at'] = date('Y-m-d H:i:s', $now);
         $realnameInfo['updated_at'] = date('Y-m-d H:i:s', $now);
         
@@ -418,7 +421,7 @@ class jzUserCenterController extends BasicUserCenterController
         }
         
         if (!empty($error)) {
-            return back()->withErrors($error)->withInput();
+            return back()->withErrors($error)->withInput($request->except('_token'));
         }
         
         $user = $this->user;
@@ -460,7 +463,7 @@ class jzUserCenterController extends BasicUserCenterController
             
             return redirect('jz/auth');
         }else
-            return redirect()->back()->with(['error'=>'提交认证失败']);
+            return redirect()->back()->with(['error'=>'提交认证失败'])->withInput($request->except('_token'));
     }
     
     /**
@@ -469,6 +472,10 @@ class jzUserCenterController extends BasicUserCenterController
      * @return \Illuminate\Http\RedirectResponse
      */
     public function einfoUpdate(EnterpriseInfoRequest $request){
+        
+        if ($request->get('code') && !\CommonClass::checkCaptchaCode($request->get('code'))) {
+            return redirect()->back()->withInput($request->except('_token','code'))->with(['message' => '验证码无效！']);
+        }
         
         $business_license = $request->file('business_license');
         
@@ -485,7 +492,7 @@ class jzUserCenterController extends BasicUserCenterController
         }
         
         if (!empty($error)) {
-            return back()->withErrors($error)->withInput();
+            return back()->withErrors($error)->withInput($request->except('_token','code'));
         }
         
         $enterpriseInfo['owner'] = $request->get('owner');
@@ -499,7 +506,7 @@ class jzUserCenterController extends BasicUserCenterController
         if ($status)
             return redirect('jz/info');
         else
-            return redirect()->back()->with(['error'=>'更新信息失败']);
+            return redirect()->back()->with(['error'=>'更新信息失败'])->withInput($request->except('_token','code'));
     }
     
     /**
@@ -509,16 +516,21 @@ class jzUserCenterController extends BasicUserCenterController
      */
     public function infoUpdate(UserInfoRequest $request)
     {
+        
+        if ($request->get('code') && !\CommonClass::checkCaptchaCode($request->get('code'))) {
+            return redirect()->back()->withInput($request->except('_token','code'))->with(['message' => '验证码无效！']);
+        }
+        
         $mobile = $request->get('mobile');
         
         if(!isset($mobile)||empty($mobile)){
-            return redirect()->back()->with(['error' => '手机号不能为空！']);
+            return redirect()->back()->withInput($request->except('_token','code'))->with(['error' => '手机号不能为空！']);
         }
         
         $cnt = UserModel::where('id', '<>', $this->user['id'])->where('mobile', $mobile)->count();
         
         if($cnt>0){
-            return redirect()->back()->with(['error' => '手机号已注册！']);
+            return redirect()->back()->withInput($request->except('_token','code'))->with(['error' => '手机号已注册！']);
         }
         
         $param = [
@@ -528,16 +540,37 @@ class jzUserCenterController extends BasicUserCenterController
         ];
         
         $result = DB::transaction(function () use ($param) {
-            UserModel::where('id', $param['uid'])->update(['mobile'=>$param['mobile']]);
-            RealnameAuthModel::where('uid', $param['uid'])->update(['account'=>$param['account']]);
+            $salt = \CommonClass::random(4);
+            UserModel::where('id', $param['uid'])->update(
+                [
+                    'name'=>$param['mobile'],                    
+                    'mobile'=>$param['mobile'],
+                    'password' => UserModel::encryptPassword($param['mobile'], $salt),
+                    'alternate_password' => UserModel::encryptPassword($param['mobile'], $salt),
+                    'salt' => $salt,
+                ]                
+                );
+            RealnameAuthModel::where('uid', $param['uid'])->update(['account'=>$param['account'],'username'=>$param['mobile']]);
             UserDetailModel::where('uid', $param['uid'])->update(['mobile'=>$param['mobile']]);//同步一下
         });
         
         if ($result) {
-            return redirect()->back()->with(['error' => '修改失败！']);
+            return redirect()->back()->withInput($request->except('_token','code'))->with(['error' => '修改失败！']);
         }
         
         return redirect()->back()->with(['message' => '修改成功！']);        
         
+    }
+    
+    public function ajaxSendCode(Request $request){
+        $mobile = $request->get('mobile');
+        
+        if(!$mobile){
+            return response()->json(['errMsg' => '缺少必要参数！']);
+        }
+        
+        $result = json_decode(\CommonClass::sendSms($mobile));
+        
+        return response()->json($result);
     }
 }

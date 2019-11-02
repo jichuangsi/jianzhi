@@ -9,11 +9,16 @@
         <div class="ipt">
            <span class="iconfont icon-shouji"></span><input type="number" name="mobile" value="{{old('mobile')}}"  placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
         </div>
-        <div class="ipt">
+        {{-- <div class="ipt">
            <span class="iconfont icon-mima"></span><input type="password" name="password" placeholder="请输入密码" datatype="*6-16" nullmsg="请输入密码" errormsg="密码长度为6-16位字符">
         </div>
         <div class="ipt">
            <span class="iconfont icon-mima"></span><input type="password" name="confirmPassword" placeholder="请输入确认密码" datatype="*" recheck="password" nullmsg="请输入确认密码" errormsg="两次密码不一致">
+        </div> --}}
+        <div class="ipt">                      
+           <span class="iconfont icon-dunpai1">
+           </span>           
+           <input type="number" name="code" placeholder="请输入验证码"><em onclick="yzm(this)">获取验证码</em>           		
         </div>
         <div class="bs">
             <div class="ipt" onclick="jn()">
@@ -124,12 +129,13 @@
     
     function validate(){
         // window.location.href = './login.html'
-        if($("input[name='password']").val() == $("input[name='confirmPassword']").val()){
+        /* if($("input[name='password']").val() == $("input[name='confirmPassword']").val()){
             return true;
         }else{
         	popUpMessage("密码不一致");
             return false;
-        }
+        } */
+        return true;
     }
     function radio_check(val){
         if($(val).siblings()[0].className.indexOf('radio_check') != -1){
@@ -246,6 +252,40 @@
             $(this).append('<i class="iconfont icon-dagou"></i>')
         }
     })
+    	function yzm(val){ 
+        	if(val.className != 'yzm'){
+            	let m = 60;
+            	$(val).addClass('yzm')
+            	$(val).text('60s后重新获取')
+            	sendCode();
+        		var timer = setInterval(function(){
+                	m--;
+                	$(val).text(m+'s后重新获取')
+            		if(m == 0){
+            			$(val).removeClass('yzm')
+            			$(val).text('获取验证码')
+            			clearInterval(timer)
+            		}
+        		},1000)
+        	}
+        }
+        function sendCode(){
+            if(!$("input[name='mobile']").val()){
+				popUpMessage('请输入手机号！');
+				return;
+            }
+        	var url = '/jz/ajaxSendCode';
+			var data = {'_token': '{{ csrf_token() }}','mobile': $("input[name='mobile']").val()};
+			$.post(url,data,function(ret,status,xhr){
+				console.log(ret);
+                console.log(status);
+                if(ret&&ret.Code==="OK"){
+                	popUpMessage('验证码发送成功！');
+                }else{
+                	popUpMessage('验证码发送失败！');
+                }
+            });
+        }
     </script>
     {!! Theme::asset()->container('specific-css')->usepath()->add('register-style','style/register.css') !!}
     {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}

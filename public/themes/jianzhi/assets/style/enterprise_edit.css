@@ -71,3 +71,12 @@
     bottom: 0rem;
     left: 0rem;
 }
+.center_box .ipt em {
+	font-size: 0.28rem;
+	color: #0377bb;
+	font-style: normal;
+	white-space: nowrap;
+}
+.center_box .ipt .yzm {
+	color: #999;
+}

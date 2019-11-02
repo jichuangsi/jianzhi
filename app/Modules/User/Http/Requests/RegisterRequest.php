@@ -11,8 +11,9 @@ class RegisterRequest extends FormRequest
 		return [
             //'username' => 'required|between:4,15|string|unique:users,name',
 		    'mobile' => 'required|mobilePhone',
-            'password' => 'required|between:6,16|string',
-            'confirmPassword' => 'required|same:password',
+		    'code' => 'required|alpha_num',
+            //'password' => 'required|between:6,16|string',
+            //'confirmPassword' => 'required|same:password',
             'agree' => 'required'
 
 		];
@@ -35,12 +36,15 @@ class RegisterRequest extends FormRequest
             'mobile.required' => '手机号码不能为空',
             'mobile.mobile_phone' => '请填写正确的手机号码',
 
-            'password.required' => '请输入注册密码',
+            'code.required' => '请输入验证码',
+            'code.alpha_num' => '请输入正确的验证码格式',
+            
+            /* 'password.required' => '请输入注册密码',
             'password.between' => '密码长度在:min - :max 个字符',
             'password.string' => '密码仅允许字母和数字',
 
             'confirmPassword.required' => '请输入确认密码',
-            'confirmPassword.same' => '确认密码与密码不一致',
+            'confirmPassword.same' => '确认密码与密码不一致', */
 
             'agree.required' => '请先阅读并同意服务条款'
 

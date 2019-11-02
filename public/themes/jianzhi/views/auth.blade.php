@@ -2,7 +2,7 @@
         个人认证
         <div class="out iconfont icon-fanhui" onclick="backToMy();"></div>
     </div>
-    <form action="/jz/user/realnameAuth" method="post" id="authform" enctype="multipart/form-data">
+    <form action="/jz/user/realnameAuth" method="post" id="authform" enctype="multipart/form-data" onsubmit='return validate()'>
     {!! csrf_field() !!}
     <div class="center">
         <div class="list">
@@ -12,7 +12,7 @@
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('realname') !!}</p>
         			@endif
             	</span>            
-            <input type="text" name="realname" id="realname" placeholder="请输入真实姓名" onkeydown='clearError(this)'>
+            <input type="text" name="realname" id="realname" placeholder="请输入真实姓名" onkeydown='clearError(this)' value="{{old('realname')}}">
         </div>
         <div class="list">
             <span>
@@ -21,10 +21,16 @@
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_number') !!}</p>
         			@endif
             </span>
-            <input type="number" name="card_number" id="card_number" placeholder="请输入身份证号码" onkeydown='clearError(this)'>
+            <input type="number" name="card_number" id="card_number" placeholder="请输入身份证号码" onkeydown='clearError(this)' value="{{old('card_number')}}">
         </div>
         <div class="list">
-            银行卡号<input type="text">
+            <span>
+            	银行卡号
+            		@if($errors->first('account'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('account') !!}</p>
+        			@endif
+            </span>
+            <input type="number" name="account" id="account" placeholder="请输入银行卡号" onkeydown='clearError(this)' value="{{old('account')}}">
         </div>
         <div class="text">
             请将证件放在平面拍摄，避免歪斜以及反光，以免造成审核不通过，谢谢！建议选择JPG格式照片进行上传，照片小于5M。
@@ -93,6 +99,17 @@
     function clearError(obj){
 		//console.log(obj);
 		$(obj).parent().find('p').remove();
+    }
+    function validate(){
+		if($("#account").val()){
+			if(luhnCheck($("#account").val())){
+				return true;
+			}else{
+				popUpMessage('银行卡号校验失败！');
+				return false;
+			}
+		}
+		return true;
     }
     </script>
     {!! Theme::asset()->container('specific-css')->usepath()->add('Authentication-style','style/Authentication.css') !!}

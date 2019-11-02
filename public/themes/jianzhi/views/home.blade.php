@@ -127,7 +127,7 @@
         </div>
     </div>
     <script>
-        var size = 2;
+        var size = 5;
     	$(function(){
     		//loadMyTasks($('.top_nav_check').attr('data-id'), 1);
        	});

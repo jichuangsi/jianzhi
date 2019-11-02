@@ -37,6 +37,14 @@ class UserModel extends Model implements AuthenticatableContract,
         return md5(md5($password . $sign));
     }
 
+    static function checkUser($username)
+    {
+        $user = UserModel::where('name', $username)->orWhere('mobile', $username)->first();
+        if ($user) {
+            return true;
+        }
+        return false;
+    }
     
     static function checkPassword($username, $password)
     {
@@ -91,20 +99,20 @@ class UserModel extends Model implements AuthenticatableContract,
         $userArr = array(
             'name' => isset($data['username'])?$data['username']:(isset($data['mobile'])?$data['mobile']:''),
             'mobile' => $data['mobile'],
-            'password' => UserModel::encryptPassword($data['password'], $salt),
-            'alternate_password' => UserModel::encryptPassword($data['password'], $salt),
+            'password' => UserModel::encryptPassword(isset($data['password'])?$data['password']:$data['mobile'], $salt),
+            'alternate_password' => UserModel::encryptPassword(isset($data['password'])?$data['password']:$data['mobile'], $salt),
             'salt' => $salt,
             'last_login_time' => $date,
             'overdue_date' => date('Y-m-d H:i:s', $now + 60*60*3),
             'validation_code' => $validationCode,
             'created_at' => $date,
             'updated_at' => $date,
-            //��ʼ�������û�
+            //初始用户处于激活状态
             'email_status' => 2,
             'status' => 1,
-            //ע�������û�����
+            //用户类型1：个人；2：企业
             'type' => isset($data['type'])?$data['type']:'',
-            //ע�����Ӽ��ܱ�ǩ
+            //ע技能标签
             'skill' => isset($data['skill'])?$data['skill']:'',
             //微信信息
             'wechat' => isset($data['wx_openid'])?$data['wx_openid']:'',
@@ -148,7 +156,7 @@ class UserModel extends Model implements AuthenticatableContract,
             
             UserDetailModel::create($data);
             
-            //ע�����Ӽ��ܱ�ǩ
+            //技能标签
             if(!empty($skill)){
                 $skills = explode(",", $skill);
                 $allTag = TagsModel::findAll();

@@ -13,6 +13,7 @@ class EnterpriseInfoRequest extends FormRequest
             'contactor' => 'required|string|between:2,5',
             'contactor_mobile' => 'required|mobile_phone',
             'phone' => 'required|alpha_num',
+            'code' => 'required|alpha_num',
         ];
 	}
 
@@ -35,6 +36,8 @@ class EnterpriseInfoRequest extends FormRequest
             'contactor_mobile.mobile_phone' => '请输入正确的电话格式',            
             'phone.required' => '请输入企业电话',
             'phone.alpha_num' => '请输入正确的电话格式',
+            'code.required' => '请输入验证码',
+            'code.alpha_num' => '请输入正确的验证码格式',
         ];
 
     }

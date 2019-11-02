@@ -10,8 +10,10 @@ use App\Modules\User\Model\TaskModel;
 use App\Modules\User\Model\UserDetailModel;
 use App\Modules\User\Model\UserFocusModel;
 use Gregwar\Captcha\CaptchaBuilder;
+use Gregwar\Captcha\PhraseBuilder;
 use Illuminate\Support\Facades\Auth;
 use Teepluss\Theme\Facades\Theme;
+use Illuminate\Support\Facades\Session;
 
 
 class CommonClass
@@ -982,5 +984,142 @@ class CommonClass
         }
         return $envInfo;
     }
+    
+    //new function for SMS
+    static function sendSms($mobile){
+        $smsConfig = ConfigModel::getConfigByType('sms');
+        
+        $phone = $mobile;//手机号
+        $signName = $smsConfig['sms_signname'];   //短信签名（注意不是工单号）
+        $appid =  $smsConfig['sms_accesskeyid']; //appid
+        $secret = $smsConfig['sms_accesskeysecret']; //秘钥
+        $tplid = $smsConfig['sms_templatecode'];      //模板id
+        
+        $tplParam = json_encode(['code' => \CommonClass::getCaptchaCode()]);
+        
+        date_default_timezone_set("UTC");
+        $params = [
+            'AccessKeyId' => $appid,                 // appid
+            'Timestamp'   => date('Y-m-d\TH:i:s\Z'), //时间
+            'SignatureMethod'=>'HMAC-SHA1',  //固定值
+            'SignatureVersion'=> '1.0',     //固定值
+            'SignatureNonce'  => uniqid(),  //随机码(这是PHP函数基于以微秒计的当前时间，生成一个唯一的ID)
+            //'Signature' => ''
+            'Format'      => 'JSON',        //返回的数据类型(如果不传官方说默认JSON经测试是XML)
+            //业务参数
+            'Action'       => 'SendSms',     //固定值不要更改
+            'Version'     => '2017-05-25',   //API的版本(固定值)
+            'RegionId'    => 'cn-hangzhou',  //API支持的RegionID(固定值)
+            'PhoneNumbers' => $phone,        //接收号码
+            'SignName'      => $signName,    //签名
+            'TemplateCode'  => $tplid,       //模板id
+            'TemplateParam' => $tplParam,    //短信模板变量替换JSON串，如$code
+        ];
+        //return json_encode($params);
+        //排序
+        ksort($params);
+        
+        $str = '';
+        
+        foreach($params as $k => $v){
+            $str .= urlencode($k) . '=' . urlencode($v) . '&';
+        }
+        
+        $str = substr($str,0,-1);//把最后一个'&'符号截取下去
+        
+        $str = str_replace(['+','*','%7E'],['%20','%2A','~'],$str );//替换字符
+        
+        $new_str = 'GET&' . urlencode('/') . '&' . urlencode($str);//拼接新字符串
+        
+        $sign = base64_encode(hash_hmac('sha1', $new_str, $secret . '&',true));
+        
+        $sign = urlencode($sign);//生成签名
+        
+        $url = 'http://dysmsapi.aliyuncs.com/?Signature=' . $sign . '&'.  $str;
+        
+        return \CommonClass::request($url);
+        
+    }
+    
+    static function getCaptchaCode($length = 6, $charset = '0123456789'){
+        $builder = new PhraseBuilder();
+        $captchaCode = $builder->build($length, $charset);
+        Session::put('captcha_code', $captchaCode);
+        Session::put('send_captcha_code_time', time());
+        
+        return $captchaCode;
+    }
+    
+    static function checkCaptchaCode($code, $duration = 60)
+    {   
+        $sendTime = Session::get('send_captcha_code_time');
+        $nowTime = time();
+        
+        if(empty($sendTime)){
+            Session::forget('captcha_code');
+            Session::forget('send_captcha_code_time');
+            return false;
+        }else{            
+            if($nowTime - $sendTime < intval($duration) ){
+                $builder = new PhraseBuilder();
+                if($builder->niceize(Session::get('captcha_code')) == $builder->niceize($code)){
+                    Session::forget('captcha_code');
+                    Session::forget('send_captcha_code_time');
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                Session::forget('captcha_code');
+                Session::forget('send_captcha_code_time');
+                return false;
+            }
+        }
+    }
 
+    static function request($url = '', $data = array(), $method = 'GET', $second = 30) {
+        if (empty($url)) {
+            return false;
+        }
+        
+        $ch = curl_init();//初始化curl
+        /* $headers = [
+         'form-data' => ['Content-Type: multipart/form-data'],
+         'json'      => ['Content-Type: application/json'],
+         ]; */
+        
+        
+        if($method == 'GET'){
+            if($data){
+                $querystring = http_build_query($data);
+                $url = $url.'?'.$querystring;
+            }
+        }
+        //dump($url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $second);//设置超时
+        curl_setopt($ch, CURLOPT_URL, $url);//抓取指定网页
+        //curl_setopt($ch, CURLOPT_HTTPHEADER,$headers[$type]);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);//设置header
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);//要求结果为字符串且输出到屏幕上
+        
+        if($method == 'POST'){
+            $post_data = "p=" . urlencode(json_encode($data));
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST,'POST');     // 请求方式
+            curl_setopt($ch, CURLOPT_POST, TRUE);//post提交方式
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        }
+        
+        $data = curl_exec($ch);//运行curl
+        
+        //返回结果
+        if($data){
+            curl_close($ch);
+            return $data;
+        } else {
+            $error = curl_error($ch);
+            //$error = curl_errno($ch);
+            curl_close($ch);
+            return $error;
+        }
+    }
 }

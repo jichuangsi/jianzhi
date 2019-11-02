@@ -22,26 +22,33 @@
             		@if($errors->first('owner'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('owner') !!}</p>
         			@endif
-            </span><input type="text" placeholder="请输入法人" name="owner" id="owner" value="{{ $einfo['owner'] }}" onkeydown='clearError(this)'></div>
+            </span><input type="text" placeholder="请输入法人" name="owner" id="owner" @if(old('owner')) value="{{ old('owner') }}" @else value="{{ $einfo['owner'] }}" @endif onkeydown='clearError(this)'></div>
             <div class="ipt">            
             <span>
             	联系人
             		@if($errors->first('contactor'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor') !!}</p>
         			@endif
-            </span><input type="text" placeholder="请输入联系人" name="contactor" id="contactor" value="{{ $einfo['contactor'] }}" onkeydown='clearError(this)'></div>
+            </span><input type="text" placeholder="请输入联系人" name="contactor" id="contactor" @if(old('contactor')) value="{{ old('contactor') }}" @else value="{{ $einfo['contactor'] }}" @endif onkeydown='clearError(this)'></div>
             <div class="ipt">
             <span>联系电话
             		@if($errors->first('contactor_mobile'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor_mobile') !!}</p>
         			@endif            
-            </span><input type="number" placeholder="请输入联系电话" name="contactor_mobile" id="contactor_mobile" value="{{ $einfo['contactor_mobile'] }}" onkeydown='clearError(this)'></div>
+            </span><input type="number" placeholder="请输入联系电话" name="contactor_mobile" id="contactor_mobile" @if(old('contactor_mobile')) value="{{ old('contactor_mobile') }}" @else value="{{ $einfo['contactor_mobile'] }}" @endif onkeydown='clearError(this)'></div>
             <div class="ipt">
             <span>企业电话
             			@if($errors->first('phone'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('phone') !!}</p>
             			@endif            		
-            	</span><input type="number" placeholder="请输入企业电话"  name="phone" id="phone" value="{{ $einfo['phone'] }}" onkeydown='clearError(this)'></div>
+            	</span><input type="number" placeholder="请输入企业电话"  name="phone" id="phone" @if(old('phone')) value="{{ old('phone') }}" @else value="{{ $einfo['phone'] }}" @endif onkeydown='clearError(this)'></div>
+            <div class="ipt">
+            <span style="width: 30%;">验证码
+            		@if($errors->first('code'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('code') !!}</p>
+        			@endif
+            </span><input style="text-align:left;" type="number" name="code" placeholder="请输入验证码" onkeydown='clearError(this)'><em onclick="yzm(this)">获取验证码</em>
+            </div>
             <div class="img">
                	 营业执照副本
                 <div class="img_file">
@@ -53,6 +60,7 @@
                     <input type="file" name="business_license" id="business_license"  onchange="zzfile()">
                 </div>
             </div>
+            <input type="hidden" name="mobile" value="{{$mobile}}"/>
         </div>
     </div>
     <button class="btn" type="submit">保存</button>
@@ -82,6 +90,40 @@
     function clearError(obj){
 		//console.log(obj);
 		$(obj).parent().find('p').remove();
+    }
+    function yzm(val){ 
+    	if(val.className != 'yzm'){
+        	let m = 60;
+        	$(val).addClass('yzm')
+        	$(val).text('60s后重新获取')
+        	sendCode();
+    		var timer = setInterval(function(){
+            	m--;
+            	$(val).text(m+'s后重新获取')
+        		if(m == 0){
+        			$(val).removeClass('yzm')
+        			$(val).text('获取验证码')
+        			clearInterval(timer)
+        		}
+    		},1000)
+    	}
+    }
+    function sendCode(){
+        if(!$("input[name='mobile']").val()){
+			popUpMessage('请输入手机号！');
+			return;
+        }
+    	var url = '/jz/user/ajaxSendCode';
+		var data = {'_token': '{{ csrf_token() }}','mobile': $("input[name='mobile']").val()};
+		$.post(url,data,function(ret,status,xhr){
+			console.log(ret);
+            console.log(status);
+            if(ret&&ret.Code==="OK"){
+            	popUpMessage('验证码发送成功！');
+            }else{
+            	popUpMessage('验证码发送失败！');
+            }
+        });
     }
     </script>
     {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_edit-style','style/enterprise_edit.css') !!}

@@ -11,7 +11,7 @@
             		@if($errors->first('company_name'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('company_name') !!}</p>
         			@endif
-            </span><input type="text" placeholder="请输入企业名称" name="company_name" id="company_name" onkeydown='clearError(this)'>
+            </span><input type="text" placeholder="请输入企业名称" name="company_name" id="company_name" onkeydown='clearError(this)' value="{{old('company_name')}}">
         </div>
         <div class="list">
             <span>
@@ -19,7 +19,7 @@
             		@if($errors->first('owner'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('owner') !!}</p>
         			@endif
-            </span><input type="text" placeholder="请输入法人"  name="owner" id="owner" onkeydown='clearError(this)'>
+            </span><input type="text" placeholder="请输入法人"  name="owner" id="owner" onkeydown='clearError(this)' value="{{old('owner')}}">
         </div>
         <div class="list">
             <span>
@@ -27,14 +27,14 @@
             		@if($errors->first('contactor'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor') !!}</p>
         			@endif
-            </span><input type="text" placeholder="请输入联系人"  name="contactor" id="contactor" onkeydown='clearError(this)'>
+            </span><input type="text" placeholder="请输入联系人"  name="contactor" id="contactor" onkeydown='clearError(this)' value="{{old('contactor')}}">
         </div>
         <div class="list">
             <span>联系电话
             		@if($errors->first('contactor_mobile'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('contactor_mobile') !!}</p>
         			@endif            
-            </span><input type="number" placeholder="请输入联系人电话" name="contactor_mobile" id="contactor_mobile" onkeydown='clearError(this)'>
+            </span><input type="number" placeholder="请输入联系人电话" name="contactor_mobile" id="contactor_mobile" onkeydown='clearError(this)' value="{{old('contactor_mobile')}}">
         </div>
         <div class="title">开票信息</div>
         <div class="list">
@@ -43,7 +43,7 @@
             		@if($errors->first('bank'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('bank') !!}</p>
         			@endif
-            </span><input type="text" placeholder="请输入企业开户行" name="bank" id="bank" onkeydown='clearError(this)'>
+            </span><input type="text" placeholder="请输入企业开户行" name="bank" id="bank" onkeydown='clearError(this)' value="{{old('bank')}}">
         </div>
         <div class="list">
             <span>
@@ -51,7 +51,7 @@
             		@if($errors->first('account'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('account') !!}</p>
         			@endif
-            </span><input type="number" placeholder="请输入企业账户" name="account" id="account" onkeydown='clearError(this)'>
+            </span><input type="number" placeholder="请输入企业账户" name="account" id="account" onkeydown='clearError(this)' value="{{old('account')}}">
         </div>
         <div class="list">
             	<span>
@@ -59,7 +59,7 @@
             			@if($errors->first('tax_code'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('tax_code') !!}</p>
             			@endif
-            	</span><input type="text" placeholder="请输入纳税人识别码" name="tax_code" id="tax_code" onkeydown='clearError(this)'>
+            	</span><input type="text" placeholder="请输入纳税人识别码" name="tax_code" id="tax_code" onkeydown='clearError(this)' value="{{old('tax_code')}}">
         </div>
         <div class="list">
             	<span>
@@ -67,7 +67,7 @@
             			@if($errors->first('phone'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('phone') !!}</p>
             			@endif            		
-            	</span><input type="number" placeholder="请输入企业电话" name="phone" id="phone" onkeydown='clearError(this)'>
+            	</span><input type="number" placeholder="请输入企业电话" name="phone" id="phone" onkeydown='clearError(this)' value="{{old('phone')}}">
         </div>
         <div class="list">
             <span>
@@ -75,7 +75,7 @@
             			@if($errors->first('address'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('address') !!}</p>
             			@endif 
-            </span><input type="text" placeholder="请输入营业执照地址" name="address" id="address" onkeydown='clearError(this)'>
+            </span><input type="text" placeholder="请输入营业执照地址" name="address" id="address" onkeydown='clearError(this)' value="{{old('address')}}">
         </div>
         <div class="img">
                 <span>
@@ -123,14 +123,14 @@
 		$(obj).parent().find('p').remove();
     }
     function validate(){
-		if($("#account").val()){
+		/* if($("#account").val()){
 			if(luhnCheck($("#account").val())){
 				return true;
 			}else{
 				popUpMessage('银行卡号校验失败！');
 				return false;
 			}
-		}
+		} */
 		return true;
     }
     </script>

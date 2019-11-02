@@ -129,7 +129,7 @@
                     </label> -->
                     <button class="btn btn-primary btn-sm" onclick="batchAction('s')">批量结算</button>
                     <button class="btn btn-primary btn-sm" onclick="templateDownload()">模板下载</button>
-                    <button class="btn btn-primary btn-sm" onclick="batchImport()">验收导入</button>
+                    <button class="btn btn-primary btn-sm" onclick="batchImport()">结算导入</button>
                 </div>
             </div>
             <div class="space-10 col-xs-12"></div>

@@ -11,6 +11,7 @@ Route::group(['prefix' => 'jz'], function () {
     Route::post('login', 'Auth\jzAuthController@postLogin');
     Route::post('wxlogin', 'Auth\jzAuthController@postWxLogin');    
     Route::post('ajaxCheckOpenid', 'Auth\jzAuthController@ajaxCheckOpenid');
+    Route::post('ajaxSendCode', 'Auth\jzAuthController@ajaxSendCode');    
     Route::get('logout', 'Auth\jzAuthController@getLogout');
     Route::get('register', 'Auth\jzAuthController@getRegister');
     Route::post('register', 'Auth\jzAuthController@postRegister');
@@ -69,6 +70,8 @@ Route::group(['prefix' => 'jz'], function () {
     Route::post('/user/createFeedback','jzUserCenterController@createFeedback');
     //企业实名认证路由
     Route::post('/user/enterpriseAuth', 'jzUserCenterController@createEnterpriseAuth');
+    
+    Route::post('/user/ajaxSendCode','jzUserCenterController@ajaxSendCode');
     
 });
 

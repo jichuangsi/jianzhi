@@ -63,7 +63,7 @@
         </div>
     </div>
     <script>
-    	var size = 2;
+    	var size = 5;
         $('.top_nav > div').click(function(){
             if(this.className.indexOf('top_nav_check') != -1){
                 return

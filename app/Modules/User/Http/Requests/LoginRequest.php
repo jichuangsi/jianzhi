@@ -10,8 +10,9 @@ class LoginRequest extends FormRequest
 	{
 		return [
             'username' => 'required|string',
-            'password' => 'required|between:3,16|string',
-            'code' => 'sometimes|required|alpha_num'
+            //'password' => 'required|between:3,16|string',
+            //'code' => 'sometimes|required|alpha_num'
+		    'code' => 'required|alpha_num'
 		];
 	}
 
@@ -26,7 +27,9 @@ class LoginRequest extends FormRequest
         return [
             'username.required' => '请输入登录账号',
             'username.string' => '请输入正确的账号格式',
-            'password.required' => '请输入登录密码',
+            //'password.required' => '请输入登录密码',
+            'code.required' => '请输入验证码',
+            'code.alpha_num' => '请输入正确的验证码格式',
         ];
     }
 

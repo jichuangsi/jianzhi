@@ -86,11 +86,14 @@ class AuthController extends IndexController
     public function postLogin(LoginRequest $request)
     {
         $error = array();
-        if ($request->get('code') && !\CommonClass::checkCode($request->get('code'))) {
-            $error['code'] = '请输入正确的验证码';
+        if ($request->get('code') && !\CommonClass::checkCaptchaCode($request->get('code'))) {
+            //$error['code'] = '请输入正确的验证码';
+            $error['code'] = '验证码无效';
         } else {
-            if (!UserModel::checkPassword($request->get('username'), $request->get('password'))) {
-                $error['password'] = '请输入正确的帐号或密码';
+            //if (!UserModel::checkPassword($request->get('username'), $request->get('password'))) {
+            if (!UserModel::checkUser($request->get('username'))) {
+                //$error['password'] = '请输入正确的帐号或密码';
+                $error['username'] = '请输入正确的手机号';
             } else {
                 $user = UserModel::where('name', $request->get('username'))->first();
                 if (!empty($user) && $user->status == 2){

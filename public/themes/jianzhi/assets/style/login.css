@@ -46,3 +46,12 @@
 .tishi a {
     color: #0377bb
 }
+.ipt em {
+	font-size: 0.28rem;
+	color: #0377bb;
+	font-style: normal;
+	white-space: nowrap;
+}
+.ipt .yzm {
+	color: #999;
+}
