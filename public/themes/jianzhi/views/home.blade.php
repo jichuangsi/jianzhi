@@ -234,6 +234,8 @@
 					{
 						case 3: tStatus = '招募中'; break;
 						case 4: tStatus = '进行中'; break;
+						case 7: tStatus = '待验收'; break;
+						case 8: tStatus = '已验收'; break;
 						case 9: tStatus = '已结算'; break;
 					}
 				}
