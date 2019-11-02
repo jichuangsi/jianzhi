@@ -105,7 +105,7 @@ class WorkModel extends Model
             switch($data['work_type'])
             {
                 case 1:
-                    $query->where('work.status','<=',1);
+                    $query->where('work.status','>=',0);
                     break;
                 case 2:
                     $query->where('work.status','>=',1);

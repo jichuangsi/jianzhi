@@ -150,11 +150,12 @@
 					}
 					break;
 					case 1: {
-						if(curPageData[i].status===3){
-							tStatus = '报名通过待开始';
-						}else{
+						//接单人任务提交不受任务状态所限
+						//if(curPageData[i].status===3){
+							//tStatus = '报名通过待开始';
+						//}else{
 							tStatus = '已派单进行中'; wAction = '提交验收'; wActionData = 's'; 
-						}
+						//}
 					}
 					break;
 					case 2: tStatus = '已提交待验收'; break;

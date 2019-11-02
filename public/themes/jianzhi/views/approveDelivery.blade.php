@@ -11,14 +11,14 @@
                 	@if($errors->first('payment'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('payment') !!}</p>
         			@endif
-        			</div><input type="number" name="payment" id="payment" onkeydown='clearError(this)'>
+        			</div><input type="number" name="payment" id="payment" onkeydown='clearError(this)' value="{{old('payment')}}">
             </div>
         <div class="text_box">
             <div>评价及说明：
             		@if($errors->first('comment'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('comment') !!}</p>
         			@endif
-            </div><textarea cols="30" rows="10" name="comment" id="comment" onkeydown='clearError(this)'></textarea>
+            </div><textarea cols="30" rows="10" name="comment" id="comment" onkeydown='clearError(this)'>{{old('comment')}}</textarea>
         </div>
     </div>
     <button class="btn" type="submit">确定验收</button>

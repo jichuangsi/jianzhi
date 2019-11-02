@@ -96,6 +96,25 @@
             height: 24px;
             display: block;
         }
+        .bigimg {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            z-index: 9999;
+        }
+        .bigimg img {
+            width: 60%;
+            /* height: 80%;
+            transform: scale(1.5); */
+            /* 放大倍数 */
+        }  
 </style>
 <div class="well">
     <h4 >任务详情</h4>
@@ -204,7 +223,7 @@
                                                 <div class="col-sm-9">
                                                     @foreach($taskAttachment as $k=>$v)
                                                         <!-- <button>附件{{ ($k+1) }}</button><a href="{{ URL('task/download',['id'=>$v['attachment_id']]) }}" target="_blank">下载</a>&nbsp;&nbsp; -->
-                                                    	<img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;"></a>                                                    
+                                                    	<img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">                                                   
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -326,6 +345,9 @@
         </div>
     </div>
 </div><!-- /.row -->
+	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+        <img src="" alt="">
+    </div>
 <script type="text/javascript">
 function toBack(){
 	window.location.href = '{!! url("manage/taskDispatch") !!}'
@@ -418,6 +440,10 @@ function iptuser(val){
         $('.end_user').css('display','none')
     }
     }, 500);
+}
+function bigimg(val){
+    $('.bigimg > img')[0].src = val.src
+    $('.bigimg').css('display','flex')
 }
 </script>
 {!! Theme::widget('editor')->render() !!}

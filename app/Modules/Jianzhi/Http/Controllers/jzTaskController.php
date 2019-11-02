@@ -336,8 +336,8 @@ class jzTaskController extends TaskBasicController
         if($this->user->type===2){//企业看任务详情，该任务默认是本企业
             $path = 'etaskDetail';
             
-            if($detail['status']===3){//任务招募中可以看见投标人和中标人
-                $param['work_type'] = 1;
+            if($detail['status']===3){//任务招募中可以看见所有人
+                $param['work_type'] = 1;                
             }else if($detail['status']>=4){//任务其他状态只能看见中标人
                 $param['work_type'] = 2;
             }else{
@@ -444,7 +444,7 @@ class jzTaskController extends TaskBasicController
         //判断当前的任务的入围人数是否用完
         $worker_num = TaskModel::where('id',$param['task_id'])->lists('worker_num');
         //当前任务的入围人数统计
-        $win_bid_num = WorkModel::where('task_id',$param['task_id'])->where('status',1)->count();
+        $win_bid_num = WorkModel::where('task_id',$param['task_id'])->where('status','>=',1)->count();
         
         //判断当前是否可以选择中标
         if($worker_num[0]>$win_bid_num)
@@ -520,14 +520,14 @@ class jzTaskController extends TaskBasicController
         //判断数据合法性
         if(empty($data['task_id']))
         {
-            return redirect()->back()->with(['error'=>'提交验收失败']);
+            return redirect()->back()->withInput($request->except('_token'))->with(['error'=>'提交验收失败']);
         }
          //判断当前用户是否有资格投标
         $is_deliver_able = $this->isDeliverAble($data['task_id']);
          //返回为何不能投标的原因
          if(!$is_deliver_able['able'])
          {
-         return redirect()->back()->with('error', $is_deliver_able['errMsg']);
+             return redirect()->back()->withInput($request->except('_token'))->with('error', $is_deliver_able['errMsg']);
          }   
         /* //判断当前用户是否有验收投稿资格
         if(!WorkModel::isWinBid($data['task_id'],$this->user['id']))
@@ -540,7 +540,7 @@ class jzTaskController extends TaskBasicController
         //判断当前用户是否已经交付
         if($is_delivery)
         {
-            return redirect()->back()->with('error','您已经提交过了！');
+            return redirect()->back()->withInput($request->except('_token'))->with('error','您已经提交过了！');
         }
         
         //查询任务需要的人数
@@ -554,7 +554,7 @@ class jzTaskController extends TaskBasicController
         
         $result = WorkModel::delivery($data);
         
-        if(!$result) return redirect()->back()->with('error','提交验收失败！');
+        if(!$result) return redirect()->back()->withInput($request->except('_token'))->with('error','提交验收失败！');
         /* //发送系统消息
         //判断当前的任务发布成功之后是否需要发送系统消息
         $agreement_documents = MessageTemplateModel::where('code_name','agreement_documents')->where('is_open',1)->where('is_on_site',1)->first();
@@ -630,12 +630,12 @@ class jzTaskController extends TaskBasicController
         //判断数据合法性
         if(empty($data['work_id'])||empty($data['task_id']))
         {
-            return redirect()->back()->with(['error'=>'验收失败']);
+            return redirect()->back()->withInput($request->except('_token'))->with(['error'=>'验收失败']);
         }
         
         //验证用户是否是雇主
         if(!TaskModel::isEmployer($data['task_id'],$this->user['id']))
-            return redirect()->back()->with(['error'=>'你是任务发布者不能验收！']);
+            return redirect()->back()->withInput($request->except('_token'))->with(['error'=>'你是任务发布者不能验收！']);
         
         //查询任务需要的人数
         $worker_num = TaskModel::where('id',$data['task_id'])->first();
@@ -647,7 +647,7 @@ class jzTaskController extends TaskBasicController
         $data['win_check'] = $win_check;
         
         $result = WorkModel::workCheck2($data);
-        if(!$result) return redirect()->back()->with(['error'=>'验收失败！']);
+        if(!$result) return redirect()->back()->withInput($request->except('_token'))->with(['error'=>'验收失败！']);
         
         if($result) return redirect()->to('jz/task/'.$data['task_id'])->with(['manage'=>'验收成功！']);
     }
@@ -749,10 +749,11 @@ class jzTaskController extends TaskBasicController
     {        
         //判断当前任务是否处于投稿期间
         $task_data = TaskModel::where('id',$task_id)->first();
-        if($task_data['status']!=4)
+        //接单人任务提交不受任务状态所限
+        /* if($task_data['status']!=4)
         {
             return ['able' => false, 'errMsg' => '当前任务不允许提交验收！'];
-        }
+        } */
         /* if(strtotime($task_data['begin_at'])>time())
         {
             return ['able' => false, 'errMsg' => '当前任务还未开始实施！'];

@@ -787,17 +787,30 @@ class TaskController extends ManageController
         
         //查询任务技能标签
         $t_tags = TaskTagsModel::getTagsByTaskId($work->w_task_id);
+        //查询任务的附件
+        $t_attatchment_ids = TaskAttachmentModel::where('task_id','=',$work->w_task_id)->lists('attachment_id')->toArray();
+        $t_attatchment_ids = array_flatten($t_attatchment_ids);
+        $taskAttatchment = AttachmentModel::whereIn('id',$t_attatchment_ids)->get();            
         
         //查询接单人技能标签
-        $w_tags = UserTagsModel::getTagsByUserId($work->w_uid);
+        $w_tags = UserTagsModel::getTagsByUserId($work->w_uid);        
+        
+        $w_attatchment_ids = WorkAttachmentModel::findById($id);
+        $w_attatchment_ids = array_flatten($w_attatchment_ids);
+        $workkAttatchment = AttachmentModel::whereIn('id',$w_attatchment_ids)->get();
+
+        $workComments = WorkCommentModel::where('work_id',$id)->where('pid',0)->with('childrenComment')->get()->toArray();
         
         $data = [
             'work' => $work,
             't_tag' => $t_tags,
             'w_tag' => $w_tags,
+            't_attachment' => $taskAttatchment,
+            'w_attachment' => $workkAttatchment,
+            'w_comment' => $workComments,
         ];
         
-        //dump($data);
+        //dump($data);exit;
         
         return $this->theme->scope('manage.taskdetail3', $data)->render();
     }
@@ -1505,7 +1518,7 @@ class TaskController extends ManageController
             return  redirect()->to('manage/taskCheck')->with(array('message' => '操作失败'));
     }
     
-    public function taskCheckHandle($id, $action){
+    public function taskCheckHandle($id, $action){//缺少对任务状态的改变--Keyman
         if (!$id) {
             return  redirect()->to('manage/taskCheck')->with(array('error' => '参数错误'));
         }
@@ -1805,6 +1818,9 @@ class TaskController extends ManageController
                         
                         if(isset($comment)&&!empty($comment)){
                             $param['task_id'] = $v[0];
+                            $task = TaskModel::select('task.uid','task.username')->where('task.id', $v[0])->first();
+                            $param['t_uid'] = $task->uid;
+                            $param['t_uname'] = $task->username;
                             $param['comment'] = $comment;
                         }
                         
@@ -1816,6 +1832,8 @@ class TaskController extends ManageController
                                 $work_comment = [
                                     'task_id'=>$param['task_id'],
                                     'work_id'=>$param['work_id'],
+                                    'uid'=>$param['t_uid'],
+                                    'nickname'=>$param['t_uname'],
                                     'comment'=>$param['comment'],
                                     'created_at'=>date('Y-m-d H:i:s',time()),
                                 ];
@@ -1975,7 +1993,7 @@ class TaskController extends ManageController
             return  redirect()->to('manage/taskSettle')->with(array('message' => '操作失败'));
     }
     
-    public function taskSettleHandle($id, $action){
+    public function taskSettleHandle($id, $action){//缺少对任务状态的改变--Keyman
         if (!$id) {
             return  redirect()->to('manage/taskSettle')->with(array('error' => '参数错误'));
         }
@@ -2072,7 +2090,7 @@ class TaskController extends ManageController
     }
     
     //提交任务结算导入数据
-    public function postTaskSettleImport(Request $request){
+    public function postTaskSettleImport(Request $request){//缺少对任务状态的改变--Keyman
         $data = $this->fileImport($request->file('tasksettlefile'));
         
         if(isset($data['fail'])&&$data['fail']){

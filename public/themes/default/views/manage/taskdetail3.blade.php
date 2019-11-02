@@ -83,6 +83,25 @@
             height: 24px;
             display: block;
         }
+        .bigimg {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            z-index: 9999;
+        }
+        .bigimg img {
+            width: 60%;
+            /* height: 80%;
+            transform: scale(1.5); */
+            /* 放大倍数 */
+        }  
 </style>
 <div class="well">
     <h4 >任务信息</h4>
@@ -179,6 +198,14 @@
                                                 </div>
                                             </div>
                                             <div class="form-group interface-bottom col-xs-12">
+                                            	<label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 任务图片： </label>
+                                            	<div class="col-sm-9">
+                                                    @foreach($t_attachment as $k=>$v)
+                                                        <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">                                                   
+                                                    @endforeach
+                                                </div>
+                                            </div>                                            
+                                            <div class="form-group interface-bottom col-xs-12">
                                                 <label class="col-sm-1 control-label no-padding-right" for="form-field-1">  验收状态： </label>
 
                                                 <div class="col-sm-9">
@@ -233,9 +260,26 @@
                                                 </div>
                                             </div>
                                             <div class="form-group interface-bottom col-xs-12">
+                                            	<label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 提交图片： </label>
+                                            	<div class="col-sm-9">
+                                                    @foreach($w_attachment as $k=>$v)
+                                                        <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">                                                  
+                                                    @endforeach
+                                                </div>
+                                            </div> 
+                                            
+                                            <div class="form-group interface-bottom col-xs-12">
                                                 <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 验收时间： </label>
                                                 <div class="col-sm-9">
                                                    	{{$work['w_checked_at']}}
+                                                </div>
+                                            </div>
+                                            <div class="form-group interface-bottom col-xs-12">
+                                                <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 验收说明： </label>
+                                                <div class="col-sm-9">
+                                                   	@foreach($w_comment as $k => $v)
+                                                    	<div>@if($v['nickname']){{ $v['nickname'] }}@else {{$k+1}} @endif：{{ $v['comment'] }}</div>                            
+                                                    @endforeach
                                                 </div>
                                             </div>
                                             <div class="form-group interface-bottom col-xs-12">
@@ -281,9 +325,16 @@
         </div>
     </div>
 </div><!-- /.row -->
+	<div class="bigimg" onclick="$('.bigimg').css('display','none')">
+        <img src="" alt="">
+    </div>
 <script type="text/javascript">
 function toBack(){
 	window.location.href = '{!! url("manage/taskCheck") !!}'
+}
+function bigimg(val){
+    $('.bigimg > img')[0].src = val.src
+    $('.bigimg').css('display','flex')
 }
 </script>
 {!! Theme::widget('editor')->render() !!}

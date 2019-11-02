@@ -1,6 +1,6 @@
 	<div class="top">
         提交验收材料
-        <div class="out iconfont icon-fanhui" onclick="window.history.back(-1);"></div>
+        <div class="out iconfont icon-fanhui" onclick="backToList();"></div>
     </div>
     <form action="/jz/task/createDeliver" method="post" id="deliverform" enctype="multipart/form-data">
     {!! csrf_field() !!}
@@ -12,7 +12,7 @@
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('desc') !!}</p>
         			@endif
             </div>
-            <textarea name="desc" id="desc" cols="30" rows="10" nullmsg="描述不能为空" errormsg="字数超过限制" onkeydown='clearError(this)'></textarea>
+            <textarea name="desc" id="desc" cols="30" rows="10" nullmsg="描述不能为空" errormsg="字数超过限制" onkeydown='clearError(this)'>{{old('desc')}}</textarea>
         </div>
         <!-- <div class="text_box">
             <div>上传验收材料：</div>
@@ -63,7 +63,9 @@
             'positive':/^[1-9]\d*$/,
         },
     });
-
+    function backToList(){
+    	window.location.href = "{!! url('jz/task') !!}";
+    }
     function addfile(){
         if($('.file_box').children().length < 3){
             var reads = new FileReader();
