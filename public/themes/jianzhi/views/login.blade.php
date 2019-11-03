@@ -66,6 +66,16 @@
 					let appid = "{{Theme::get('weixin_config')['wx_appid']}}";
 					let secret = "{{Theme::get('weixin_config')['wx_secret']}}";
 					// 获取code
+					
+					var loadJsonp = $.ajax({
+                        dataType: 'jsonp',
+                        jsonp: 'callbackparam',
+                        url: 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code'
+                    });
+					loadJsonp.done(function(data) {console.log(data)});
+					loadJsonp.fail(function(data) {console.log(data)});
+					
+					
 					$.ajax({
 						url:'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code',
 						dataType:'jsonp',
