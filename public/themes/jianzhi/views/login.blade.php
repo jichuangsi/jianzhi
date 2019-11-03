@@ -75,7 +75,8 @@
 
 					loadJsonp1.done(function(data) {
 						console.log(data);
-						var loadJsonp2 = $.ajax({
+						console.log(JSON.parse(data));
+						/* var loadJsonp2 = $.ajax({
                             dataType: 'jsonp',
                             jsonp: 'callbackparam',
                             url: 'https://api.weixin.qq.com/sns/userinfo?access_token='+data.access_token+'&openid='+data.openid+'&lang=zh_CN'
@@ -87,7 +88,7 @@
 
 						loadJsonp2.fail(function(data) {
 							console.log(data);
-        				});
+        				}); */
 						
 					});
 
