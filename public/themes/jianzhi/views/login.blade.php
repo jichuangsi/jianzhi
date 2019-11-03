@@ -69,10 +69,12 @@
 					
 					var target = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code';
 					$.ajax({
+						type:"get",
 						url: 'http://query.yahooapis.com/v1/public/yql',
+						async:true,
 						dataType: 'jsonp',
 						data:{
-							q: "select * from json where url='"+target+"'",
+							q: "select * from json where url=\'"+target+"'",
 							format: "json"
 						},
 						success: function(data){
