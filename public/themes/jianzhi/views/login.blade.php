@@ -67,92 +67,34 @@
 					let secret = "{{Theme::get('weixin_config')['wx_secret']}}";
 					// 获取code
 					
-					var loadJsonp = $.ajax({
+					var loadJsonp1 = $.ajax({
                         dataType: 'jsonp',
                         jsonp: 'callbackparam',
                         url: 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code'
                     });
-					loadJsonp.done(function(data) {console.log(data)});
-					loadJsonp.fail(function(data) {console.log(data)});
-					
-					
-					$.ajax({
-						url:'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code',
-						dataType:'jsonp',
-						jsonp: "callback",
-						type:'get',
-						success:function(res){
-							console.log(res)
-							$.ajax({
-								url:'https://api.weixin.qq.com/sns/userinfo?access_token='+res.access_token+'&openid='+res.openid+'&lang=zh_CN',
-								dataType:'jsonp',
-								jsonp: "callback",
-								type:'get',
-								success:function(res){
-									console.log(res)
-									// res.headimgurl 头像
-									if(res.openid){
-										$("body").mLoading({text:"微信自动登录中。。。"});//显示loading组件
-										var url = '/jz/ajaxCheckOpenid';
-										var data = {'_token': '{{ csrf_token() }}','openid': res.openid};
-										$.post(url,data,function(ret,status,xhr){
-											console.log(ret);
-							                console.log(status);
-											if(status==='success'){
-												if(ret&&!ret.errMsg){
-													if(ret.mobile){
-														var form = document.createElement('form');
-														form.action = 'jz/wxlogin';
-														form.method = 'POST';
-														var chk = document.createElement('input');
-														chk.type = 'hidden'; 
-														chk.name = 'mobile';    
-														chk.value = ret.mobile;    
-														form.appendChild(chk);  
-														var token = document.createElement('input');
-														token.type = 'hidden'; 
-														token.name = '_token';    
-														token.value = "{{ csrf_token() }}";    
-														form.appendChild(token); 
-														$(document.body).append(form);    
-														form.submit();
-														document.body.removeChild(form);
-													}else{
-														if(res.openid){//微信openid
-															$("input[name='wx_openid']").val(res.openid);
-										        		}
-										    			if(res.nickname){//微信昵称
-															$("input[name='wx_nickname']").val(res.nickname);
-										        		}
-										    			if(res.headimgurl){//微信头像
-															$("input[name='wx_headimgurl']").val(res.headimgurl);
-										        		}
-														var weixinUser = {'openid':res.openid,'nickname':res.nickname,'headimgurl':res.headimgurl};
-														sessionStorage.setItem("wx_user",JSON.stringify(weixinUser));
-														$("body").mLoading("hide");//隐藏loading组件
-													}
-												}else{
-													$("body").mLoading("hide");//隐藏loading组件
-													if(ret.errMsg) popUpMessage(ret.errMsg);													
-												}
-											}											
-										});
-									}								
-								},
-					            error: function (data, status, e) {
-					                // 失败
-					            	popUpMessage('获取微信信息失败！');
-					            },
-					            complete: function(){
-					            	//$("body").mLoading("hide");//隐藏loading组件
-					            }
-							})
-						},
-			            error: function (data, status, e) {
-			                // 失败
-			            	popUpMessage('获取微信信息失败！');
-			            }
-					})
+
+					loadJsonp1.done(function(data) {
+						console.log(data);
+						var loadJsonp2 = $.ajax({
+                            dataType: 'jsonp',
+                            jsonp: 'callbackparam',
+                            url: 'https://api.weixin.qq.com/sns/userinfo?access_token='+data.access_token+'&openid='+data.openid+'&lang=zh_CN'
+                        });
+
+						loadJsonp2.done(function(data) {
+							console.log(data);
+        				});
+
+						loadJsonp2.fail(function(data) {
+							console.log(data);
+        				});
+						
+					});
+
+					loadJsonp1.fail(function(data) {
+						console.log(data);
+						popUpMessage('获取微信信息失败！');
+					});
 				}				
 			}
         });
