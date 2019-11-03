@@ -1819,9 +1819,9 @@ class TaskController extends ManageController
                         
                         if(isset($comment)&&!empty($comment)){
                             $param['task_id'] = $v[0];
-                            $task = TaskModel::select('task.uid','task.username')->where('task.id', $v[0])->first();
+                            $task = TaskModel::select('task.uid','users.name')->where('task.id', $v[0])->leftjoin('users','users.id','=','task.uid')->first();
                             $param['t_uid'] = $task->uid;
-                            $param['t_uname'] = $task->username;
+                            $param['t_uname'] = $task->name;
                             $param['comment'] = $comment;
                         }
                         
