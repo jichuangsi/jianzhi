@@ -109,6 +109,7 @@
         }
         .bigimg img {
             width: 60%;
+            height: 70%;
             /* height: 80%;
             transform: scale(1.5); */
             /* 放大倍数 */
@@ -128,7 +129,7 @@
                 	<select name="uids" class="uids col-xs-10 col-sm-5" >
                 		<option  value="-1" >请选择发布企业</option>
                 		@foreach($qiye as $key => $value)
-                		<option  value="{{$value['uid']}}" @if($value['uid']==$task['uid'])selected="selected" @endif>{{$value['company_name']}}</option>
+                		<option  value="{{$value['uid']}}" @if($value['uid']==$task['uid']) selected="selected" @endif>{{$value['company_name']}}</option>
             			@endforeach
                 	</select>
                 	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
@@ -186,7 +187,7 @@
                             <select name="province" id="province" class="form-control validform-select Validform_error" onchange="getZone(this.value, 'city');">
                                 <option value="">请选择省份</option>
                                 @foreach($province as $item)
-                                    <option @if($task['province'] == $item['id'])selected="selected"@endif value="{!! $item['id'] !!}">{!! $item['name'] !!}</option>
+                                    <option @if($task['province'] == $item['id']) selected="selected" @endif value="{!! $item['id'] !!}">{!! $item['name'] !!}</option>
                                 @endforeach
                             </select>
                         </div>

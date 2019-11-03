@@ -112,6 +112,7 @@
         }
         .bigimg img {
             width: 60%;
+            height: 70%;
             /* height: 80%;
             transform: scale(1.5); */
             /* 放大倍数 */

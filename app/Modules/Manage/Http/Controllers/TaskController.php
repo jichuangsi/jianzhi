@@ -1283,8 +1283,8 @@ class TaskController extends ManageController
 	                array_push($tasksCheck, $v);
 	                continue;
         		}
-        		if(empty($v[8])){
-        			$v['msg'] = '请输入预算！';
+        		if(empty(floatval($v[8]))){
+        			$v['msg'] = '请输入任务预算！';
 	                array_push($tasksCheck, $v);
 	                continue;
         		}
@@ -1345,7 +1345,7 @@ class TaskController extends ManageController
                     'province' => $province,         //省份
                     'city' => $city,             //城市
                     'area' => 0,
-                    'bounty' => $v[8],
+                    'bounty' => floatval($v[8]),
                     'worker_num' => $v[9],
                     'desc' => $v[10],
 //                  'file_id'=>[$result['id']],
@@ -1355,6 +1355,7 @@ class TaskController extends ManageController
                     'bounty_status' => 1,
                     
                 ];
+                $v[8]=floatval($v[8]);
                 if(!empty($skill)){
                 	 $param['skill']= $skill;
                 }

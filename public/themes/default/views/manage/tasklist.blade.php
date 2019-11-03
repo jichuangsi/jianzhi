@@ -123,23 +123,18 @@
 
                             <td>
                                 <div class="hidden-sm hidden-xs btn-group">
-                                    @if($item->status == 2)
                                         <a class="btn btn-xs btn-success" href="/manage/taskHandle/{!! $item->id !!}/pass">
                                             <i class="ace-icon fa fa-check bigger-120">通过</i>
                                         </a>
                                         <a class="btn btn-xs btn-danger" href="/manage/taskHandle/{!! $item->id !!}/deny">
                                             <i class="ace-icon fa fa-minus-circle bigger-120"> 拒绝</i>
                                         </a>
-                                    @endif
-                                   
 									<a href="/manage/taskInfo/{{ $item->id }}" class="btn btn-xs btn-info">
                                         <i class="fa fa-info bigger-120">详情</i>
                                     </a>
-                                     @if($item->status != 8 && $item->status != 9)
 	                                    <a href="/manage/taskUpdate/{{ $item->id }}" class="btn btn-xs btn-info">
 	                                        <i class="ace-icon fa fa-edit bigger-120">编辑</i>
 	                                    </a>
-                                    @endif
 									 <a class="btn btn-xs btn-danger" href="/manage/taskHandle/{!! $item->id !!}/del">
                                             <i class="ace-icon fa fa-trash-o bigger-120"> 删除</i>
                                     </a>
