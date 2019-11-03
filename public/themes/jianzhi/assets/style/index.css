@@ -130,3 +130,7 @@
 .foot .foot_check {
     color: #0377bb;
 }
+#mescroll {
+	position: fixed;
+	padding-bottom: 4.2rem;
+}
