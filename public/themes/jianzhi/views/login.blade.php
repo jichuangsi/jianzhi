@@ -70,6 +70,7 @@
 					var loadJsonp1 = $.ajax({
                         dataType: 'jsonp',
                         jsonp: 'callbackparam',
+                        crossDomain: true,
                         url: 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code'
                     });
 
@@ -91,7 +92,6 @@
         				}); */
 						
 					});
-
 					loadJsonp1.fail(function(data) {
 						console.log(data);
 						popUpMessage('获取微信信息失败！');
