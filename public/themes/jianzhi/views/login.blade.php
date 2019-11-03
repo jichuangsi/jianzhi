@@ -69,12 +69,14 @@
 					$.ajax({
 						url:'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code',
 						dataType:'jsonp',
+						jsonp: "callback",
 						type:'get',
 						success:function(res){
 							console.log(res)
 							$.ajax({
 								url:'https://api.weixin.qq.com/sns/userinfo?access_token='+res.access_token+'&openid='+res.openid+'&lang=zh_CN',
 								dataType:'jsonp',
+								jsonp: "callback",
 								type:'get',
 								success:function(res){
 									console.log(res)
