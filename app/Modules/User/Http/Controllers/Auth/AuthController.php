@@ -124,16 +124,15 @@ class AuthController extends IndexController
         UserModel::where('mobile', $request->get('username'))->orWhere('name', $request->get('username'))->update(['last_login_time' => date('Y-m-d H:i:s')]);
         //更新微信信息
         if($request->get('wx_openid')){
-            UserDetailModel::where('uid',$user->id)->where('wechat','<>',$request->get('wx_openid'))->update(['wechat'=>$request->get('wx_openid')]);
+            UserDetailModel::where('uid',$user->id)->update(['wechat'=>$request->get('wx_openid')]);
         }
         if($request->get('wx_nickname')){
-            UserDetailModel::where('uid',$user->id)->where('nickname','<>',$request->get('wx_nickname'))->update(['nickname'=>$request->get('wx_nickname')]);
+            UserDetailModel::where('uid',$user->id)->update(['nickname'=>$request->get('wx_nickname')]);
         }
         if($request->get('wx_headimgurl')){
-            UserDetailModel::where('uid',$user->id)->where('avatar','<>',$request->get('wx_headimgurl'))->update(['avatar'=>$request->get('wx_headimgurl')]);
+            UserDetailModel::where('uid',$user->id)->update(['avatar'=>$request->get('wx_headimgurl')]);
         }
         return $this->handleUserWasAuthenticated($request, $throttles);
-
     }
 
     

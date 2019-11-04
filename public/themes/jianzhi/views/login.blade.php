@@ -66,27 +66,58 @@
 					let appid = "{{Theme::get('weixin_config')['wx_appid']}}";
 					let secret = "{{Theme::get('weixin_config')['wx_secret']}}";
 					// 获取code
-					
-					var target = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code';
-					$.ajax({
-						type:"get",
-						url: 'http://query.yahooapis.com/v1/public/yql',
-						async:true,
-						dataType: 'jsonp',
-						data:{
-							q: "select * from json where url=\'"+target+"'",
-							format: "json"
-						},
-						success: function(data){
-							console.log(data);
-						}
+					var url = '/jz/ajaxWxAuth';
+					var data = {'_token': '{{ csrf_token() }}','code': code};
+					$("body").mLoading({text:"微信自动登录中。。。"});//显示loading组件
+					$.post(url,data,function(ret,status,xhr){
+						console.log(ret);
+		                console.log(status);
+		                if(status==='success'){
+							if(ret&&!ret.errMsg){
+								if(ret.mobile){
+									var form = document.createElement('form');
+									form.action = 'jz/wxlogin';
+									form.method = 'POST';
+									var chk = document.createElement('input');
+									chk.type = 'hidden'; 
+									chk.name = 'mobile';    
+									chk.value = ret.mobile;    
+									form.appendChild(chk);  
+									var token = document.createElement('input');
+									token.type = 'hidden'; 
+									token.name = '_token';    
+									token.value = "{{ csrf_token() }}";    
+									form.appendChild(token); 
+									$(document.body).append(form);    
+									form.submit();
+									document.body.removeChild(form);
+								}else{
+									if(ret.openid){//微信openid
+										$("input[name='wx_openid']").val(ret.openid);
+					        		}
+					    			if(ret.nickname){//微信昵称
+										$("input[name='wx_nickname']").val(ret.nickname);
+					        		}
+					    			if(ret.headimgurl){//微信头像
+										$("input[name='wx_headimgurl']").val(ret.headimgurl);
+					        		}
+									var weixinUser = {'openid':ret.openid,'nickname':ret.nickname,'headimgurl':ret.headimgurl};
+									sessionStorage.setItem("wx_user",JSON.stringify(weixinUser));
+									$("body").mLoading("hide");//隐藏loading组件
+								}
+							}else{
+								$("body").mLoading("hide");//隐藏loading组件
+								if(ret.errMsg) popUpMessage(ret.errMsg);													
+							}
+						}else{
+							$("body").mLoading("hide");//隐藏loading组件
+							popUpMessage('获取微信信息失败！');
+						}	
 
 					});
 					
 					
-					
-					
-					/*$.ajax({
+					/* $.ajax({
 						url:'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type=authorization_code',
 						dataType:'jsonp',
 						jsonp: "callback",
@@ -162,7 +193,7 @@
 			                // 失败
 			            	popUpMessage('获取微信信息失败！');
 			            }
-					})*/
+					}) */
 				}				
 			}
         });

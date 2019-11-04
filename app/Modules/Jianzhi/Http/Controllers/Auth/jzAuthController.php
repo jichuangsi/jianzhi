@@ -123,6 +123,68 @@ class jzAuthController extends AuthController
         return $this->handleUserWasAuthenticated($request, $throttles);
     }
     
+    public function ajaxWxAuth(Request $request){
+        $code = $request->get('code');
+        
+        if(!$code){
+            return response()->json(['errMsg' => '缺少必要参数！']);
+        }
+        
+        //获取微信配置
+        $weixinConfig = ConfigModel::getConfigByType('weixin');
+        if(empty($weixinConfig)){
+            return response()->json(['errMsg' => '缺少微信必要参数：code！']);
+        }        
+        
+        $appid = $weixinConfig['wx_appid'];
+        $secret = $weixinConfig['wx_secret'];
+        
+        if(empty($appid)||empty($secret)){
+            return response()->json(['errMsg' => '缺少系统必要参数：appid，secret！']);
+        }   
+        
+        $accessTokeUrl = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='.$appid.'&secret='.$secret.'&code='.$code.'&grant_type=authorization_code';
+        
+        $result = json_decode(\CommonClass::request($accessTokeUrl));
+        
+        $access_token = $result->access_token;
+        $openid = $result->openid;
+        
+        if(empty($access_token)||empty($openid)){
+            return response()->json(['errMsg' => '缺少微信必要参数：access_token，openid！']);
+        }  
+        
+        unset($result);
+        
+        $userInfoUrl = 'https://api.weixin.qq.com/sns/userinfo?access_token='.$access_token.'&openid='.$openid.'&lang=zh_CN';
+        
+        $result = json_decode(\CommonClass::request($userInfoUrl));
+        
+        $userInfo = UserModel::getUsersByOpenid($result->openid);
+                
+        if(!$userInfo||count($userInfo)===0){
+            return response()->json(['mobile' => '', 'openid' => $result->openid, 'nickname' => $result->nickname, 'headimgurl' => $result->headimgurl]);
+        }
+        
+        if(count($userInfo)>1){
+            return response()->json(['errMsg' => '你的微信绑定多于一个账号，<br/>请用手机号登陆！']);
+        }
+        
+        //更新微信信息
+        if($result->openid){
+            UserDetailModel::where('uid',$userInfo[0]->u_id)->update(['wechat'=>$result->openid]);
+        }
+        if($result->nickname){
+            UserDetailModel::where('uid',$userInfo[0]->u_id)->update(['nickname'=>$result->nickname]);
+        }
+        if($result->headimgurl){
+            UserDetailModel::where('uid',$userInfo[0]->u_id)->update(['avatar'=>$result->headimgurl]);
+        }
+        
+        return response()->json(['mobile' => $userInfo[0]->u_mobile]);
+        
+    }
+    
     public function ajaxCheckOpenid(Request $request){
         $openid = $request->get('openid');
         

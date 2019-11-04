@@ -31,9 +31,11 @@
         			<p class="Validform_checktip Validform_wrong">{!! $errors->first('begin_at') !!}</p>
         		@endif
             </span>
-            <span class="starTime_span">{{old('begin_at')}}</span> <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
-            <div class="time" id="startDate"></div>
-            <input type="hidden" name="begin_at" value="{{old('begin_at')}}">
+            {{-- <span class="starTime_span">{{old('begin_at')}}</span> --}}
+            <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
+            {{-- <div class="time" id="startDate"></div> --}}
+            {{-- <input type="hidden" name="begin_at" value="{{old('begin_at')}}"> --}}
+            <input type="text" class="time" name="begin_at" id="begin_at" value="{{old('begin_at')}}">
             </div>
             <div class="list Time">
             <span>结束时间
@@ -41,9 +43,11 @@
         			<p class="Validform_checktip Validform_wrong">{!! $errors->first('end_at') !!}</p>
         		@endif
             </span>
-            <span class="endTime_span">{{old('end_at')}}</span> <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
-            <div class="time" id="endDate"></div>
-            <input type="hidden" name="end_at" value="{{old('end_at')}}">
+            {{-- <span class="endTime_span">{{old('end_at')}}</span>  --}}
+            <span class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-"></span>
+            {{-- <div class="time" id="endDate"></div>  --}}
+            {{-- <input type="hidden" name="end_at" value="{{old('end_at')}}"> --}}
+            <input type="text" class="time" name="end_at" id="end_at" value="{{old('end_at')}}">
             </div>
             <div class="list">
                 <span>任务名称
@@ -227,7 +231,8 @@
         </div>
     <script>
     var today=new Date()
-    var date = new Array(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours()<10?("0"+today.getHours()):today.getHours(), today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes());
+    //var date = new Array(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours()<10?("0"+today.getHours()):today.getHours(), today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes());
+    
         
      var taskform=$("#taskform").Validform({
         tiptype:3,
@@ -253,6 +258,35 @@
 				}
 			}
 		}
+		//初始任务开始时间
+		var begin_at = "{{old('begin_at')}}";
+		if(begin_at){
+			var d = new Date()
+			d.setTime(Date.parse(begin_at));
+			console.log(d);
+		}else{
+		    begin_at = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate() + " " + (today.getHours()<10?("0"+today.getHours()):today.getHours()) + ":" + (today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes()) + ":" + (today.getSeconds()<10?('0'+today.getSeconds()):today.getSeconds());
+		}
+	    laydate.render({ 
+	    	elem: '#begin_at',
+	    	type: 'datetime',
+	    	value: begin_at
+	    });
+	  	//初始任务结束时间
+	    var end_at = "{{old('end_at')}}";
+	    if(end_at){
+			var d = new Date()
+			d.setTime(Date.parse(end_at));
+			console.log(d);
+		}else{
+			end_at = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate() + " " + (today.getHours()<10?("0"+today.getHours()):today.getHours()) + ":" + (today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes()) + ":" + (today.getSeconds()<10?('0'+today.getSeconds()):today.getSeconds());
+		}
+	    laydate.render({ 
+	    	elem: '#end_at',
+	    	type: 'datetime',
+	    	value: end_at
+	    });
+		
 		//初始任务城市
 		var old_district = "{{old('district')}}";
 		if(old_district){
@@ -456,7 +490,7 @@
             }        	
         }
     }
-    $("#startDate").datetime({
+    /* $("#startDate").datetime({
         type: "datetime",
         value: date,
         success: function (res) {
@@ -475,7 +509,7 @@
             //$('.endTime_span').parent().find('p').remove();
             clearError($('.endTime_span'));
         }
-    })
+    }) */
     function dzbtn() {
         $('.dzbj').css('display','none')
         $('.dz_span').text($("select[name='province'] option:selected").text() + '-' + $("select[name='city'] option:selected").text() + '-' + $("select[name='area'] option:selected").text())
@@ -613,8 +647,9 @@
     {!! Theme::asset()->container('specific-css')->usepath()->add('enterprise_index-style','style/enterprise_index.css') !!}
     {!! Theme::asset()->container('specific-css')->usePath()->add('validform-css', 'plugins/jquery/validform/css/style.css') !!}
     {!! Theme::asset()->container('specific-js')->usePath()->add('validform-js', 'plugins/jquery/validform/js/Validform_v5.3.2_min.js') !!}
-    {!! Theme::asset()->container('specific-css')->usePath()->add('dateTime-css', 'libs/dateTime.css') !!}
-    {!! Theme::asset()->container('specific-js')->usePath()->add('dateTime-js', 'libs/dateTime.min.js') !!}
+    {{-- {!! Theme::asset()->container('specific-css')->usePath()->add('dateTime-css', 'libs/dateTime.css') !!} --}}
+    {{-- {!! Theme::asset()->container('specific-js')->usePath()->add('dateTime-js', 'libs/dateTime.min.js') !!} --}}
+    {!! Theme::asset()->container('specific-js')->usePath()->add('laydate-js', 'libs/layDate-v5.0.9/laydate/laydate.js') !!}
     {!! Theme::asset()->container('specific-js')->usePath()->add('ajaxFileUpload-js', 'libs/jquery.ajaxFileUpload.js') !!}
     {!! Theme::asset()->container('specific-js')->usePath()->add('mloading-js', 'libs/jquery.mloading.js') !!}
     {!! Theme::asset()->container('specific-css')->usePath()->add('mloading-css', 'libs/jquery.mloading.css') !!}

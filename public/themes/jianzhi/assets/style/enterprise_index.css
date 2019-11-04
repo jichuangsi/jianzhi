@@ -256,12 +256,13 @@ textarea {
     font-size: 0.36rem;
 }
 .center .Time .time {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0rem;
-    top: 0rem;
-    opacity: 0;
+	width:100%;
+	height:100%;
+	position:absolute;
+	left:0rem;
+	top:0rem;
+	text-align:center;
+	/* opacity: 0; */
 }
 .dzbj {
     width: 100%;

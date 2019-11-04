@@ -567,7 +567,7 @@ class UserModel extends Model implements AuthenticatableContract,
     }
     
     static function getUsersByOpenid($openid){
-        $query = Self::select('users.name as u_name', 'users.mobile as u_mobile', 'realname_auth.card_number as u_card_number', 'realname_auth.realname as u_realname');
+        $query = Self::select('users.id as u_id', 'users.name as u_name', 'users.mobile as u_mobile', 'realname_auth.card_number as u_card_number', 'realname_auth.realname as u_realname');
         
         if(is_array($openid)){
             $query = $query->whereIn('user_detail.wechat', $openid);

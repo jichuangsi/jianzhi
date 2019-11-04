@@ -1098,6 +1098,8 @@ class CommonClass
         //dump($url);
         curl_setopt($ch, CURLOPT_TIMEOUT, $second);//设置超时
         curl_setopt($ch, CURLOPT_URL, $url);//抓取指定网页
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);// https请求 不验证证书和hosts
+        curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);
         //curl_setopt($ch, CURLOPT_HTTPHEADER,$headers[$type]);
         curl_setopt($ch, CURLOPT_HEADER, FALSE);//设置header
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);//要求结果为字符串且输出到屏幕上
