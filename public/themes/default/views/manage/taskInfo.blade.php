@@ -3,7 +3,7 @@
 </div>--}}
 <style>
         .jnbox {
-            width: 100%;
+            width: 41%;
             font-size: 14px;
             padding-bottom: 20px;
         }
@@ -145,8 +145,6 @@
 			<p class="col-sm-4">
 				{{$task['title']}}
 			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 服务时间：</p>
 			<p class="col-sm-4">
 				{{ date('Y年m月d日 H:i',strtotime($task['begin_at'])) }}	至 {{ date('Y年m月d日 H:i',strtotime($task['end_at'])) }}
@@ -157,8 +155,6 @@
 			<p class="col-sm-4">
 				{{$task['typename']}}
 			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务子类别：</p>
 			<p class="col-sm-4">
 				{{$task['subtypename']}}
@@ -169,18 +165,26 @@
 			<p class="col-sm-4">
 				{{$task['bounty']}}(元)
 			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务人数：</p>
 			<p class="col-sm-4">
 				{{$task['worker_num']}}(人)
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
-				<div class="jnbox">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任发布企业：</p>
+			<p class="col-sm-4">
+				{{$task['nickname']}}
+			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 服务地址：</p>
+			<p class="col-sm-4">
+				{{$task['address']}}
+			</p>
+		</div>	
+		<div class="bankAuth-bottom clearfix col-xs-12">
+				<div class="jnbox col-sm-6" >
                     <div class="jn_check">
-                        <div class="col-sm-1 control-label no-padding-left">任务标签：</div>
-                        <div class="jn col-sm-4">
+                        <div class="col-sm-2 control-label no-padding-left">任务标签：</div>
+                        <div class="jn col-sm-9">
 	                        @if(isset($myTags)&&!empty($myTags))
 	                        		@foreach($myTags as $v1)
 	                        			<span>{{ $v1['tag_name'] }}<i></i></span>
@@ -189,30 +193,18 @@
                         </div>
                     </div>                    
                 </div>
+                <div class="col-sm-6">
+                	<p class="col-sm-2 control-label no-padding-left" for="form-field-1"> 任务详情：</p>
+					<p class="col-sm-9">
+						{{$task['desc']}}
+					</p>
+                </div>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任发布企业：</p>
-			<p class="col-sm-4">
-				{{$task['nickname']}}
-			</p>
-		</div>	
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 服务地址：</p>
-			<p class="col-sm-4">
-				{{$task['address']}}
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务详情：</p>
-			<p class="col-sm-4">
-				{{$task['desc']}}
-			</p>
-		</div>
-			<div class="bankAuth-bottom clearfix col-xs-12">
+			<div class="bankAuth-bottom clearfix col-xs-12" style="padding-bottom: 20px;">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务图片：</label>
-                <div class="col-sm-4">
+                <div class="col-sm-11" >
                 	@foreach($taskAttachment as $k=>$v)
-                	<img alt="任务图片" src="{!! url($v['url']) !!}"  onclick="bigimg(this)">
+                	<img class="col-sm-3" alt="任务图片" src="{!! url($v['url']) !!}"  onclick="bigimg(this)">
                     @endforeach
                 </div>
                 	

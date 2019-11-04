@@ -134,6 +134,11 @@
                 	</select>
                 	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务名称：</label>
+                <div class="col-sm-4">
+                	<input type="text" class="col-xs-10 col-sm-5" name="title" value="{{$task['title']}}" placeholder="请输入任务名称" />
+                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+                </div>
             </div> 
             <input type="hidden" name="task_id" value="{{$task['id']}}" />
             <div class="form-group basic-form-bottom">
@@ -148,15 +153,13 @@
                 	</select>
                 	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
-            </div>  
-            <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务子类型：</label>
                 <div class="col-sm-4">
                 	<select name="sub_type_id" class="sub_type_id col-xs-10 col-sm-5" id="zileixing">
                 	</select>
                 	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
-            </div>            
+            </div>  
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 开始时间：</label>
                 <div class="col-sm-4">
@@ -164,8 +167,6 @@
                 	<input  type="date" name="begin_at" style="line-height: inherit;" value="{{ date('Y-m-d',strtotime($task['begin_at'])) }}" class="col-xs-10 col-sm-5 birthday"/>
                 	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
-            </div>
-            <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 结束时间：</label>
                 <div class="col-sm-4">
                 	<input type="date" name="end_at" style="line-height: inherit;" value="{{ date('Y-m-d',strtotime($task['end_at'])) }}" class="col-xs-10 col-sm-5 birthday"/>
@@ -173,9 +174,26 @@
                 </div>
             </div>
             <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务名称：</label>
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 服务地址：</label>
                 <div class="col-sm-4">
-                	<input type="text" class="col-xs-10 col-sm-5" name="title" value="{{$task['title']}}" placeholder="请输入任务名称" />
+                	<input type="text" class="col-xs-10 col-sm-5" name="address" value="{{$task['address']}}" placeholder="请输入服务地址" />
+                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+                </div>
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务描述：</label>
+                <div class="col-sm-4">
+                	<textarea name="desc" class="col-xs-20 col-sm-20" id="desc" cols="60" rows="4" placeholder="请简单描述您的任务需求..." onkeydown="clearError(this)">{{$task['desc']}}</textarea>
+                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+                </div>
+            </div>
+            <div class="form-group basic-form-bottom">
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务预算：</label>
+                <div class="col-sm-4">
+                	<input type="number" class="col-xs-10 col-sm-5" name="bounty" value="{{$task['bounty']}}"/>元
+                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+                </div>
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务人数：</label>
+                <div class="col-sm-4">
+                	<input type="number" class="col-xs-10 col-sm-5" name="worker_num"  min="1" value="{{$task['worker_num']}}"/>
                 	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
@@ -211,38 +229,8 @@
 							<option selected="selected" value="{!! $task['area'] !!}">{!! $taskarea !!}</option>
 						@endif
                     </select>
-                    
                 </div>
             </div>
-            <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 服务地址：</label>
-                <div class="col-sm-4">
-                	<input type="text" class="col-xs-10 col-sm-5" name="address" value="{{$task['address']}}" placeholder="请输入服务地址" />
-                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-                </div>
-            </div>
-            <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务预算：</label>
-                <div class="col-sm-4">
-                	<input type="number" class="col-xs-10 col-sm-5" name="bounty" value="{{$task['bounty']}}"/>元
-                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-                </div>
-            </div>
-            <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务描述：</label>
-                <div class="col-sm-4">
-                	<textarea name="desc" class="col-xs-20 col-sm-20" id="desc" cols="60" rows="10" placeholder="请简单描述您的任务需求..." onkeydown="clearError(this)">{{$task['desc']}}</textarea>
-                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-                </div>
-            </div>
-            <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务人数：</label>
-                <div class="col-sm-4">
-                	<input type="number" class="col-xs-10 col-sm-5" name="worker_num"  min="1" value="{{$task['worker_num']}}"/>
-                	<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-                </div>
-            </div>
-            
             <div class="form-group basic-form-bottom" >
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 上传图片：</label>
                 <?php $num=0;?>

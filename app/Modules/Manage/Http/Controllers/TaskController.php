@@ -393,10 +393,10 @@ class TaskController extends ManageController
             ->leftJoin('task_type as tt', 'tt.id', '=', 'task.type_id')
             ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
         ->paginate($paginate);
-
         $data = array(
             'task' => $taskList,
         );
+        $data['tasks'] = $taskList->toArray();
         $data['merge'] = $search;
 
         return $this->theme->scope('manage.tasklist', $data)->render();
@@ -1298,31 +1298,50 @@ class TaskController extends ManageController
 	                array_push($tasksCheck, $v);
 	                continue;
         		}
-        		if(empty($v[12])){
+        		if(empty($v[14])){
         			$v['msg'] = '请输入服务地址！';
 	                array_push($tasksCheck, $v);
 	                continue;
         		}
         		//------------------------------
-        		$attresult;
-        		if(!empty($v[11])){
-        			$attachment_data['name'] = basename($v[11]);
-			        $attachment_data['status']=1;
-			        $type = explode('.', $v[11]);
-			        $attachment_data['type']=$type[1];
-			        $attachment_data['url']=$v[11];
-			        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
-			        $attachment_data['user_id']=$autouid;
-			        //将记录写入到attchement表中
-			        $attresult = AttachmentModel::create($attachment_data);
+//      		$attresult;
+				$fileid_arr=array();
+//      		if(!empty($v[11])){
+//      			$attachment_data['name'] = basename($v[11]);
+//			        $attachment_data['status']=1;
+//			        $type = explode('.', $v[11]);
+//			        $attachment_data['type']=$type[1];
+//			        $attachment_data['url']=$v[11];
+//			        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+//			        $attachment_data['user_id']=$autouid;
+//			        //将记录写入到attchement表中
+//			        $attresult = AttachmentModel::create($attachment_data);
+//			        if($attresult){
+//				        	array_push($fileid_arr,$attresult['id']);
+//				        }
+//      		}
+        		for($i=11;$i<=13;$i++){
+        			if(!empty($v[$i])){
+	        			$attachment_data['name'] = basename($v[$i]);
+				        $attachment_data['status']=1;
+				        $type = explode('.', $v[$i]);
+				        $attachment_data['type']=$type[1];
+				        $attachment_data['url']=$v[$i];
+				        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+				        $attachment_data['user_id']=$autouid;
+				        //将记录写入到attchement表中
+				        $attresult = AttachmentModel::create($attachment_data);
+				        if($attresult){
+				        	array_push($fileid_arr,$attresult['id']);
+				        }
+        			}
         		}
-	        
                 $salt = \CommonClass::random(4);
                 $skill=0;
 				$isskill=false;
 				
-                for ($x=14; $x<=32; $x++) {
-                if($x!=17 && $x!=21 && $x!=25 && $x!=29){
+				for ($x=16; $x<=34; $x++) {
+                if($x!=19 && $x!=23 && $x!=27 && $x!=31){
 					  if(!empty($v[$x]) && !$isskill){
 					  	$isskinfo = explode('-', $v[$x]);
 					  	$skill=$isskinfo[0];
@@ -1333,7 +1352,20 @@ class TaskController extends ManageController
 					  	$skill=$skill.','.$isskinfo[0];
 					  }
 				  }
-				} 
+				}
+//              for ($x=14; $x<=32; $x++) {
+//              if($x!=17 && $x!=21 && $x!=25 && $x!=29){
+//					  if(!empty($v[$x]) && !$isskill){
+//					  	$isskinfo = explode('-', $v[$x]);
+//					  	$skill=$isskinfo[0];
+//					  	$isskill=true;
+//					  }
+//					  if(!empty($v[$x]) && $isskill){
+//					  	$isskinfo = explode('-', $v[$x]);
+//					  	$skill=$skill.','.$isskinfo[0];
+//					  }
+//				  }
+//				} 
 //				dump($skill);exit;
                 $param = [
                     'uid' => $autouid,   //企业id
@@ -1349,7 +1381,7 @@ class TaskController extends ManageController
                     'worker_num' => $v[9],
                     'desc' => $v[10],
 //                  'file_id'=>[$result['id']],
-                    'address' => $v[12],
+                    'address' => $v[14],
 //                  'skill'=>$skill,
                     'status' => 2,
                     'bounty_status' => 1,
@@ -1359,9 +1391,12 @@ class TaskController extends ManageController
                 if(!empty($skill)){
                 	 $param['skill']= $skill;
                 }
-                if(!empty($attresult)){
-                	$param['file_id']=[$attresult['id']];
+                if(!empty($fileid_arr)){
+                	$param['file_id']=$fileid_arr;
                 }
+//              if(!empty($attresult)){
+//              	$param['file_id']=[$attresult['id']];
+//              }
                 
                  $taskModel = new TaskModel();
        		 	 $result = $taskModel->createTask($param);

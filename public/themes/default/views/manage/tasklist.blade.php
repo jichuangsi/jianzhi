@@ -74,7 +74,7 @@
                 <form id="rms" action="/manage/taskMultiHandle" method="post">
                     {!! csrf_field() !!}
                     <tbody>
-                    @foreach($task as $item)
+                    @foreach($task as $k=>$item)
                         <tr>
                             <td class="center">
                                 <label class="pos-rel">
@@ -84,7 +84,14 @@
                             </td>
 
                             <td>
-                                <a href="#">{!! $item->id !!}</a>
+                                <!--<a href="#">{!! $k+1 !!}</a>-->
+                                <a href="#">
+                                	@if(intval($tasks['current_page'])>1)
+		                            {{ $tasks['per_page']*($tasks['current_page']-1)+($k + 1)  }}
+		                            @else
+		                             {{ $k + 1 }}                            
+		                            @endif
+                           		</a>
                             </td>
                             
                             <td>{!! $item->title !!}</td>
