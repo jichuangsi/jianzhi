@@ -121,84 +121,87 @@
     
 	<div class="g-backrealdetails clearfix bor-border">
 		<input type="hidden" name="uid" value="{!! $info['id'] !!}">
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</p>
 			<p class="col-sm-4">
 				{{$info['name']}}				
 			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
-			<p class="col-sm-4">
+		</div> -->
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
+			<p class="col-sm-9">
 				{{$info['mobile']}}				
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 姓名：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 姓名：</p>
+			<p class="col-sm-9">
 				{{$info['realname']}}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证号码：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 身份证号码：</p>
+			<p class="col-sm-9">
 				{{$info['card_number']}}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 银行卡号：</p>
+			<p class="col-sm-9">
 				{{$info['account']}}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 认证状态：</p>
-			<p class="col-sm-4">
-				@if(isset($info['astatus']))
-					@if($info['astatus']===0)
-						待审核
-					@elseif($info['astatus']===1)
-						已认证
-					@elseif($info['astatus']===2)
-						已拒绝
-					@elseif($info['astatus']===NULL)
-						未认证
-					@else
-						未知状态
-					@endif
-				@endif
-			</p>
-		</div>
-			<div class="bankAuth-bottom clearfix col-xs-12">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证正面：</label>
-                <div class="col-sm-4">
+			<div class="bankAuth-bottom clearfix col-xs-6">
+                <label class="col-sm-3 control-label no-padding-left" for="form-field-1"> 身份证正面：</label>
+                <div class="col-sm-9">
                     <img alt="身份证正面" src="{!! url($info['card_front_side']) !!}" onclick="bigimg(this)">
                 </div>
                 	
             </div>
             
-            <div class="bankAuth-bottom clearfix col-xs-12">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证反面：</label>
-                <div class="col-sm-4">
+            <div class="bankAuth-bottom clearfix col-xs-6">
+                <label class="col-sm-3 control-label no-padding-left" for="form-field-1"> 身份证反面：</label>
+                <div class="col-sm-9">
                     <img alt="身份证反面" src="{!! url($info['card_back_dside']) !!}"  onclick="bigimg(this)">
                 </div>
             </div>		
-		
+    		<div class="bankAuth-bottom clearfix col-xs-12">
+    			<div class="col-xs-6">
+    				<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 认证状态：</p>
+        			<p class="col-sm-9">
+        				@if(isset($info['astatus']))
+        					@if($info['astatus']===0)
+        						待审核
+        					@elseif($info['astatus']===1)
+        						已认证
+        					@elseif($info['astatus']===2)
+        						已拒绝
+        					@elseif($info['astatus']===NULL)
+        						未认证
+        					@else
+        						未知状态
+        					@endif
+        				@endif
+        			</p>    			
+    			</div>
+    			
+    		</div>
 			<div class="bankAuth-bottom clearfix col-xs-12">
-				<div class="jnbox">
-                    <div class="jn_check">
-                        <div class="col-sm-1 control-label no-padding-left">技能标签：</div>
-                        <div class="jn col-sm-4">
-                        	@if(isset($myTags)&&!empty($myTags))
-                        		@foreach($myTags as $v1)
-                        			<span>{{ $v1['tag_name'] }}<i></i></span>
-                        		@endforeach
-                        	@endif
-                        
-                        </div>
-                    </div>                    
-                </div>
-			
+				<div class="col-xs-6">
+    				<div class="jnbox">
+                        <div class="jn_check">
+                            <div class="col-sm-3 control-label no-padding-left">技能标签：</div>
+                            <div class="jn col-sm-9">
+                            	@if(isset($myTags)&&!empty($myTags))
+                            		@foreach($myTags as $v1)
+                            			<span>{{ $v1['tag_name'] }}<i></i></span>
+                            		@endforeach
+                            	@endif
+                            
+                            </div>
+                        </div>                    
+                    </div>
+				</div>
 			</div>
 		
 		<div class="col-xs-12">

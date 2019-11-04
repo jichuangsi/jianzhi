@@ -114,10 +114,12 @@ class UserController extends ManageController
             $list = $list->where($timeType,'<',$end);
         }
         $list = $list->paginate($paginate);
+        $listArr = $list->toArray();
         //dump($list);
         $data = [
             'status'=>$request->get('status'),
             'list' => $list,
+            'listArr' => $listArr,
             'paginate' => $paginate,
             'order' => $order,
             'by' => $request->get('by'),
@@ -180,6 +182,9 @@ class UserController extends ManageController
             if ($request->get('contactor_mobile')){
                 $list = $list->where('enterprise_auth.contactor_mobile', $request->get('contactor_mobile'));
             }
+            if ($request->get('mobile')){
+                $list = $list->where('users.mobile', $request->get('mobile'));
+            }
             if (intval($request->get('status'))){
                 switch(intval($request->get('status'))){
                     case 1:
@@ -235,10 +240,12 @@ class UserController extends ManageController
                 $list = $list->where($timeType,'<',$end);
             }
             $list = $list->paginate($paginate);
+            $listArr = $list->toArray();
             
             $data = [
                 'status'=>$request->get('status'),
                 'list' => $list,
+                'listArr' => $listArr,
                 'paginate' => $paginate,
                 'order' => $order,
                 'by' => $request->get('by'),
@@ -246,6 +253,7 @@ class UserController extends ManageController
                 'username' => $request->get('username'),
                 'email' => $request->get('email'),
                 'contactor_mobile' => $request->get('contactor_mobile'),
+                'mobile' => $request->get('mobile'),
                 'company_name' => $request->get('company_name'),
                 'contactor' => $request->get('contactor')                
             ];
@@ -258,6 +266,7 @@ class UserController extends ManageController
                 'username' => $request->get('username'),
                 'email' => $request->get('email'),
                 'contactor_mobile' => $request->get('contactor_mobile'),
+                'mobile' => $request->get('mobile'),
                 'company_name' => $request->get('company_name'),
                 'contactor' => $request->get('contactor'),
                 'start' => $request->get('start'),

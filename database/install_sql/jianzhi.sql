@@ -47734,7 +47734,7 @@ CREATE TABLE IF NOT EXISTS `kppw_work` (
   `id` int(10) unsigned NOT NULL,
   `task_id` int(11) NOT NULL DEFAULT '0' COMMENT '任务ID',
   `desc` text COLLATE utf8_unicode_ci NOT NULL COMMENT '被关注者id',
-  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态 0表示威客投稿 1表示威客中标 2表示威客交付 3表示验收成功 4表示验收失败(交易维权） 5结束',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态 0表示威客投稿 1表示威客中标 2表示威客交付 3表示验收成功 4表示验收失败(交易维权） 5结束  6终止',
   `forbidden` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否禁用稿件 0表示启用 1表示禁用',
   `uid` int(11) NOT NULL DEFAULT '0' COMMENT '威客ID',
   `bid_by` tinyint(4) NOT NULL DEFAULT '0' COMMENT '中标选中对象 0表示雇主选中 1表示系统选中',

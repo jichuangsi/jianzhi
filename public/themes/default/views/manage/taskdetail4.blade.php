@@ -102,10 +102,13 @@
             transform: scale(1.5); */
             /* 放大倍数 */
         }  
+        .zs_img div {
+            margin-right : 1rem;
+        }
 </style>
-{{-- <div class="well">
-    <h4 >任务信息</h4>
-</div> --}}
+{{--<div class="well">
+    <h4 >任务结算信息</h4>
+</div>--}}
 {{--<div class="row">
     <div class="col-xs-12 widget-container-col ui-sortable">
         <div class="widget-box transparent ui-sortable-handle">
@@ -119,31 +122,19 @@
                         <div id="need" class="tab-pane active">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <form action="
-                                    @if(isset($type))
-                                    	@if($type==='dispatch')
-                                    		/manage/createTaskDispatch
-                                    	@endif
-                                    @endif
-                                    " method="post" id="taskform" class="form-horizontal">
+                                    <form action="/manage/taskSettleUpload" method="post" id="taskform" class="form-horizontal" enctype="multipart/form-data">
                                         <div class="g-backrealdetails clearfix bor-border interface">
                                             <div class="space-8 col-xs-12"></div>
-                                            
-                                            <div class="col-xs-12"><b><u>任务信息</u></b></div>
+                                            <input type="hidden" name="w_id" value="{{$work['w_id']}}">
+                                            <input type="hidden" name="w_task_id" value="{{$work['w_task_id']}}">                                            
+                                            <input type="hidden" name="w_uid" value="{{$work['w_uid']}}">
+                                            <div class="col-xs-12"><b><u>任务结算信息</u></b></div>
                                             <div class="interface-bottom col-xs-12">
                                             	<div class="form-group interface-bottom col-xs-6">
                                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 任务名称： </label>
     
                                                     <div class="col-sm-9">
                                                     	{{ $work['title'] }}
-                                                        
-                                                    </div>
-                                                </div>
-                                                <div class="form-group interface-bottom col-xs-6">
-                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 服务时间： </label>
-    
-                                                    <div class="col-sm-9">
-                                                    	{{ date('Y年m月d日 H:i',strtotime($work['begin_at'])) }}	至 {{ date('Y年m月d日 H:i',strtotime($work['end_at'])) }}
                                                         
                                                     </div>
                                                 </div>
@@ -155,6 +146,50 @@
                                                         <!-- <label><input type="text" value="悬赏模式" readonly="true"/></label> -->
                                                     </div>
                                                 </div>
+                                                <div class="form-group interface-bottom col-xs-6">
+                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 发布企业： </label>
+    
+                                                    <div class="col-sm-9">
+                                                        {{ $work['company_name'] }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group interface-bottom col-xs-6">
+                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 接包人姓名： </label>
+                                                    <div class="col-sm-9">
+                                                       	{{$work['realname']}}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group interface-bottom col-xs-12">
+                                                	<div class="col-xs-6">
+                                                		<label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 验收时间： </label>
+                                                        <div class="col-sm-9">
+                                                           	{{$work['w_checked_at']}}
+                                                        </div>
+                                                	</div>                                                    
+                                                </div>
+                                                <div class="form-group interface-bottom col-xs-6">
+                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 结算金额： </label>
+                                                    <div class="col-sm-9">
+                                                       	{{$work['w_payment']}}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group interface-bottom col-xs-6">
+                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 结算时间： </label>
+                                                    <div class="col-sm-9">
+                                                       	{{$work['w_settle_at']}}
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                
+                                                {{-- <div class="form-group interface-bottom col-xs-6">
+                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 服务时间： </label>
+    
+                                                    <div class="col-sm-9">
+                                                    	{{ date('Y年m月d日 H:i',strtotime($work['begin_at'])) }}	至 {{ date('Y年m月d日 H:i',strtotime($work['end_at'])) }}
+                                                        
+                                                    </div>
+                                                </div>                                                
                                                 <div class="form-group interface-bottom col-xs-6">
                                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 任务预算： </label>
     
@@ -169,15 +204,7 @@
                                                     	{{ $work['st_type_name'] }}
                                                         <!-- <label><input type="text" value="悬赏模式" readonly="true"/></label> -->
                                                     </div>
-                                                </div>
-                                                <div class="form-group interface-bottom col-xs-6">
-                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 发布企业： </label>
-    
-                                                    <div class="col-sm-9">
-                                                        {{ $work['company_name'] }}
-                                                    </div>
-                                                </div>
-                                                
+                                                </div>   
                                                 <div class="form-group interface-bottom col-xs-6">
                                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 任务标签： </label>
     
@@ -186,7 +213,7 @@
                                                         	<span>{{ $v['tag_name'] }}<i></i></span>
                                                         @endforeach                                                	
                                                     </div>
-                                                </div>                                            
+                                                </div>                                           
                                                 
                                                 <div class="form-group interface-bottom col-xs-12">
                                                     <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 服务地址： </label>
@@ -226,19 +253,22 @@
                                                        		已终止
                                                        @endif
                                                     </div>
-                                                </div>
+                                                </div>--}} 
                                             </div>
                                             
                                             
-                                            <div class="col-xs-12"><b><u>接包人信息</u></b></div>
+                                            <div class="col-xs-12"><b><u>已有验收材料</u></b></div>
                                             <div class="interface-bottom col-xs-12">
-                                            	<div class="form-group interface-bottom col-xs-6">
-                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 接包人姓名： </label>
-                                                    <div class="col-sm-9">
-                                                       	{{$work['realname']}}
+                                            	<div class="form-group interface-bottom col-xs-12">
+                                                	<label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 提交图片： </label>
+                                                	<div class="col-sm-9">
+                                                        @foreach($w_attachment as $k=>$v)
+                                                            <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">                                                  
+                                                        @endforeach
                                                     </div>
-                                                </div>
-                                                <div class="form-group interface-bottom col-xs-6">
+                                                </div> 
+                                            	
+                                                {{-- <div class="form-group interface-bottom col-xs-6">
                                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 接包人手机号： </label>
                                                     <div class="col-sm-9">
                                                        	{{$work['w_mobile']}}
@@ -258,12 +288,28 @@
                                                     <div class="col-sm-9">
                                                        	{{$work['w_card_number']}}
                                                     </div>
-                                                </div>
+                                                </div>--}}
                                             </div>
                                             
-                                            <div class="col-xs-12"><b><u>提交详情</u></b></div>
+                                            @if($action==='upload')
+                                            <div class="col-xs-12"><b><u>上传验收材料</u></b></div>
                                             <div class="interface-bottom col-xs-12">
-                                            	<div class="form-group interface-bottom col-xs-6">
+                                            	<div class="form-group interface-bottom col-xs-12">
+                                                	<label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 文件上传： </label>
+                                                	<div class="col-sm-9">
+                                                        <div class="zs_img">
+                                                            
+                                                        </div>
+                                                        <input type="file" name="file[]" id="file" onchange="imgfile(this)" multiple>
+                                                        	@if($errors->first('uploadFiles'))
+                                                				<p class="Validform_checktip Validform_wrong">{!! $errors->first('uploadFiles') !!}</p>
+                                                			@endif
+                                                    </div>
+                                                </div> 
+                                            
+                                            
+                                            
+                                            	{{--<div class="form-group interface-bottom col-xs-6">
                                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 提交时间： </label>
                                                     <div class="col-sm-9">
                                                        	{{$work['w_delivered_at']}}
@@ -282,51 +328,19 @@
                                                             <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">                                                  
                                                         @endforeach
                                                     </div>
-                                                </div> 
-                                            </div>
-                                            
-                                            <div class="col-xs-12"><b><u>验收情况</u></b></div>
-                                            <div class="interface-bottom col-xs-12">
-                                            	<div class="form-group interface-bottom col-xs-6">
-                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 验收时间： </label>
-                                                    <div class="col-sm-9">
-                                                       	{{$work['w_checked_at']}}
-                                                    </div>
-                                                </div>
-                                                <div class="form-group interface-bottom col-xs-6">
-                                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 结算金额： </label>
-                                                    <div class="col-sm-9">
-                                                       	{{$work['w_payment']}}
-                                                    </div>
-                                                </div>                                            
-                                                <div class="form-group interface-bottom col-xs-12">
-                                                    <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 验收意见： </label>
-                                                    <div class="col-sm-9">
-                                                       	@foreach($w_comment as $k => $v)
-                                                        	<div>@if($v['nickname']){{ $v['nickname'] }}@else {{$k+1}} @endif：{{ $v['comment'] }}</div>                            
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            
-                                            
-                                            @if($work['w_status']===6)
-                                            <div class="form-group interface-bottom col-xs-12">
-                                                <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 终止时间： </label>
-                                                <div class="col-sm-9">
-                                                   	{{$work['w_settle_at']}}
-                                                </div>
+                                                </div> --}}
                                             </div>
                                             @endif
-                                            
                                             
                                             {{ csrf_field() }}                                            
                                             <div class="col-xs-12">
                                                 <div class="clearfix row bg-backf5 padding20 mg-margin12">
                                                     <div class="col-xs-12">
                                                         <div class="col-sm-1 text-right"></div>
-                                                        <div class="col-sm-10">                                                    
+                                                        <div class="col-sm-10">      
+                                                        @if($action==='upload')
+                                                        <button class="btn btn-sm btn-primary" type="submit">提交</button>  
+                                                         @endif                                   
                                                         <div class="btn btn-sm btn-primary" style="margin-left: 50px" onclick="toBack()">返回</div>
                                                         </div>
                                                     </div>
@@ -359,14 +373,40 @@
         <img src="" alt="">
     </div>
 <script type="text/javascript">
+var cnt = '{{count($w_attachment)}}';
 function toBack(){
-	window.location.href = '{!! url("manage/taskCheck") !!}'
+	window.location.href = '{!! url("manage/taskSettle") !!}'
 }
 function bigimg(val){
     $('.bigimg > img')[0].src = val.src
     $('.bigimg').css('display','flex')
 }
+function imgfile(val){
+
+	var files = document.getElementById('file').files;
+
+	if(files.length+parseInt(cnt)+$(".zs_img").children().length>3){
+		popUpMessage('最多上传三张');
+		$("#file").val('');
+		return;
+	}
+	
+    if($(".zs_img").children().length < 3){			
+		for(var i = 0; i < files.length; i++){
+			var f = files[i];  
+			var reads = new FileReader();
+			reads.readAsDataURL(f);
+			reads.onload = function(e) {
+	            $(".zs_img").css("display", "flex");
+	            var html = '<div><img src ="'+this.result+'" onclick="bigimg(this)"></div>'
+				$(".zs_img").append(html)            
+	        };
+		}        
+    }else{
+    	popUpMessage('最多上传三张')
+    }
+}
 </script>
-{!! Theme::widget('editor')->render() !!}
-{!! Theme::widget('ueditor')->render() !!}
+{{-- {!! Theme::widget('editor')->render() !!}
+{!! Theme::widget('ueditor')->render() !!} --}}
 {!! Theme::asset()->container('custom-css')->usePath()->add('backstage', 'css/backstage/backstage.css') !!}

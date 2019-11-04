@@ -54,7 +54,7 @@
                     <th class="center">
                         
                     </th>
-                    <th>编号</th>
+                    <th>序号</th>
                     <!-- <th>用户名</th> -->
                     <th>任务名称</th>
 
@@ -76,7 +76,7 @@
                     {!! csrf_field() !!}
                     <tbody>
                     
-                    @foreach($work as $item)
+                    @foreach($work as $k => $item)
                         <tr>
                             <td class="center">
                                 <label class="pos-rel">
@@ -85,7 +85,7 @@
                                 </label>
                             </td>
 							<td>
-                                {!! $item->w_id !!}
+                                {{ $listArr['per_page']*($listArr['current_page']-1)+($k + 1)  }}
                             </td>
                             <td>
                                 {!! $item->title !!}
@@ -109,7 +109,12 @@
                                 @else
                                 		未知状态
                                 @endif
-                            
+                            			<a class="btn btn-xs btn-warning" href="/manage/taskDetail4/{!! $item->w_id !!}/upload">
+                                            <i class="ace-icon fa fa-plus bigger-120">补充验收材料</i>
+                                        </a>
+                                        <a class="btn btn-xs btn-info" href="/manage/taskDetail4/{!! $item->w_id !!}/view">
+                                            <i class="ace-icon fa fa-link bigger-120">查看</i>
+                                        </a>
                             </td>
                         </tr>
                     @endforeach

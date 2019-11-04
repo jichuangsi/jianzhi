@@ -470,9 +470,11 @@ class TaskController extends ManageController
         ->leftJoin('users as us', 'us.id', '=', 'task.uid')
         ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
         ->paginate($paginate);
+        $listArr = $taskList->toArray();
         
         $data = array(
             'task' => $taskList,
+            'listArr' => $listArr,
         );
         $data['merge'] = $search;
         
@@ -827,6 +829,12 @@ class TaskController extends ManageController
         $uids = UserTagsModel::getUsersByTagId($tagIds);
         $uids = array_flatten($uids);
         
+        $exist = array();
+        foreach($data['works'] as $v){
+            array_push($exist, $v['uid']);
+        }
+        $uids = array_diff($uids, $exist);
+        
         $users = UserModel::getUsersById($uids);
         
         $usersInfo = array();
@@ -1041,7 +1049,7 @@ class TaskController extends ManageController
             array_push($tasksDetail, $taskDetail);
         }
         
-        $title = ['任务ID','任务名称','发布企业','任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址','技能要求','任务预算','任务人数','任务描述','发布时间','姓名','身份证号码','手机号','银行卡号','身份证正面','身份证反面'];
+        $title = ['任务ID',['任务名称',NULL,'50'],['发布企业',NULL,'50'],'任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址',['技能要求',NULL,50],'任务预算','任务人数','任务描述','发布时间','姓名','身份证号码','手机号','银行卡号','身份证正面','身份证反面'];
         //dump($tasksDetail);       
         
         $param = [
@@ -1142,6 +1150,14 @@ class TaskController extends ManageController
                 }
             }
             
+            //检查是否已经报名
+            $existWork = WorkModel::select('work.status')->where('uid', $uid->id)->where('task_id', $v[0])->first();
+            
+            if(!empty($existWork)&&$existWork->status>0){
+                array_push($tasksDispatch, ['num'=>$k, 'msg'=>'该接单人已中标！']);
+                continue;
+            }
+            
             //判断当前的任务的入围人数是否用完
             $worker_num = TaskModel::where('id',$v[0])->lists('worker_num');
             $worker_num = $worker_num[0];
@@ -1153,16 +1169,22 @@ class TaskController extends ManageController
                 continue;
             }
             
-            $param1 = [
-                'task_id' => $v[0],
-                'uid' => $uid->id,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s',time()),
-            ];
             
-            //创建一个新的稿件
-            $workModel = new WorkModel();
-            $status = $workModel->workCreate($param1);
+            if(!empty($existWork)&&$existWork->status===0){
+                $status = WorkModel::where('uid', $uid->id)->where('task_id', $v[0])->update(['status'=>1, 'bid_at' => date('Y-m-d H:i:s',time())]);
+            }else{
+                $param1 = [
+                    'task_id' => $v[0],
+                    'uid' => $uid->id,
+                    'status' => 1,
+                    'created_at' => date('Y-m-d H:i:s',time()),
+                    'bid_at' => date('Y-m-d H:i:s',time()),
+                ];
+                
+                //创建一个新的稿件
+                $workModel = new WorkModel();
+                $status = $workModel->workCreate($param1);
+            }
             
             if(!$status){
                 array_push($tasksDispatch, ['num'=>$k, 'msg'=>'接单失败！']);
@@ -1425,9 +1447,12 @@ class TaskController extends ManageController
     public function getTaskCheck(Request $request){
         
         $search = $request->all();
-        $by = $request->get('by') ? $request->get('by') : 'work.id';
-        $order = $request->get('order') ? $request->get('order') : 'desc';
+        /* $by = $request->get('by') ? $request->get('by') : 'work.id';
+        $order = $request->get('order') ? $request->get('order') : 'desc'; */
+        $by = $request->get('by') ? $request->get('by') : 'work.status';
+        $order = $request->get('order') ? $request->get('order') : 'asc';
         $paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+        
         
         
         $worklist = WorkModel::select('work.id as w_id','work.task_id as w_task_id', 'work.desc as w_desc', 'work.status as w_status', 'work.uid as w_uid', 'work.created_at as w_created_at', 
@@ -1457,7 +1482,7 @@ class TaskController extends ManageController
                          $status = [2];
                          break;
                      case 4:
-                         $status = [5];
+                         $status = [6];
                          break;                     
                  }
                  $worklist = $worklist->whereIn('work.status',$status);
@@ -1484,9 +1509,11 @@ class TaskController extends ManageController
                             ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
                             ->leftJoin('realname_auth', 'realname_auth.uid', '=', 'work.uid')
                             ->paginate($paginate);
+           $listArr = $worklist->toArray();
             
             $data = array(
                 'work' => $worklist,
+                'listArr' => $listArr,
             );
             $data['merge'] = $search;
             
@@ -1554,7 +1581,7 @@ class TaskController extends ManageController
             return  redirect()->to('manage/taskCheck')->with(array('message' => '操作失败'));
     }
     
-    public function taskCheckHandle($id, $action){//缺少对任务状态的改变--Keyman
+    public function taskCheckHandle($id, $action){
         if (!$id) {
             return  redirect()->to('manage/taskCheck')->with(array('error' => '参数错误'));
         }
@@ -1567,14 +1594,41 @@ class TaskController extends ManageController
             case 'reject':
                 $wstatus = 4;
                 break;
-            case 'end':
-                $wstatus = 5;
+            case 'end'://接单人任务为终止
+                $wstatus = 6;
                 break;
         }
         
-        $status = DB::transaction(function () use ($id, $wstatus) {
-            WorkModel::where('id', $id)->update(['status' => $wstatus]);
+        if($wstatus===3){
+            $task_id = WorkModel::select('task_id')->where('id',$id)->first();
+            //查询任务需要的人数
+            $worker_num = TaskModel::where('id',$task_id['task_id'])->first();
+            $worker_num = $worker_num['worker_num'];
+            //任务验收通过人数
+            $win_check = WorkModel::where('work.task_id',$task_id['task_id'])->whereIn('status',[3,5])->count();
+            
+            if(($win_check>=$worker_num)){
+                return redirect()->to('manage/taskCheck')->with(array('error' => '不能再接受新的验收！'));
+            } 
+        }        
+        
+        $param = [
+            'id' => $id,
+            'task_id' => isset($task_id)&&isset($task_id['task_id'])?$task_id['task_id']:'',
+            'wstatus' => $wstatus,
+            'worker_num' => isset($worker_num)?$worker_num:'',
+            'win_check' => isset($win_check)?$win_check:'',
+        ];
+        
+        $status = DB::transaction(function () use ($param) {
+            WorkModel::where('id', $param['id'])->update(['status' => $param['wstatus']]);
+            
+            if($param['wstatus']===3&&($param['win_check']+1)==$param['worker_num'])
+            {
+                TaskModel::where('id',$param['task_id'])->update(['status'=>8,'comment_at'=>date('Y-m-d H:i:s',time()),'updated_at'=>date('Y-m-d H:i:s',time())]);
+            }
         });
+		
         if(is_null($status))
         {
             return redirect()->to('manage/taskCheck')->with(array('message' => '操作成功'));
@@ -1654,9 +1708,10 @@ class TaskController extends ManageController
                         5、如果该任务中途有人新增进来可以在表格里新增该个人的信息，以及验收情况；
                         6、评价及说明非必填。";
         
-        $title = ['任务ID','任务名称','任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址','技能要求','任务预算',['任务人数','9BC2E6'],'任务描述','任务图片','发布时间'
+        $title = ['任务ID',['任务名称',NULL,50],'任务主类别','任务子类别','服务起始日期','服务截止日期','任务城市','服务地址',['技能要求',NULL,50],'任务预算',['任务人数','9BC2E6'],['任务描述',NULL,50],'任务图片','发布时间'
             ,['姓名','9BC2E6'],['身份证号码','9BC2E6'],['手机号','9BC2E6'],['银行卡号','9BC2E6'],['身份证正面','9BC2E6'],['身份证反面','9BC2E6']
-            ,['验收状态(注：1-通过，2-驳回，3-任务终止)','FFE699'],['验收时间','FFE699'],['结算价格','FFE699'],['评价及说明','FFE699']];        
+            ,['验收状态(注：1-通过，2-驳回，3-任务终止)','FFE699'],['验收时间','FFE699'],['结算价格','FFE699'],['评价及说明','FFE699',50]];        
+        
         
         
         $param = [
@@ -1984,8 +2039,10 @@ class TaskController extends ManageController
             ->leftJoin('realname_auth', 'realname_auth.uid', '=', 'work.uid')
             ->paginate($paginate);
             
+            $listArr = $worklist->toArray();
             $data = array(
                 'work' => $worklist,
+                'listArr' => $listArr,
             );
             $data['merge'] = $search;
         
@@ -2029,7 +2086,7 @@ class TaskController extends ManageController
             return  redirect()->to('manage/taskSettle')->with(array('message' => '操作失败'));
     }
     
-    public function taskSettleHandle($id, $action){//缺少对任务状态的改变--Keyman
+    public function taskSettleHandle($id, $action){
         if (!$id) {
             return  redirect()->to('manage/taskSettle')->with(array('error' => '参数错误'));
         }
@@ -2041,9 +2098,30 @@ class TaskController extends ManageController
                 break;
         }
         
-        $status = DB::transaction(function () use ($id, $wstatus) {
-            WorkModel::where('id', $id)->update(['status' => $wstatus]);
+        $task_id = WorkModel::select('task_id')->where('id',$id)->first();
+        //判断当前的任务的入围人数是否用完
+        $worker_num = TaskModel::where('id',$task_id['task_id'])->lists('worker_num');
+        $worker_num = $worker_num[0];
+        //当前任务的完成验收人数统计
+        $settle_num = WorkModel::where('task_id',$task_id['task_id'])->where('status', '=' ,5)->count(); 
+        
+        $param = [
+            'id' => $id,
+            'task_id' => isset($task_id)&&isset($task_id['task_id'])?$task_id['task_id']:'',
+            'wstatus' => $wstatus,
+            'worker_num' => isset($worker_num)?$worker_num:'',
+            'settle_num' => isset($settle_num)?$settle_num:'',
+        ];        
+        
+        $status = DB::transaction(function () use ($param) {
+            WorkModel::where('id', $param['id'])->update(['status' => $param['wstatus']]);
+            
+            if(($param['settle_num']+1)==$param['worker_num'])
+            {
+                TaskModel::where('id',$param['task_id'])->update(['status'=>9, 'updated_at'=>date('Y-m-d H:i:s',time())]);
+            }
         });
+		
             if(is_null($status))
             {
                 return redirect()->to('manage/taskSettle')->with(array('message' => '操作成功'));
@@ -2095,7 +2173,7 @@ class TaskController extends ManageController
         /* $template = $this->fileImport('',[],$_SERVER['DOCUMENT_ROOT'].'/attachment/sys/templates/template_taskys.xlsx');
          dump($template); */
         
-        $title = ['企业ID','企业名称','任务ID','任务名称','任务主类别','验收时间','收款户名(真实姓名,必填)','收款账号(个人银行卡号)','身份证号(必填)','打款金额/元(四舍五入至分,必填)','结算状态'];
+        $title = ['企业ID',['企业名称',NULL,50],'任务ID',['任务名称',NULL,50],'任务主类别','验收时间','收款户名(真实姓名,必填)','收款账号(个人银行卡号)','身份证号(必填)','打款金额/元(四舍五入至分,必填)','结算状态'];
         
         $param = [
             'sheetName' => '任务结算',
@@ -2126,7 +2204,7 @@ class TaskController extends ManageController
     }
     
     //提交任务结算导入数据
-    public function postTaskSettleImport(Request $request){//缺少对任务状态的改变--Keyman
+    public function postTaskSettleImport(Request $request){
         $data = $this->fileImport($request->file('tasksettlefile'));
         
         if(isset($data['fail'])&&$data['fail']){
@@ -2145,6 +2223,19 @@ class TaskController extends ManageController
         
         WorkModel::whereIn('task_id',$tasks)->where('status', '3')->update(['status'=>5, 'settle_at'=>date('Y-m-d H:i:d',time())]);
         
+        foreach($tasks as $v){
+            //判断当前的任务的入围人数是否用完
+            $worker_num = TaskModel::where('id',$v)->lists('worker_num');
+            $worker_num = $worker_num[0];
+            //当前任务的完成验收人数统计
+            $settle_num = WorkModel::where('task_id',$v)->where('status', '=' ,5)->count();
+            
+            if($settle_num==$worker_num)
+            {
+                TaskModel::where('id',$v)->update(['status'=>9, 'updated_at'=>date('Y-m-d H:i:s',time())]);
+            }
+        }
+             
         $tasksSettle = array();
         foreach($data as $k => &$v){
             if($k === 0 || empty($v[0])) continue;
@@ -2174,6 +2265,116 @@ class TaskController extends ManageController
     }
     
     
+    public function taskDetail4($id, $action){
+        
+        $work = WorkModel::select('work.id as w_id','work.task_id as w_task_id', 'work.desc as w_desc', 'work.status as w_status', 'work.uid as w_uid', 'work.created_at as w_created_at', 
+            'work.delivered_at as w_delivered_at','work.checked_at as w_checked_at','work.settle_at as w_settle_at','users.mobile as w_mobile',
+            'work.delivered_at as w_delivered_at', 'work.payment as w_payment','enterprise_auth.company_name','mt.name as mt_type_name','st.name as st_type_name',
+            //'province.name as province_name','city.name as city_name','area.name as area_name','task.address',
+            'realname_auth.realname','realname_auth.card_number as w_card_number',
+            'task.title','task.begin_at','task.end_at','task.status as t_status','task.bounty')->where('work.id', $id);
+        
+        $work = $work->leftJoin('users', 'users.id', '=', 'work.uid')
+        ->leftJoin('task', 'task.id', '=', 'work.task_id')
+        ->leftJoin('task_type as mt', 'task.type_id', '=', 'mt.id')
+        ->leftJoin('task_type as st', 'task.sub_type_id', '=', 'st.id')
+        /* ->leftjoin('district as province','province.id','=','task.province')
+        ->leftjoin('district as city','city.id','=','task.city')
+        ->leftjoin('district as area','area.id','=','task.area') */
+        ->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'task.uid')
+        ->leftJoin('realname_auth', 'realname_auth.uid', '=', 'work.uid')->first();
+        
+        //查询任务技能标签
+        /* $t_tags = TaskTagsModel::getTagsByTaskId($work->w_task_id);
+        //查询任务的附件
+        $t_attatchment_ids = TaskAttachmentModel::where('task_id','=',$work->w_task_id)->lists('attachment_id')->toArray();
+        $t_attatchment_ids = array_flatten($t_attatchment_ids);
+        $taskAttatchment = AttachmentModel::whereIn('id',$t_attatchment_ids)->get(); */
+        
+        //查询接单人技能标签
+        //$w_tags = UserTagsModel::getTagsByUserId($work->w_uid);
+        
+        $w_attatchment_ids = WorkAttachmentModel::findById($id);
+        $w_attatchment_ids = array_flatten($w_attatchment_ids);
+        $workkAttatchment = AttachmentModel::whereIn('id',$w_attatchment_ids)->get();
+        
+        //$workComments = WorkCommentModel::where('work_id',$id)->where('pid',0)->with('childrenComment')->get()->toArray();
+        
+        $data = [
+            'work' => $work,
+            //'t_tag' => $t_tags,
+            //'w_tag' => $w_tags,
+            //'t_attachment' => $taskAttatchment,
+            'w_attachment' => $workkAttatchment,
+            //'w_comment' => $workComments,
+            'action' => $action,
+        ];
+        
+        //dump($data);exit;
+        
+        return $this->theme->scope('manage.taskdetail4', $data)->render();
+    }
     
-    
+    public function postTaskSettleUpload(Request $request){
+        $files = $request->file('file');
+        if(!$files||empty($files)){
+            return redirect()->back()->with(['error'=>'缺少必要参数！']);
+        }        
+        
+        $uid = $request->get('w_uid');        
+        if(!$uid||empty($uid)){
+            return redirect()->back()->with(['error'=>'缺少必要参数！']);
+        }
+        
+        $wid = $request->get('w_id');
+        if(!$wid||empty($wid)){
+            return redirect()->back()->with(['error'=>'缺少必要参数！']);
+        }
+        
+        $tid = $request->get('w_task_id');
+        if(!$tid||empty($tid)){
+            return redirect()->back()->with(['error'=>'缺少必要参数！']);
+        }
+        
+        
+        $uploadFiles = array();
+        $error = array();
+        //$allowExtension = array('jpg', 'gif', 'jpeg', 'bmp', 'png');
+        foreach($files as $k=>$f){
+            $uploadFiles[$k] = $this->addattachment($f, $uid);
+        }
+        
+        if (!empty($error)) {
+            return back()->withErrors($error)->withInput();
+        }  
+        
+        //dump($uploadFiles);
+        
+        $param = [
+            'task_id' => $tid,
+            'work_id' => $wid,
+            'a_id' => $uploadFiles
+        ];
+        
+        $status = DB::transaction(function() use($param){
+            $file_able_ids = AttachmentModel::select('attachment.id','attachment.type')->whereIn('id',$param['a_id'])->get()->toArray();
+            
+            foreach($file_able_ids as $v){
+                $work_attachment = [
+                    'task_id'=>$param['task_id'],
+                    'work_id'=>$param['work_id'],
+                    'attachment_id'=>$v['id'],
+                    'type'=>$v['type'],
+                    'created_at'=>date('Y-m-d H:i:s',time()),
+                ];
+                WorkAttachmentModel::create($work_attachment);
+            }
+        });
+            
+            if(is_null($status))
+            {
+                return redirect()->to('manage/taskSettle')->with(array('message' => '操作成功'));
+            }
+            return  redirect()->to('manage/taskSettle')->with(array('message' => '操作失败'));
+    }
 }

@@ -161,7 +161,8 @@ class ManageController extends BasicController
         
         //横向单元格标识
         $cellName = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ');
-        
+        //默认列宽
+        $columnWidth = 20;
         
         $obj->getActiveSheet(0)->setTitle(isset($param['sheetName'])?$param['sheetName']:'sheet1');   //设置sheet名称
         $_row = 1;   //设置纵向单元格标识
@@ -183,7 +184,7 @@ class ManageController extends BasicController
             $i = 0;
             foreach($param['title'] AS $v){   //设置列标题
                 if(is_array($v)){
-                    $obj->setActiveSheetIndex(0)->setCellValue($cellName[$i].$_row, isset($v[0])?$v[0]:'');//默认数组第一个为标题
+                    $obj->getActiveSheet(0)->setCellValue($cellName[$i].$_row, isset($v[0])?$v[0]:'');//默认数组第一个为标题
                     if(isset($v[1])){//默认数组第二个为颜色
                         $obj->getActiveSheet(0)->getStyle($cellName[$i].$_row)->applyFromArray(
                             array(
@@ -200,11 +201,17 @@ class ManageController extends BasicController
                             )
                          );
                     }
+                    if(isset($v[2])){//默认数组第二个为宽度
+                        $obj->getActiveSheet(0)->getColumnDimension($cellName[$i])->setWidth($v[2]);
+                    }else{
+                        $obj->getActiveSheet(0)->getColumnDimension($cellName[$i])->setWidth($columnWidth);
+                    }
                 }else{
-                    $obj->setActiveSheetIndex(0)->setCellValue($cellName[$i].$_row, $v);
+                    $obj->getActiveSheet(0)->setCellValue($cellName[$i].$_row, $v);
+                    $obj->getActiveSheet(0)->getColumnDimension($cellName[$i])->setWidth($columnWidth);
                 }
                 
-                $obj->setActiveSheetIndex(0)->getStyle($cellName[$i].$_row)->applyFromArray(
+                $obj->getActiveSheet(0)->getStyle($cellName[$i].$_row)->applyFromArray(
                         array(
                             'borders' => array (
                                 'outline'     => array (

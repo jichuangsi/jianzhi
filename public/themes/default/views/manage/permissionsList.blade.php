@@ -52,7 +52,7 @@
                         <label>
                             <input type="checkbox" class="ace allcheck"/>
                             <span class="lbl"></span>
-                            编号
+                            序号
                         </label>
                     </th>
                     <th>权限</th>
@@ -68,11 +68,7 @@
                         <label>
                             <input type="checkbox" class="ace" name="chk"/>
                             <span class="lbl"></span>
-                            @if(intval($listArr['current_page'])>1)
-                            	{{ $listArr['per_page']*$listArr['current_page']+($k + 1)  }}
-                            @else
-                            	{{ $k + 1 }}                            
-                            @endif
+                            {{ $listArr['per_page']*($listArr['current_page']-1)+($k + 1)  }}
                         </label>
                     </td>
 

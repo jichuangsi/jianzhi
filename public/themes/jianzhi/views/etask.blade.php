@@ -104,7 +104,7 @@
                     <div class="number">1</div>
                     <div onclick="jia()">+</div>
                 </div>
-                <input type="hidden" name="worker_num" value="{{old('worker_num')}}">
+                <input type="hidden" name="worker_num" @if(old('worker_num')) value="{{old('worker_num')}}" @else value="1" @endif>
             </div>
             <div class="list">
                 <span>任务描述

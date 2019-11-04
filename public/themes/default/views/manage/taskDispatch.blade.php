@@ -59,7 +59,7 @@
                     <th class="center">
                         
                     </th>
-                    <th>编号</th>
+                    <th>序号</th>
                     <!-- <th>用户名</th> -->
                     <th>任务名称</th>
 
@@ -79,7 +79,7 @@
                 <!-- <form action="/manage/taskMultiHandle" method="post"> -->
                     {!! csrf_field() !!}
                     <tbody>
-                    @foreach($task as $item)
+                    @foreach($task as $k => $item)
                         <tr>
                             <td class="center">
                                 <label class="pos-rel">
@@ -89,7 +89,7 @@
                             </td>
 
                             <td>
-                                {!! $item->id !!}
+                                {{ $listArr['per_page']*($listArr['current_page']-1)+($k + 1)  }}
                             </td>
                             <td><a href="/manage/taskDetail2/{{ $item->id }}" target="_Self">{!! $item->title !!}</a></td>
                             <td>

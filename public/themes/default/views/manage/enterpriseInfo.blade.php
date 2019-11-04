@@ -32,99 +32,93 @@
 				{!! $info['name'] !!}				
 			</p>
 		</div> -->
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
+			<p class="col-sm-9">
 				{!! $info['mobile'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业名称：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 企业名称：</p>
+			<p class="col-sm-9">
 				{!! $info['company_name'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p  class="col-sm-1 control-label no-padding-left">所在城市：</p>
-			<div class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p  class="col-sm-3 control-label no-padding-left">所在城市：</p>
+			<div class="col-sm-9">
 				{!! $info['province_name'] !!}{!! $info['city_name'] !!}
 			</div>			
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 纳税人识别号：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 纳税人识别号：</p>
+			<p class="col-sm-9">
 				{!! $info['tax_code'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 开户行：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 开户行：</p>
+			<p class="col-sm-9">
 				{!! $info['bank'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业账号：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 企业账号：</p>
+			<p class="col-sm-9">
 				{!! $info['account'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业法人：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 企业法人：</p>
+			<p class="col-sm-9">
 				{!! $info['owner'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业电话：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 企业电话：</p>
+			<p class="col-sm-9">
 				{!! $info['phone'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 联系人：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 联系人：</p>
+			<p class="col-sm-9">
 				{!! $info['contactor'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 联系人电话：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 联系人电话：</p>
+			<p class="col-sm-9">
 				{!! $info['contactor_mobile'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业邮箱：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 企业邮箱：</p>
+			<p class="col-sm-9">
 				{!! $info['company_email'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">企业地址：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1">企业地址：</p>
+			<p class="col-sm-9">
 				{!! $info['address'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">注册时间：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1">注册时间：</p>
+			<p class="col-sm-9">
 				{!! $info['u_created_at'] !!}
 			</p>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">提交认证时间：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1">提交认证时间：</p>
+			<p class="col-sm-9">
 				{!! $info['created_at'] !!}
 			</p>
 		</div>
-			<div class="bankAuth-bottom clearfix col-xs-12">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 营业执副本：</label>
-                <div class="col-sm-4">
-                    <img alt="营业执副本" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                 
-                </div>
-            </div> 
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">审核：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1">审核：</p>
+			<p class="col-sm-9">
 				@if(isset($info['status']))
     				@if($info['status']!=0)
     					{!! Theme::get('manager') !!}({!! $info['auth_time'] !!})		
@@ -132,9 +126,9 @@
 				@endif
 			</p>
 		</div> 
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">认证状态：</p>
-			<p class="col-sm-4">
+		<div class="bankAuth-bottom clearfix col-xs-6">
+			<p class="col-sm-3 control-label no-padding-left" for="form-field-1">认证状态：</p>
+			<p class="col-sm-9">
 				@if(isset($info['status']))
 					@if($info['status']===0)
 						待审核
@@ -150,6 +144,13 @@
 				@endif
 			</p>
 		</div> 
+			<div class="bankAuth-bottom clearfix col-xs-6">
+                <label class="col-sm-3 control-label no-padding-left" for="form-field-1"> 营业执照副本：</label>
+                <div class="col-sm-4">
+                    <img alt="营业执副本" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                 
+                </div>
+            </div> 
+		
 		
 		
 		<div class="col-xs-12">

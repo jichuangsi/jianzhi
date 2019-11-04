@@ -63,7 +63,7 @@
                        	 编号
                     </label>
                 </th>
-                <th>用户名</th>
+                <th>姓名</th>
                 <th>身份证号码</th>
                 <th>手机号</th>
                 <th>认证状态</th>
@@ -77,12 +77,12 @@
             
             <tbody>
                 @if(!empty($list))
-                @foreach($list as $item)
+                @foreach($list as $k => $item)
                 <tr>
                     <td class="center">
                         <label class="position-relative">
                             <input type="checkbox" class="ace"  value="{{ $item->id }}" name="chk"/>
-                            <span class="lbl"></span>{!! $item->id !!}
+                            <span class="lbl"></span>{{ $listArr['per_page']*($listArr['current_page']-1)+($k + 1)  }}
                         </label>
                     </td>
                     <td>

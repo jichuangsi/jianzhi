@@ -54,7 +54,7 @@
                     <th class="center">
                         
                     </th>
-                    <th>编号</th>
+                    <th>序号</th>
                     <!-- <th>用户名</th> -->
                     <th>任务名称</th>
 
@@ -76,7 +76,7 @@
                     {!! csrf_field() !!}
                     <tbody>
                     
-                    @foreach($work as $item)
+                    @foreach($work as $k => $item)
                         <tr>
                             <td class="center">
                                 <label class="pos-rel">
@@ -85,7 +85,7 @@
                                 </label>
                             </td>
 							<td>
-                                {!! $item->w_id !!}
+                                {{ $listArr['per_page']*($listArr['current_page']-1)+($k + 1)  }}
                             </td>
                             <td>
                                 {!! $item->title !!}
@@ -107,6 +107,8 @@
                                 	验收驳回
                                 @elseif($item->w_status===5)
                                 	任务结束
+                                @elseif($item->w_status===6)
+                                	任务终止
                                 @else
                                 	未知状态
                                 @endif
@@ -124,18 +126,10 @@
                                         <a class="btn btn-xs btn-success" href="/manage/taskCheckHandle/{!! $item->w_id !!}/end">
                                             <i class="ace-icon fa fa-check bigger-120">终止任务</i>
                                         </a>
-                                @elseif($item->w_status===3)
+                                @elseif($item->w_status===3||$item->w_status===4||$item->w_status===5||$item->w_status===6)
                                 		<a class="btn btn-xs btn-info" href="/manage/taskDetail3/{!! $item->w_id !!}">
                                             <i class="ace-icon fa fa-info bigger-120">详情</i>
-                                        </a>
-                                @elseif($item->w_status===4)
-                                		<a class="btn btn-xs btn-info" href="/manage/taskDetail3/{!! $item->w_id !!}">
-                                            <i class="ace-icon fa fa-info bigger-120">详情</i>
-                                        </a>
-                                @elseif($item->w_status===5)
-                                		<a class="btn btn-xs btn-info" href="/manage/taskDetail3/{!! $item->w_id !!}">
-                                            <i class="ace-icon fa fa-info bigger-120">详情</i>
-                                        </a>
+                                        </a>                                
                                 @else
                                 	未知状态
                                 @endif

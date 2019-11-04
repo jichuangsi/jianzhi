@@ -116,9 +116,9 @@
             /* 放大倍数 */
         }  
 </style>
-<div class="well">
+{{-- <div class="well">
     <h4 >任务详情</h4>
-</div>
+</div> --}}
 {{--<div class="row">
     <div class="col-xs-12 widget-container-col ui-sortable">
         <div class="widget-box transparent ui-sortable-handle">

@@ -17,9 +17,13 @@
                     <label for="">联系人　</label>
                     <input type="text" name="contactor" @if(isset($contactor))value="{!! $contactor !!}"@endif/>
                 </div>
-                <div class="form-group search-list">
+                <!-- <div class="form-group search-list">
                     <label for="">联系电话　</label>
                     <input type="text" name="contactor_mobile" @if(isset($contactor_mobile))value="{!! $contactor_mobile !!}" @endif/>
+                </div> -->
+                <div class="form-group search-list">
+                    <label for="">注册手机　</label>
+                    <input type="text" name="mobile" @if(isset($mobile))value="{!! $mobile !!}" @endif/>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary btn-sm">搜索</button>
@@ -60,7 +64,7 @@
                     <label class="position-relative">
                         <input type="checkbox" class="ace"/>
                         <span class="lbl"></span>
-                        	编号
+                        	序号
                     </label>
                 </th>
                 <th>企业名称</th>
@@ -78,12 +82,12 @@
             
             <tbody>
                 @if(!empty($list))
-                @foreach($list as $item)
+                @foreach($list as $k => $item)
                 <tr>
                     <td class="center">
                         <label class="position-relative">
                             <input type="checkbox" class="ace"  value="{{ $item->id }}" name="chk"/>
-                            <span class="lbl"></span>{!! $item->id !!}
+                            <span class="lbl"></span>{{ $listArr['per_page']*($listArr['current_page']-1)+($k + 1)  }}
                         </label>
                     </td>
                     <td>
