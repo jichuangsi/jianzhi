@@ -25,11 +25,11 @@
             	上传验收材料：
             <div class="img">
                 <div class="zs_img">
-                    <!-- <img src="" id="img" alt=""> -->
-                </div>
-                <div class="add">
-                    +
-                    <input type="file" name="file" id="file" onchange="imgfile()">
+                    <!-- <img src="" id="img" alt=""> -->                    
+                    <div class="add">
+                        +
+                        <input type="file" name="file" id="file" onchange="imgfile()" accept="image/*">
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,6 +47,7 @@
             <img src="" alt="">
         </div>
     <script type="text/javascript">
+    var max = '{{$a_config["number"]}}';
     $(function(){
 		var old_desc = "{{old('desc')}}";
 		if(old_desc){
@@ -67,7 +68,7 @@
     	window.location.href = "{!! url('jz/task') !!}";
     }
     function addfile(){
-        if($('.file_box').children().length < 3){
+        if($('.file_box').children().length < parseInt(max)){
             var reads = new FileReader();
             f = document.getElementById('file').files[0];
             console.log(f)
@@ -75,7 +76,7 @@
             $('.file_box').append(div)
             uploadFile();
         }else{
-        	popUpMessage('最多上传三个文件')
+        	popUpMessage('最多上传'+parseInt(max)+'个文件')
         }
     }
     function delfile(val){
@@ -84,19 +85,20 @@
     }
 
     function imgfile(){
-        if($(".zs_img").children().length < 3){
+        if($(".zs_img").children().length <= parseInt(max)){
             var reads = new FileReader();
             f = document.getElementById('file').files[0];
             reads.readAsDataURL(f);
             reads.onload = function(e) {
                 $(".zs_img").css("display", "flex");
                 var html = '<div onclick="bigimg(this)" class="box_img"><img src ="'+this.result+'"><em onclick="delimg(this)">-</em></div>'
-                $(".zs_img").append(html)
+                //$(".zs_img").append(html)
+                $(".add").before(html)
                 //$('#img_file').val('')
                 uploadFile();
             };
         }else{
-        	popUpMessage('最多上传三个文件')
+        	popUpMessage('最多上传'+parseInt(max)+'个文件')
         }
     }
     function delimg(val){
@@ -135,7 +137,7 @@
             		$("input[name='file_id']").val(attachmentId+(attachmentId?",":"")+ret.id);     
             		var files = $(".zs_img").children();	
             		if(files&&files.length>0){
-            			files[files.length-1].id = 'file_'+ret.id;
+            			files[files.length-2].id = 'file_'+ret.id;
                 	}
                 }
                 $('#file').val('')

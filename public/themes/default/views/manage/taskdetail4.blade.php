@@ -102,9 +102,29 @@
             transform: scale(1.5); */
             /* 放大倍数 */
         }  
+        .zs_img {
+            flex-wrap: wrap;
+        }
         .zs_img div {
             margin-right : 1rem;
+            display: inline-block;
+            position: relative;
         }
+        .zs_img div em {            
+            font-style: normal;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            color: #fff;
+            background-color: red;
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            text-align: center;
+            line-height: 20px;
+            cursor: pointer
+        }
+        
 </style>
 {{--<div class="well">
     <h4 >任务结算信息</h4>
@@ -307,7 +327,7 @@
                                                     </div>
                                                 </div> 
                                             
-                                            
+                                            	<input type="hidden" name="file_id">
                                             
                                             	{{--<div class="form-group interface-bottom col-xs-6">
                                                     <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 提交时间： </label>
@@ -374,6 +394,8 @@
     </div>
 <script type="text/javascript">
 var cnt = '{{count($w_attachment)}}';
+var max = '{{$a_config["number"]}}';
+//var arr = [];
 function toBack(){
 	window.location.href = '{!! url("manage/taskSettle") !!}'
 }
@@ -385,28 +407,101 @@ function imgfile(val){
 
 	var files = document.getElementById('file').files;
 
-	if(files.length+parseInt(cnt)+$(".zs_img").children().length>3){
-		popUpMessage('最多上传三张');
+	if(files.length+parseInt(cnt)+$(".zs_img").children().length>parseInt(max)){
+		popUpMessage('最多上传'+parseInt(max)+'张');
 		$("#file").val('');
 		return;
 	}
 	
-    if($(".zs_img").children().length < 3){			
+    if($(".zs_img").children().length < parseInt(max)){			
 		for(var i = 0; i < files.length; i++){
 			var f = files[i];  
+			//arr.push(f);
 			var reads = new FileReader();
 			reads.readAsDataURL(f);
 			reads.onload = function(e) {
 	            $(".zs_img").css("display", "flex");
-	            var html = '<div><img src ="'+this.result+'" onclick="bigimg(this)"></div>'
+	            var html = '<div><img src ="'+this.result+'" onclick="bigimg(this)"><em data-name="'+f.name+'" onclick="delimg(this)">X</em></div>'
 				$(".zs_img").append(html)            
 	        };
-		}        
+		}
+		//console.log(arr);
+		uploadFile();       
     }else{
-    	popUpMessage('最多上传三张')
+    	popUpMessage('最多上传'+parseInt(max)+'张')
     }
+}
+function delimg(val){
+	$(val).parent().remove()
+	event.stopPropagation()
+	if($(".zs_img").children().length == 0){
+		$(".zs_img").css("display", "none");
+	} 
+	/* for(var i =0; i< arr.length;i++){
+		if($(val).attr('data-name') == arr[i].name){
+			arr.splice(i,1)
+		}
+	}
+	console.log(arr); */
+	deleteFile($(val).parent()[0].id);
+}
+
+/**
+上传文件
+*/
+function uploadFile(){
+    $("body").mLoading({text:"上传中"});//显示loading组件
+    var headers = { "_token": "{{ csrf_token() }}"};
+    // 开始上传
+    $.ajaxFileUpload({
+        secureuri: false,// 是否启用安全提交，默认为 false
+        type: "POST",
+        url: "/manage/fileMultipleUpload",
+        fileElementId: "file",// input[type=file] 的 id
+        dataType: "json",// 返回值类型，一般位 `json` 或者 `text`
+        //data: data,// 添加参数，无参数时注释掉
+        header: headers,
+        success: function (ret, status) {
+            // 成功
+        	console.log(ret); 
+        	if(ret&&ret.ids&&ret.ids.length>0){
+        		var attachmentId = $("input[name='file_id']").val();
+        		var files = $(".zs_img").children();
+				for(var i = 0; i < ret.ids.length; i++){
+					attachmentId += (attachmentId?",":"")+ret.ids[i];
+					if(files&&files.length>0){
+	        			files[files.length-ret.ids.length+i].id = 'file_'+ret.ids[i];
+	            	}
+				}
+        		$("input[name='file_id']").val(attachmentId);
+            }
+    		$('#file').val('') 
+        },
+        error: function (data, status, e) {
+            // 失败
+        	console.log(e);
+        },
+        complete: function(){
+        	$("body").mLoading("hide");//隐藏loading组件
+        }
+    });
+}
+function deleteFile(id){
+    if(!id) return;
+    var ids = id.split('_', 2);
+    if(!ids[1]) return;
+    var attachmentId = $("input[name='file_id']").val();
+    attachmentId = attachmentId.replace(','+ids[1],'').replace(ids[1]+',','').replace(ids[1],'')
+    console.log(attachmentId);
+    $("input[name='file_id']").val(attachmentId);
+    $.get('/manage/fileSingleDelete',{'id':ids[1]},function(data){
+        console.log(data);            
+    });
 }
 </script>
 {{-- {!! Theme::widget('editor')->render() !!}
 {!! Theme::widget('ueditor')->render() !!} --}}
 {!! Theme::asset()->container('custom-css')->usePath()->add('backstage', 'css/backstage/backstage.css') !!}
+    {!! Theme::asset()->container('specific-js')->usePath()->add('ajaxFileUpload-js', 'js/jquery.ajaxFileUpload.js') !!}
+    {!! Theme::asset()->container('specific-js')->usePath()->add('mloading-js', 'js/jquery.mloading.js') !!}
+    {!! Theme::asset()->container('specific-css')->usePath()->add('mloading-css', 'js/jquery.mloading.css') !!}

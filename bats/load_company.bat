@@ -1,0 +1,1 @@
+mysql -u root -p jianzhi -e "select company_name from kppw_enterprise_auth where status = 1 INTO OUTFILE 'd:/company.txt' lines terminated by '\r\n'"

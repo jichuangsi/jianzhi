@@ -773,9 +773,9 @@ class TaskController extends ManageController
     public function taskDetail3($id){
         
         $work = WorkModel::select('work.id as w_id','work.task_id as w_task_id', 'work.desc as w_desc', 'work.status as w_status', 'work.uid as w_uid', 'work.created_at as w_created_at', 'work.delivered_at as w_delivered_at', 
-                        'work.checked_at as w_checked_at','work.settle_at as w_settle_at','users.mobile as w_mobile',
+                        'work.checked_at as w_checked_at','work.settle_at as w_settle_at','work.end_at as w_end_at','work.reject_at as w_reject_at','users.mobile as w_mobile',
                         'work.delivered_at as w_delivered_at', 'work.payment as w_payment','enterprise_auth.company_name','mt.name as mt_type_name','st.name as st_type_name','realname_auth.realname','realname_auth.card_number as w_card_number',
-                        'task.title','task.begin_at','task.end_at','province.name as province_name','city.name as city_name','area.name as area_name','task.address','task.status as t_status','task.bounty')->where('work.id', $id);
+                        'task.title','task.begin_at','task.end_at','task.desc','province.name as province_name','city.name as city_name','area.name as area_name','task.address','task.status as t_status','task.bounty')->where('work.id', $id);
         
         $work = $work->leftJoin('users', 'users.id', '=', 'work.uid')
                     ->leftJoin('task', 'task.id', '=', 'work.task_id')
@@ -1534,7 +1534,7 @@ class TaskController extends ManageController
         }
         $status = DB::transaction(function () use ($data) {
             foreach ($data['chk'] as $id) {
-                WorkModel::where('id', $id)->update(['status' => 5,'settle_at'=>date('Y-m-d H:i:d',time())]);
+                WorkModel::where('id', $id)->update(['status' => 5,'end_at'=>date('Y-m-d H:i:d',time())]);
             }
         });
             if(is_null($status))
@@ -1567,7 +1567,7 @@ class TaskController extends ManageController
         $rest = array_diff($data['chk'], $reject);
         
         $status = DB::transaction(function () use ($reject) {
-            WorkModel::whereIn('id', $reject)->update(['status' => 4, 'checked_at' => date('Y-m-d H:i:d',time())]);
+            WorkModel::whereIn('id', $reject)->update(['status' => 4, 'reject_at' => date('Y-m-d H:i:d',time())]);
         });
             if(is_null($status))
             {
@@ -1621,7 +1621,15 @@ class TaskController extends ManageController
         ];
         
         $status = DB::transaction(function () use ($param) {
-            WorkModel::where('id', $param['id'])->update(['status' => $param['wstatus']]);
+            $update = ['status' => $param['wstatus']];
+            if($param['wstatus']===3){
+                $update['checked_at'] = date('Y-m-d H:i:s',time());
+            }else if($param['wstatus']===4){
+                $update['reject_at'] = date('Y-m-d H:i:s',time());
+            }else if($param['wstatus']===6){
+                $update['end_at'] = date('Y-m-d H:i:s',time());
+            }
+            WorkModel::where('id', $param['id'])->update($update);
             
             if($param['wstatus']===3&&($param['win_check']+1)==$param['worker_num'])
             {
@@ -1937,10 +1945,10 @@ class TaskController extends ManageController
                         });
                         
                             if($result){
-                                $v['msg'] = '接单人验收状态更行失败！';
+                                $v['msg'] = '接单人验收状态更新失败！';
                                 array_push($tasksCheck, $v);
                             }else{
-                                $v['msg'] = '接单人验收状态更行成功！';
+                                $v['msg'] = '接单人验收状态更新成功！';
                                 array_push($tasksCheck, $v);
                             }
                         
@@ -2114,7 +2122,7 @@ class TaskController extends ManageController
         ];        
         
         $status = DB::transaction(function () use ($param) {
-            WorkModel::where('id', $param['id'])->update(['status' => $param['wstatus']]);
+            WorkModel::where('id', $param['id'])->update(['status' => $param['wstatus'], 'settle_at'=>date('Y-m-d H:i:s',time())]);
             
             if(($param['settle_num']+1)==$param['worker_num'])
             {
@@ -2298,7 +2306,9 @@ class TaskController extends ManageController
         $w_attatchment_ids = array_flatten($w_attatchment_ids);
         $workkAttatchment = AttachmentModel::whereIn('id',$w_attatchment_ids)->get();
         
-        //$workComments = WorkCommentModel::where('work_id',$id)->where('pid',0)->with('childrenComment')->get()->toArray();
+        //$workComments = WorkCommentModel::where('work_id',$id)->where('pid',0)->with('childrenComment')->get()->toArray();        
+        
+        $a_config = ConfigModel::getConfigByType('attachment');
         
         $data = [
             'work' => $work,
@@ -2308,6 +2318,7 @@ class TaskController extends ManageController
             'w_attachment' => $workkAttatchment,
             //'w_comment' => $workComments,
             'action' => $action,
+            'a_config' => $a_config['attachment']
         ];
         
         //dump($data);exit;
@@ -2315,8 +2326,8 @@ class TaskController extends ManageController
         return $this->theme->scope('manage.taskdetail4', $data)->render();
     }
     
-    public function postTaskSettleUpload(Request $request){
-        $files = $request->file('file');
+    public function postTaskSettleUpload(Request $request){ 
+        $files = $request->get('file_id');
         if(!$files||empty($files)){
             return redirect()->back()->with(['error'=>'缺少必要参数！']);
         }        
@@ -2337,18 +2348,9 @@ class TaskController extends ManageController
         }
         
         
-        $uploadFiles = array();
-        $error = array();
-        //$allowExtension = array('jpg', 'gif', 'jpeg', 'bmp', 'png');
-        foreach($files as $k=>$f){
-            $uploadFiles[$k] = $this->addattachment($f, $uid);
-        }
-        
-        if (!empty($error)) {
-            return back()->withErrors($error)->withInput();
-        }  
-        
-        //dump($uploadFiles);
+        $uploadFiles = explode(",", $files);
+                
+        //dump($uploadFiles);exit;
         
         $param = [
             'task_id' => $tid,
@@ -2369,6 +2371,8 @@ class TaskController extends ManageController
                 ];
                 WorkAttachmentModel::create($work_attachment);
             }
+            
+            WorkModel::where('id', $param['work_id'])->update(['desc'=>'通过验收记录导入自动创建','delivered_at'=>date('Y-m-d H:i:s',time())]);
         });
             
             if(is_null($status))

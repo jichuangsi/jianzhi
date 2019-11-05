@@ -19,6 +19,7 @@ use PHPExcel_Reader_Excel2007;
 use PHPExcel_Style_NumberFormat;
 use PHPExcel_Style_Color;
 use Illuminate\Http\Request;
+use App\Modules\User\Model\AttachmentModel;
 
 class ManageController extends BasicController
 {
@@ -439,4 +440,89 @@ class ManageController extends BasicController
         return $val.'@'.$val.'.com';
     }
     //Excel 相关方法
+    
+    //文件上传相关方法
+    //多文件上传
+    protected function fileMultipleUpload(Request $request){
+        $files = $request->file('file');
+        
+        if(!$files||empty($files)){
+            return response()->json(['errCode' => 0, 'errMsg' => '缺少必要参数！']);
+        }
+        
+        $result = array();
+        foreach($files as $k => $file){
+            $result[$k] = $this->fileUpload($file);
+        }
+        
+        if(empty($result)){
+            return response()->json(['errCode' => 0, 'errMsg' => '文件上传失败！']);
+        }
+        
+        return response()->json(['ids' => $result]);
+        
+    }
+    //单文件上传
+    protected function fileSingleUpload(Request $request){
+        $file = $request->file('file');
+        if(!$file) {
+            return response()->json(['errCode' => 0, 'errMsg' => '缺少必要参数！']);
+        }
+        $result = $this->fileUpload($file);
+        
+        if(!$result){
+            return response()->json(['errCode' => 0, 'errMsg' => '文件上传失败！']);
+        }
+        
+        return response()->json(['id' => $result]);
+    }
+    /**
+     * 单文件删除
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function fileSingleDelete(Request $request)
+    {
+        $id = $request->get('id');
+        //查询当前的附件
+        $file = AttachmentModel::where('id',$id)->first()->toArray();
+        if(!$file)
+        {
+            return response()->json(['errCode' => 0, 'errMsg' => '附件没有上传成功！']);
+        }
+        //删除附件
+        if(is_file($file['url']))
+            unlink($file['url']);
+            $result = AttachmentModel::destroy($id);
+            if (!$result) {
+                return response()->json(['errCode' => 0, 'errMsg' => '删除失败！']);
+            }
+            return response()->json(['errCode' => 1, 'errMsg' => '删除成功！']);
+    }
+    /**
+     * 文件上传控制
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function fileUpload($file)
+    {        
+        //将文件上传的数据存入到attachment表中
+        $attachment = \FileClass::uploadFile($file, 'task');
+        $attachment = json_decode($attachment, true);
+        //判断文件是否上传
+        if($attachment['code']!=200)
+        {
+            return response()->json(['errCode' => 0, 'errMsg' => $attachment['message']]);
+        }
+        $attachment_data = array_add($attachment['data'], 'status', 1);
+        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+        //将记录写入到attchement表中
+        $result = AttachmentModel::create($attachment_data);
+        $result = json_decode($result, true);
+        if (!$result) {
+            return NULL;
+        }
+        //回传附件id
+        return $result['id'];
+    }
 }

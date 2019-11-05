@@ -307,20 +307,15 @@
                                                         @endforeach
                                                     </div>
                                                 </div>
-                                            </div>
-                                            
-                                            
-                                            
-                                            @if($work['w_status']===6)
-                                            <div class="form-group interface-bottom col-xs-12">
-                                                <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 终止时间： </label>
-                                                <div class="col-sm-9">
-                                                   	{{$work['w_settle_at']}}
+                                                @if($work['w_status']===6)
+                                                <div class="form-group interface-bottom col-xs-12">
+                                                    <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 终止时间： </label>
+                                                    <div class="col-sm-9">
+                                                       	{{$work['w_end_at']}}
+                                                    </div>
                                                 </div>
+                                                @endif
                                             </div>
-                                            @endif
-                                            
-                                            
                                             {{ csrf_field() }}                                            
                                             <div class="col-xs-12">
                                                 <div class="clearfix row bg-backf5 padding20 mg-margin12">

@@ -21,6 +21,7 @@ use App\Modules\User\Model\RealnameAuthModel;
 use App\Modules\User\Model\EnterpriseAuthModel;
 use App\Modules\Task\Model\WorkCommentModel;
 use App\Modules\User\Model\MessageReceiveModel;
+use App\Modules\Manage\Model\ConfigModel;
 use Illuminate\Http\Request;
 /* use App\Modules\Manage\Model\AgreementModel;
 use App\Modules\Manage\Model\ConfigModel;
@@ -501,8 +502,11 @@ class jzTaskController extends TaskBasicController
             return redirect()->back()->with('error', $is_deliver_able['errMsg']);
         }   */      
         
+        $a_config = ConfigModel::getConfigByType('attachment');
+        
         $data = array(
-            'taskId' => $id
+            'taskId' => $id,
+            'a_config' => $a_config['attachment']
         );
         return $this->theme->scope('workDelivery', $data)->render();
     } 

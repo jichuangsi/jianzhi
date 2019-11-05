@@ -59,6 +59,8 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     //Route::post('/taskListImport', 'TaskController@postTaskListImport')->name('taskListImport');//任务导入
     Route::get('/ajaxSubTaskType','TaskController@ajaxSubTaskType');
 	Route::post('/taskExcel', 'TaskController@postTaskExcel')->name('taskExcel');//任务导入    
+	Route::get('/taskTemplateDownload', 'TaskController@getTaskTemplateDownload')->name('taskTemplateDownload');//任务模板下载
+	
     
     Route::get('/taskHandle/{id}/{action}', 'TaskController@taskHandle')->name('taskUpdate');//任务处理
     Route::post('/taskMultiHandle', 'TaskController@taskMultiHandle')->name('taskMultiUpdate');//任务批量处理
@@ -90,6 +92,9 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::post('/taskSettleImport', 'TaskController@postTaskSettleImport')->name('taskSettleImport');//任务结算批量导入   
     Route::get('/changeMessageStatus', 'IndexController@ajaxChangeMessageStatus'); //改变信息读取状态
     Route::get('/taskDetail4/{id}/{action}', 'TaskController@taskDetail4')->name('taskDetail4');//任务结算详情
+    Route::post('/fileMultipleUpload','TaskController@fileMultipleUpload');//多文件上传
+    Route::post('/fileSingleUpload','TaskController@fileSingleUpload');//单文件上传
+    Route::get('/fileSingleDelete','TaskController@fileSingleDelete');//单文件删除
     Route::post('/taskSettleUpload', 'TaskController@postTaskSettleUpload')->name('taskSettleUpload');//任务结算上传图片     
 
     //财务管理路由

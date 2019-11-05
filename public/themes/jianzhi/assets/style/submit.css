@@ -100,26 +100,29 @@
     font-size: 0.24rem;
 }
 .img_box .zs_img {
-    /* width: 1.2rem; */
-    height: 1.2rem;
-    border: 1px solid #ddd;
-    font-size: 0.6rem;
-    line-height: 1.2rem;
-    margin-right: 0.2rem;
-    text-align: center;
-    position: relative;
-    display: none;
+	/* width: 1.2rem; */
+	/* height: 1.2rem; */
+	/* border: 1px solid #ddd; */
+	font-size: 0.6rem;
+	line-height: 1.2rem;
+	margin-right: 0.2rem;
+	text-align: center;
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
 }
 .img_box .zs_img .box_img {
-    position: relative;
-    width: 1.2rem;
-    height: 1.2rem;
-    margin-right: 0.2rem;
-    overflow: hidden;
+	position: relative;
+	width: 1.2rem;
+	height: 1.2rem;
+	margin-right: 0.2rem;
+	overflow: hidden;
+	border: 1px solid #ddd;
+	margin-bottom: 0.1rem;
 }
-.img_box .zs_img .box_img:last-child {
-    position: relative;
-    margin-right: 0rem;
+.img_box .zs_img .box_img:nth-child(5){
+	position: relative;
+	margin-right: 0rem;
 }
 .img_box .zs_img .box_img em {
     position: absolute;
