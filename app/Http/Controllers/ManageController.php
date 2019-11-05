@@ -452,7 +452,7 @@ class ManageController extends BasicController
         
         $result = array();
         foreach($files as $k => $file){
-            $result[$k] = $this->fileUpload($file);
+            $result[$k] = $this->fileUpload($file, $request->get('uid'));
         }
         
         if(empty($result)){
@@ -468,7 +468,7 @@ class ManageController extends BasicController
         if(!$file) {
             return response()->json(['errCode' => 0, 'errMsg' => '缺少必要参数！']);
         }
-        $result = $this->fileUpload($file);
+        $result = $this->fileUpload($file, $request->get('uid'));
         
         if(!$result){
             return response()->json(['errCode' => 0, 'errMsg' => '文件上传失败！']);
@@ -504,7 +504,7 @@ class ManageController extends BasicController
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    private function fileUpload($file)
+    private function fileUpload($file, $uid='')
     {        
         //将文件上传的数据存入到attachment表中
         $attachment = \FileClass::uploadFile($file, 'task');
@@ -516,6 +516,7 @@ class ManageController extends BasicController
         }
         $attachment_data = array_add($attachment['data'], 'status', 1);
         $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+        $attachment_data['user_id'] = !empty($uid)?$uid:((isset($attachment_data['user_id'])&&!empty($attachment_data['user_id']))?$attachment_data['user_id']:$this->manager->id);     
         //将记录写入到attchement表中
         $result = AttachmentModel::create($attachment_data);
         $result = json_decode($result, true);

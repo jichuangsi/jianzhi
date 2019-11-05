@@ -452,6 +452,7 @@ function delimg(val){
 function uploadFile(){
     $("body").mLoading({text:"上传中"});//显示loading组件
     var headers = { "_token": "{{ csrf_token() }}"};
+    var data = { "uid": "{{$work['w_uid']}}"};
     // 开始上传
     $.ajaxFileUpload({
         secureuri: false,// 是否启用安全提交，默认为 false
@@ -459,7 +460,7 @@ function uploadFile(){
         url: "/manage/fileMultipleUpload",
         fileElementId: "file",// input[type=file] 的 id
         dataType: "json",// 返回值类型，一般位 `json` 或者 `text`
-        //data: data,// 添加参数，无参数时注释掉
+        data: data,// 添加参数，无参数时注释掉
         header: headers,
         success: function (ret, status) {
             // 成功
