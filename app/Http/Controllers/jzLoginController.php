@@ -30,7 +30,7 @@ use App\Modules\Advertisement\Model\AdTargetModel;
 use App\Modules\Manage\Model\ConfigModel;
 use Cache;
 use Teepluss\Theme\Theme;
-
+use Auth;
 
 class jzLoginController extends IndexController
 {
@@ -46,6 +46,10 @@ class jzLoginController extends IndexController
      */
     public function index()
     {
+        if(Auth::check()){
+            Auth::logout();
+        }
+        
         $data = array();
         return $this->theme->scope('login',$data)->render();
 
