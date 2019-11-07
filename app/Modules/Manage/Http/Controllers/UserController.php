@@ -51,7 +51,7 @@ class UserController extends ManageController
             $list = $list->where('users.id', $request->get('uid'));
         }
         if ($request->get('username')){
-            $list = $list->where('users.name','like', '%'.$request->get('username').'%');
+            $list = $list->where('realname_auth.realname','like', '%'.$request->get('username').'%');
         }
         if ($request->get('email')){
             $list = $list->where('users.email', $request->get('email'));

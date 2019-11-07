@@ -142,8 +142,11 @@
 	                                    <a href="/manage/taskUpdate/{{ $item->id }}" class="btn btn-xs btn-info">
 	                                        <i class="ace-icon fa fa-edit bigger-120">编辑</i>
 	                                    </a>
-									 <a class="btn btn-xs btn-danger" href="/manage/taskHandle/{!! $item->id !!}/del">
+									 <a onclick="confdel(this)" data-data="/manage/taskHandle/{!! $item->id !!}/del" class="btn btn-xs btn-danger" href="javascript:void(0)">
                                             <i class="ace-icon fa fa-trash-o bigger-120"> 删除</i>
+                                    </a>
+                                    <a class="btn btn-xs btn-danger" style="background-color: #23c6c8 !important;border: #23c6c8 !important;" href="/manage/taskVoucher/{{ $item->id }}">
+                                            <i class="ace-icon fa fa-link bigger-120"> 上传凭证</i>
                                     </a>
                                 </div>
 
@@ -186,7 +189,15 @@
 </div><!-- /.row -->
 
 <script>
-	
+	function confdel(obj){
+		if(confirm("确定要删除吗?"))
+	     {
+	     	window.location.href=$(obj).attr('data-data');
+	     }else{
+	     	console.log(22222);
+		   return false;
+		 }
+	}
 	function refuse(){
 		$("#rms").append('<input type="hidden" name="action" value="deny"/>');
 		$("#rms").submit();

@@ -105,14 +105,16 @@
             position: fixed;
             left: 0px;
             top: 0px;
-            justify-content: center;
-            align-items: center;
+            /*justify-content: center;
+            align-items: center;*/
             overflow: auto;
             z-index:9999;
         }
         .bigimg img {
             width: 60%;
-            height: 70%;
+            position: absolute;
+            top: 10%;
+            left: 25%;
             /* height: 80%;
             transform: scale(1.5); */
             /* 放大倍数 */
@@ -204,7 +206,9 @@
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 任务图片：</label>
                 <div class="col-sm-11" >
                 	@foreach($taskAttachment as $k=>$v)
-                	<img class="col-sm-3" alt="任务图片" src="{!! url($v['url']) !!}"  onclick="bigimg(this)">
+	                	@if($v['atstatus']!=3)
+	                	<img class="col-sm-3" alt="任务图片" src="{!! url($v['url']) !!}"  onclick="bigimg(this)">
+	                    @endif
                     @endforeach
                 </div>
                 	
@@ -259,7 +263,14 @@
                                                                 <th>上传时间</th>
                                                                 <th>上传文件</th>
                                                             </tr>
-                                                            
+                                                            @foreach($taskAttachment as $k=>$v)
+											                	@if($v['atstatus']==3)
+											                	<tr>
+											                		<td>{{$v['atcreated']}}</td>
+											                		<td><a href="{!! url($v['url']) !!}" download="">{!! $v['atname'] !!}</a> </td>
+											                    </tr>
+											                    @endif
+										                    @endforeach
                                                         </table>
                                                     </div>
                                                 </div>

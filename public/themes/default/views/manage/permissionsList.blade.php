@@ -87,7 +87,7 @@
                             <a class="btn btn-xs btn-info" href="permissionsDetail/{{ $v['id'] }}">
                                 <i class="fa fa-edit bigger-120"></i>编辑
                             </a>
-                            <a  href="permissionsDel/{{ $v['id'] }}" title="删除" class="btn btn-xs btn-danger">
+                            <a  href="javascript:void(0)" onclick="confdel(this)" data-data="permissionsDel/{{ $v['id'] }}" title="删除" class="btn btn-xs btn-danger">
                                 <i class="ace-icon fa fa-trash-o bigger-120"></i>删除
                             </a>
                         </div>
@@ -138,5 +138,15 @@
                 </div>
             </div>
         </div>
-
+<script>
+	function confdel(obj){
+			if(confirm("确定要删除吗?"))
+		     {
+		     	window.location.href=$(obj).attr('data-data');
+		     }else{
+		     	console.log(22222);
+			   return false;
+			 }
+		}
+</script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('backstage', 'css/backstage/backstage.css') !!}

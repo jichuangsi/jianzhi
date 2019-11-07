@@ -22,6 +22,8 @@ use App\Modules\User\Model\AttachmentModel;
 use App\Modules\Task\Model\WorkAttachmentModel;
 use App\Modules\User\Model\UserTagsModel;
 use App\Modules\Manage\Model\ConfigModel;
+use App\Modules\Manage\Model\ManagerModel;
+use App\Modules\User\Model\ChannelDistributionModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Theme;
@@ -99,7 +101,7 @@ class TaskController extends ManageController
      * 上传任务附件
      */
      public function addattachment($file,$uids){
-     	$attachment = \FileClass::uploadFile($file, 'task');
+     		$attachment = \FileClass::uploadFile($file, 'task');
 	        $attachment = json_decode($attachment, true);
 	        //判断文件是否上传
 	//      return response()->json(['errCode' => 0, 'errMsg' => $id]);
@@ -255,6 +257,7 @@ class TaskController extends ManageController
         return $this->theme->scope("manage.taskUpdate",$data)->render();
     }
     /*
+    /*
      * 提交任务修改
      */
     public function postTaskUpdate(Request $request){
@@ -329,7 +332,145 @@ class TaskController extends ManageController
         }
         return redirect('manage/taskList')->with(['message' => '更新成功']);
 	}
-    
+	
+    /**
+      *进入上传凭证视图 
+      */
+    public function getTaskVoucher($id){
+    	$task=TaskModel::where('id',$id)->first();
+        if(!$task)
+        {
+            return redirect()->back()->with(['error'=>'当前任务不存在,无法继续操作！']);
+        }
+        $query = TaskModel::select('task.*', 'ea.company_name as nickname', 'ud.avatar','ud.qq')->where('task.id', $id);
+        $taskDetail = $query->join('user_detail as ud', 'ud.uid', '=', 'task.uid')
+            ->leftjoin('enterprise_auth as ea','ea.uid','=','task.uid')
+            ->first()->toArray();
+        if(!$taskDetail)
+        {
+             return redirect()->back()->with(['error'=>'当前任务已经被删除！']);
+        }
+         $data = [
+            'task' => $taskDetail,
+        ]; 
+        return $this->theme->scope("manage.taskVoucher",$data)->render();
+    }
+    public function postTaskVoucher(Request $request){
+    	$data = $request->except('_token');
+    	$file = $request->file('file');
+    	if(empty($file)){
+    		return redirect()->back()->with(['error'=>'请选择上传文件']);
+    	}
+    	$attachment = \FileClass::uploadFile($file, 'task');
+        $attachment = json_decode($attachment, true);
+        //判断文件是否上传
+//      return response()->json(['errCode' => 0, 'errMsg' => $id]);
+        if($attachment['code']!=200)
+        {
+//          return response()->json(['errCode' => 0, 'errMsg' => $attachment['message']]);
+            return redirect()->back()->with(['error'=>$attachment['message']]);
+        }
+        $attachment_data = array_add($attachment['data'], 'status', 1);
+        $attachment_data['created_at'] = date('Y-m-d H:i:s', time());
+        $attachment_data['user_id']=$data['tuid'];
+        $attachment_data['status']=3;
+        //将记录写入到attchement表中
+        $result = AttachmentModel::create($attachment_data);
+        $attachment_data = [
+            'task_id' => $data['tid'],
+            'attachment_id' => $result['id'],
+            'created_at' => date('Y-m-d H:i:s', time()),
+        ];
+        TaskAttachmentModel::create($attachment_data);
+        return redirect('manage/taskList')->with(['message' => '上传成功']);
+    }
+    /*
+	 * 渠道商列表查看
+	 */
+	public function channelList(Request $request){
+		$search = $request->all();
+		$chanList = UserModel::select('enterprise_auth.*','users.id as uuid','district.name as dname');
+		$paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+		if ($request->get('company_name')) {
+            $chanList = $chanList->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
+        }
+		$chanList=$chanList->where('users.type','=',2)
+					->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'users.id')
+					->leftJoin('district', 'enterprise_auth.city', '=', 'district.id')
+				  	->paginate($paginate);
+		$data = [
+            'chan' => $chanList,
+        ]; 
+        $data['merge'] = $search;
+        $data['company_name'] = $request->get('company_name');
+        return $this->theme->scope('manage.channelList',$data)->render();
+	}
+	/*
+	 * 渠道商分配列表
+	 */
+	public function channelDistribution(Request $request){
+		$search = $request->all();
+		$chanList = UserModel::select('enterprise_auth.*','users.id as uuid','district.name as dname','ma.realname as musername','cd.createtime as cdtime');
+		$paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+		if ($request->get('company_name')) {
+            $chanList = $chanList->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
+        }
+        if($request->get('start')){
+            $start = date('Y-m-d H:i:s',strtotime($request->get('start')));
+            $chanList = $chanList->where('cd.createtime','>',$start);
+        }
+        if($request->get('end')){
+            $end = date('Y-m-d H:i:s',strtotime($request->get('end')));
+            $chanList = $chanList->where('cd.createtime','<',$end);
+        }
+		$chanList=$chanList->where('users.type','=',2)
+					->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'users.id')
+					->leftJoin('district', 'enterprise_auth.city', '=', 'district.id')
+					->leftJoin('channel_distribution as cd', 'cd.eid', '=', 'enterprise_auth.id')
+					->leftJoin('manager as ma', 'ma.id', '=', 'cd.mid')
+				  	->paginate($paginate);
+		$data = [
+            'chan' => $chanList,
+        ]; 
+        $data['merge'] = $search;
+        $data['company_name'] = $request->get('company_name');
+        return $this->theme->scope('manage.channelDistribution',$data)->render();
+	}
+	/*
+	 * 渠道商分配页面
+	 */
+	public function getChannelDistributionInfo($id){
+		if(!empty($id)){
+			$entauth=EnterpriseAuthModel::where('id','=',$id)->first();
+		}
+		$managelist=ManagerModel::select('manager.*')->where('ru.role_id','=','3')
+								->leftJoin('role_user as ru', 'ru.user_id', '=', 'manager.id')->get()->toArray();
+		$data=[
+			'entinfo'=>$entauth,
+			'managelist'=>$managelist,
+		];
+		return $this->theme->scope('manage.channelDistributionInfo',$data)->render();
+	}
+	/*
+	 * 提交渠道商分配
+	 */
+	public function postChannelDistributionInfo(Request $request){
+		$data = $request->except('_token');
+		if(empty($data['eid'])){
+			return redirect()->back()->with(['error'=>'缺少企业参数']);
+		}
+		if(empty($data['mid'])){
+			return redirect()->back()->with(['error'=>'请选择销售人员']);
+		}
+		$data=[
+			'eid'=>$data['eid'],
+			'mid'=>$data['mid'],
+			'createtime'=>date('Y-m-d H:i:s', time()),
+		];
+		ChannelDistributionModel::create($data);
+		return redirect('manage/channelDistribution')->with(['message' => '分配成功']);
+		return $this->theme->scope('manage.channelDistributionInfo',$data)->render();
+	}
     /**
      * 任务列表
      *
@@ -386,7 +527,6 @@ class TaskController extends ManageController
                 $end = date('Y-m-d H:i:s',strtotime($request->get('end')));
                 $taskList = $taskList->where($request->get('time_type'),'<',$end);
             }
-
         }
         $taskList = $taskList->orderBy($by, $order)
             ->leftJoin('users as us', 'us.id', '=', 'task.uid')
@@ -632,6 +772,7 @@ class TaskController extends ManageController
             return back();
 
     }
+    
 	/**
      * 后台任务详情信息
      */
@@ -649,7 +790,7 @@ class TaskController extends ManageController
         {
              return redirect()->back()->with(['error'=>'当前任务已经被删除！']);
         }
-        $task_attachment = TaskAttachmentModel::select('task_attachment.*', 'at.url')->where('task_id', $id)
+        $task_attachment = TaskAttachmentModel::select('task_attachment.*', 'at.url','at.status as atstatus','at.name as atname','at.created_at as atcreated')->where('task_id', $id)
             ->leftjoin('attachment as at', 'at.id', '=', 'task_attachment.attachment_id')->get()->toArray();
         $myTags = TaskTagsModel::getTagsByTaskId($id);
         $typename=TaskTypeModel::getTaskTypeid($taskDetail['type_id']);
@@ -1861,6 +2002,7 @@ class TaskController extends ManageController
                     
                     if($v[21]){
                         $update['checked_at'] = date('Y-m-d H:i:s', strtotime($v[21]));
+                        
                     }
                     if($v[22]){
                         $update['payment'] = floatval($v[22]);
@@ -1868,7 +2010,7 @@ class TaskController extends ManageController
                     if($v[23]){
                         $comment = \CommonClass::removeXss($v[23]);
                     }
-                    
+                    $update['delivered_at'] = date('Y-m-d H:i:s', time());
                     $work_id = WorkModel::select('id')->where('task_id',$v[0])->where('uid',$uid->id)->first();
                     
                     if(!$work_id){
@@ -1878,6 +2020,7 @@ class TaskController extends ManageController
                             'uid' => $uid->id,
                             'status' => 1,
                             'created_at' => date('Y-m-d H:i:s',time()),
+                            'delivered_at'=>date('Y-m-d H:i:s',time()),
                         ];
                         
                         //创建一个新的稿件

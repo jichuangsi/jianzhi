@@ -10,7 +10,7 @@
         <form  role="form" class="form-inline search-group" action="{!! url('manage/userList') !!}" method="get">
             <div class="">
                 <div class="form-group search-list">
-                    <label for="">用户名　　</label>
+                    <label for="">姓名　　</label>
                     <input type="text" name="username" @if(isset($username)) value="{!! $username !!}" @endif/>
                 </div>
                 <!-- <div class="form-group search-list">
@@ -127,7 +127,7 @@
                                 <i class="fa fa-info bigger-120"></i>详情
                             </a>
                         	@if($item->astatus === 0||$item->astatus === NULL)
-                            <a title="删除" class="btn btn-xs btn-danger" href="{!! url('manage/userDelete/' . $item->id) !!}" >
+                            <a title="删除" onclick="confdel(this)" data-data="{!! url('manage/userDelete/' . $item->id) !!}" class="btn btn-xs btn-danger" href="javascript:void(0)" >
                                 <i class="ace-icon fa fa-trash-o bigger-120"></i>删除
                             </a>
                             @endif
@@ -183,6 +183,15 @@
     </div>
     </div>
 	<script>
+		function confdel(obj){
+			if(confirm("确定要删除吗?"))
+		     {
+		     	window.location.href=$(obj).attr('data-data');
+		     }else{
+		     	console.log(22222);
+			   return false;
+			 }
+		}
 	function batchAction(param){
 		var action = '';
 		switch(param){

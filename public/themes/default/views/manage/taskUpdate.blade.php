@@ -102,14 +102,16 @@
             position: fixed;
             left: 0px;
             top: 0px;
-            justify-content: center;
-            align-items: center;
+            /*justify-content: center;
+            align-items: center;*/
             overflow: auto;
             z-index:9999;
         }
         .bigimg img {
             width: 60%;
-            height: 70%;
+			position: absolute;
+            top: 10%;
+            left: 25%;
             /* height: 80%;
             transform: scale(1.5); */
             /* 放大倍数 */

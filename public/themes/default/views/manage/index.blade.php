@@ -182,9 +182,9 @@
                 <img src="/themes/default/assets/img/excel.png" alt="">
                 <div>个人导入模板</div>
             </div>
-            <div class="nav_li_excel">
+            <div class="nav_li_excel" onclick="window.location.href='/attachment/sys/templates/template_task.xlsx'">
                 <img src="/themes/default/assets/img/excel.png" alt="">
-                <div>便签导入模板</div>
+                <div>任务导入模板</div>
             </div>
         </div>
     </div>

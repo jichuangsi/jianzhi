@@ -89,6 +89,7 @@
 <!-- /.page-content-area -->
    {!! Theme::asset()->container('custom-css')->usePath()->add('backstage', 'css/backstage/backstage.css') !!}
 <script>
+	
     /**
      * 省级切换
      * @param obj
@@ -170,15 +171,22 @@
     {
         var id = obj.attr('area_id');
         var url = '/manage/industryDelete/'+id;
-        $.get(url,function(data){
-            if(data.errCode==0)
-            {
-                alert('删除失败');
-            }else if(data.errCode==1)
-            {
-                $('#area-delete-'+data.id).remove();
-            }
-        });
+        if(confirm("确定要删除吗?"))
+	     {
+	     	$.get(url,function(data){
+	            if(data.errCode==0)
+	            {
+	                alert('删除失败');
+	            }else if(data.errCode==1)
+	            {
+	                $('#area-delete-'+data.id).remove();
+	            }
+	        });
+	     }else{
+	     	console.log(22222);
+		   return false;
+		 }
+        
     }
     /**
      * 地区的添加修改

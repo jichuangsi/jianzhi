@@ -44,10 +44,19 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
     Route::get('/bankAuth/{id}', 'AuthController@getBankAuth')->name('bankAuth');//银行认证列表
     Route::post('bankAuthPay', 'AuthController@bankAuthPay')->name('bankAuthPayCreate');//银行后台支付
 
+	//渠道分配
+	Route::get('/channelList', 'TaskController@channelList')->name('channelList');//渠道商查看列表
+	Route::get('/channelDistribution', 'TaskController@channelDistribution')->name('channelDistribution');//渠道商分配列表
+	Route::get('/channelDistributionInfo/{id}', 'TaskController@getChannelDistributionInfo')->name('toChannelDistributionInfo');//渠道商分配页面
+	Route::post('/channelDistributionInfo', 'TaskController@postChannelDistributionInfo')->name('subChannelDistributionInfo');//提交渠道商分配
+	
     //任务管理路由
     Route::get('/taskList', 'TaskController@taskList')->name('taskList');//任务列表
     Route::get('/taskAdd', 'TaskController@getTaskAdd')->name('totaskAdd');//进入任务添加
     Route::post('/taskAdd', 'TaskController@postTaskAdd')->name('taskAdd');//任务添加
+    
+    Route::get('/taskVoucher/{id}', 'TaskController@getTaskVoucher')->name('toTaskVoucher');//进入上传凭证
+    Route::post('/taskVoucher', 'TaskController@postTaskVoucher')->name('taskVoucher');//提交上传凭证
     
     Route::get('/taskInfo/{id}', 'TaskController@getTaskInfo')->name('taskInfo');//进入任务详情
     Route::get('/taskUpdate/{id}', 'TaskController@getTaskUpdate')->name('taskInfoUpdate');//进入任务修改

@@ -57,7 +57,7 @@
                     <a class="btn btn-xs btn-info" href="rolesDetail/{{ $v['id'] }}">
                         <i class="fa fa-edit bigger-120"></i>编辑
                     </a>
-                    <a  href="rolesDel/{{ $v['id'] }}" title="删除" class="btn btn-xs btn-danger">
+                    <a  href="javascript:void(0)" onclick="confdel(this)" data-data="rolesDel/{{ $v['id'] }}" title="删除" class="btn btn-xs btn-danger">
                         <i class="ace-icon fa fa-trash-o bigger-120"></i>删除
                     </a>
                 </div>
@@ -92,6 +92,17 @@
         </tbody>
     </table>
 </div>
+<script>
+	function confdel(obj){
+			if(confirm("确定要删除吗?"))
+		     {
+		     	window.location.href=$(obj).attr('data-data');
+		     }else{
+		     	console.log(22222);
+			   return false;
+			 }
+		}
+</script>
 <div class="row">
     <div class="col-xs-12">
         <div class="dataTables_info" id="sample-table-2_info">

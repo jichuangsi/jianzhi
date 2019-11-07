@@ -302,8 +302,9 @@
                                                 <div class="form-group interface-bottom col-xs-12">
                                                     <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 验收意见： </label>
                                                     <div class="col-sm-9">
-                                                       	@foreach($w_comment as $k => $v)
-                                                        	<div>@if($v['nickname']){{ $v['nickname'] }}@else {{$k+1}} @endif：{{ $v['comment'] }}</div>                            
+                                                       	@foreach($w_comment as $k => $v) 
+                                                        	<div style="display: none;">@if($v['nickname']){{ $v['nickname'] }}@else {{$k+1}} @endif：{{ $v['comment'] }}</div>                            
+                                                        	<div >{{ $work['company_name'] }}：{{ $v['comment'] }}</div>
                                                         @endforeach
                                                     </div>
                                                 </div>

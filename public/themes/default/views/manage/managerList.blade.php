@@ -116,7 +116,7 @@
                             <a class="btn btn-xs btn-info" href="managerDetail/{{ $v->id }}">
                                 <i class="fa fa-edit"></i>编辑
                             </a>
-                            <a class="btn btn-xs btn-danger" href="managerDel/{{ $v->id }}">
+                            <a class="btn btn-xs btn-danger" onclick="confdel(this)" data-data="managerDel/{{ $v->id }}" href="javascript:void(0)">
                                 <i class="fa fa-trash-o"></i>删除
                             </a>
                             @if($v->status == 1)
@@ -170,6 +170,16 @@
         </div>
     </div>
     </div>
-
+<script>
+	function confdel(obj){
+			if(confirm("确定要删除吗?"))
+		     {
+		     	window.location.href=$(obj).attr('data-data');
+		     }else{
+		     	console.log(22222);
+			   return false;
+			 }
+		}
+</script>
 {!! Theme::asset()->container('custom-css')->usePath()->add('backstage', 'css/backstage/backstage.css') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('checked-js', 'js/checkedAll.js') !!}
