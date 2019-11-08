@@ -222,8 +222,10 @@
 
                                                 <div class="col-sm-9">
                                                     @foreach($taskAttachment as $k=>$v)
+                                                    	@if($v['atstatus']!=3)
                                                         <!-- <button>附件{{ ($k+1) }}</button><a href="{{ URL('task/download',['id'=>$v['attachment_id']]) }}" target="_blank">下载</a>&nbsp;&nbsp; -->
                                                     	<img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">                                                   
+                                                    	@endif
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -277,7 +279,14 @@
                                                                 <th>上传时间</th>
                                                                 <th>上传文件</th>
                                                             </tr>
-                                                            
+                                                            @foreach($taskAttachment as $k=>$v)
+											                	@if($v['status']==3)
+											                	<tr>
+											                		<td>{{$v['created_at']}}</td>
+											                		<td><a href="{!! url($v['url']) !!}" download="">{!! $v['name'] !!}</a> </td>
+											                    </tr>
+											                    @endif
+										                    @endforeach
                                                         </table>
                                                     </div>
                                                 </div>
