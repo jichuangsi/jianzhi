@@ -163,7 +163,7 @@
                 <img src="/themes/default/assets/img/task_js.png" alt="">
                 <div>任务状态同步</div>
             </div>
-            <div class="nav_li_column">
+            <div class="nav_li_column" onclick="window.location.href = '{!! url('manage/channelDistribution') !!}'">
                 <img src="/themes/default/assets/img/fp.png" alt="">
                 <div>分配渠道商</div>
             </div>
