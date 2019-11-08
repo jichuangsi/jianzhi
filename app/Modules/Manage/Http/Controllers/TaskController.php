@@ -389,27 +389,6 @@ class TaskController extends ManageController
 	 */
 	public function channelList(Request $request){
 		$search = $request->all();
-		$chanList = UserModel::select('enterprise_auth.*','users.id as uuid','district.name as dname');
-		$paginate = $request->get('paginate') ? $request->get('paginate') : 10;
-		if ($request->get('company_name')) {
-            $chanList = $chanList->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
-        }
-		$chanList=$chanList->where('users.type','=',2)
-					->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'users.id')
-					->leftJoin('district', 'enterprise_auth.city', '=', 'district.id')
-				  	->paginate($paginate);
-		$data = [
-            'chan' => $chanList,
-        ]; 
-        $data['merge'] = $search;
-        $data['company_name'] = $request->get('company_name');
-        return $this->theme->scope('manage.channelList',$data)->render();
-	}
-	/*
-	 * 渠道商分配列表
-	 */
-	public function channelDistribution(Request $request){
-		$search = $request->all();
 		$chanList = UserModel::select('enterprise_auth.*','users.id as uuid','district.name as dname','ma.realname as musername','cd.createtime as cdtime');
 		$paginate = $request->get('paginate') ? $request->get('paginate') : 10;
 		if ($request->get('company_name')) {
@@ -429,6 +408,54 @@ class TaskController extends ManageController
 					->leftJoin('channel_distribution as cd', 'cd.eid', '=', 'enterprise_auth.id')
 					->leftJoin('manager as ma', 'ma.id', '=', 'cd.mid')
 				  	->paginate($paginate);
+		foreach($chanList as $k=>$v){
+			if($v['uid']!=null){
+				$chanList[$k]['sumbou']=TaskModel::where('uid', $v['uid'])->where('status','=','9')->sum('bounty');
+			}else{
+				$chanList[$k]['sumbou']=0;
+			}
+		}
+//		dump($chanList);exit;
+		$data = [
+            'chan' => $chanList,
+        ]; 
+        $data['merge'] = $search;
+        $data['company_name'] = $request->get('company_name');
+        return $this->theme->scope('manage.channelList',$data)->render();
+	}
+	/*
+	 * 渠道商分配列表
+	 */
+	public function channelDistribution(Request $request){
+		$search = $request->all();
+		$chanList = UserModel::select('enterprise_auth.*','users.id as uuid','district.name as dname','ma.realname as musername','cd.createtime as cdtime','cd.eid');
+		$paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+		if ($request->get('company_name')) {
+            $chanList = $chanList->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
+        }
+        if($request->get('start')){
+            $start = date('Y-m-d H:i:s',strtotime($request->get('start')));
+            $chanList = $chanList->where('cd.createtime','>',$start);
+        }
+        if($request->get('end')){
+            $end = date('Y-m-d H:i:s',strtotime($request->get('end')));
+            $chanList = $chanList->where('cd.createtime','<',$end);
+        }
+        
+        if($request->get('isstatus')>0){
+        	if($request->get('isstatus') == 1){
+        		$chanList = $chanList->where('cd.eid','<>','enterprise_auth.id');
+        	}
+        	if($request->get('isstatus') == 2){
+        		$chanList = $chanList->whereIn('cd.eid' ,null);
+        	}
+        }
+		$chanList=$chanList->where('users.type','=',2)
+					->leftJoin('enterprise_auth', 'enterprise_auth.uid', '=', 'users.id')
+					->leftJoin('district', 'enterprise_auth.city', '=', 'district.id')
+					->leftJoin('channel_distribution as cd', 'cd.eid', '=', 'enterprise_auth.id')
+					->leftJoin('manager as ma', 'ma.id', '=', 'cd.mid')
+				  	->paginate($paginate);
 		$data = [
             'chan' => $chanList,
         ]; 
@@ -439,7 +466,7 @@ class TaskController extends ManageController
 	/*
 	 * 渠道商分配页面
 	 */
-	public function getChannelDistributionInfo($id){
+	public function getChannelDistributionInfo($id,Request $request){
 		if(!empty($id)){
 			$entauth=EnterpriseAuthModel::where('id','=',$id)->first();
 		}
@@ -462,6 +489,7 @@ class TaskController extends ManageController
 		if(empty($data['mid'])){
 			return redirect()->back()->with(['error'=>'请选择销售人员']);
 		}
+		ChannelDistributionModel::where('eid','=',$data['eid'])->delete();
 		$data=[
 			'eid'=>$data['eid'],
 			'mid'=>$data['mid'],

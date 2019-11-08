@@ -14,9 +14,9 @@
                     </div>
                     	<span style="margin-left: 20px;">时间筛选：</span>
                     <div  class="input-daterange input-group">
-                                <input type="text" name="start" class="input-sm form-control" value="">
+                                <input type="text" name="start" class="input-sm form-control" value="@if(isset($merge['start'])){!! $merge['start'] !!}@endif">
                                 <span class="input-group-addon"><i class="fa fa-exchange"></i></span>
-                                <input type="text" name="end" class="input-sm form-control" value="">
+                                <input type="text" name="end" class="input-sm form-control" value="@if(isset($merge['end'])){!! $merge['end'] !!}@endif">
                     </div>
                     <div class="space"></div>
                 </form>
@@ -38,6 +38,9 @@
                     </th>
                     <th>
                         总计结算
+                    </th>
+                    <th>
+                        分配时间
                     </th>
                 </tr>
                 </thead>
@@ -63,8 +66,9 @@
                     	 		</td>
                     	 		<td>{{$item['company_name']}}</td>
                     	 		<td>{{$item['dname']}}</td>
-                    	 		<td>0</td>
-                    	 		<td>0</td>
+                    	 		<td>{{$item['musername']}}</td>
+                    	 		<td>{{$item['sumbou']}}</td>
+                    	 		<td>{{$item['cdtime']}}</td>
                     	 	</tr>
                     	 @endforeach
                     </tbody>

@@ -20,10 +20,10 @@
                     </div>
                     <div class="form-group search-list width285">
                             <label class="">状态筛选：　</label>
-                            <select name="status">
-                                <option value="-1">全部</option>
-                                <option value="0">已分配</option>
-                                <option value="1">未分配</option>
+                            <select name="isstatus">
+                                <option value="0" >全部</option>
+                                <option value="1" @if($merge['isstatus']==1) selected="selected" @endif>已分配</option>
+                                <option value="2" @if($merge['isstatus']==2) selected="selected" @endif>未分配</option>
                             </select>
                         </div>
                     <div class="space"></div>
@@ -54,7 +54,7 @@
                     </th>
                 </tr>
                 </thead>
-                <form id="rms" action="/manage/taskMultiHandle" method="post">
+                <form id="rms" action="/manage/channelDistributionInfo" method="get">
                     {!! csrf_field() !!}
                     <tbody>
                     	 @foreach($chan as $k=>$item)
@@ -89,7 +89,7 @@
                     	 		<td>
 	                                <div class="hidden-sm hidden-xs btn-group">
 	                                	@if($item['musername'])
-	                    	 				<a class="btn btn-xs btn-success" href="#">
+	                    	 				<a class="btn btn-xs btn-success" href="/manage/channelDistributionInfo/{!! $item->id !!}">
 	                                            <i class="ace-icon fa fa-check bigger-120">修改</i>
 	                                        </a>
 	                    	 			@else
@@ -121,10 +121,6 @@
         </div>
         </form>
     </div>
-    <form id="exceform" action="/manage/taskExcel" method="post" enctype="multipart/form-data">
-    	<input type="hidden" name="_token" value="{{ csrf_token() }}" />
-    	<input type="file" id="exce" name="tasklistexcel" style="display: none;" accept="xls" onchange="ss()" />
-    </form>
 </div><!-- /.row -->
 
 <script>
