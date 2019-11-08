@@ -22,8 +22,8 @@
                             <label class="">状态筛选：　</label>
                             <select name="isstatus">
                                 <option value="0" >全部</option>
-                                <option value="1" @if($merge['isstatus']==1) selected="selected" @endif>已分配</option>
-                                <option value="2" @if($merge['isstatus']==2) selected="selected" @endif>未分配</option>
+                                <option value="1" @if(isset($merge['isstatus'])==1) selected="selected" @endif>已分配</option>
+                                <option value="2" @if(isset($merge['isstatus'])==2) selected="selected" @endif>未分配</option>
                             </select>
                         </div>
                     <div class="space"></div>
