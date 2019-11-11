@@ -49,6 +49,7 @@ Route::group(['prefix' => 'manage', 'middleware' => ['manageauth', 'RolePermissi
 	Route::get('/channelDistribution', 'TaskController@channelDistribution')->name('channelDistribution');//渠道商分配列表
 	Route::get('/channelDistributionInfo/{id}', 'TaskController@getChannelDistributionInfo')->name('toChannelDistributionInfo');//渠道商分配页面
 	Route::post('/channelDistributionInfo', 'TaskController@postChannelDistributionInfo')->name('subChannelDistributionInfo');//提交渠道商分配
+	Route::post('/channelDistributionInfoBatch', 'TaskController@channelDistributionInfoBatch')->name('channelDistributionInfoBatch');//批量渠道商分配
 	
     //任务管理路由
     Route::get('/taskList', 'TaskController@taskList')->name('taskList');//任务列表

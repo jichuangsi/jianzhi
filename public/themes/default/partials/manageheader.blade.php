@@ -12,8 +12,8 @@
 <!-- /section:basics/sidebar.mobile.toggle -->
 <div class="navbar-header pull-left">
     <!-- #section:basics/navbar.layout.brand -->
-    <a href="/manage" class="navbar-brand">
-    	<img src="\themes\jianzhi\assets\images\微信图片_20191009141254.png" style="width: 100px;">
+    <a href="/manage" class="navbar-brand" style="padding: 0;">
+    	<img src="\themes\jianzhi\assets\images\微信图片_20191009141254.png" style="height: 100px;">
         {{--<img src="{!! url(Theme::get('site_config')['site_logo_2'])!!}"/>--}}
         @if(Theme::get('site_config')['site_logo_2'])
             <!-- <img src="{!! url(Theme::get('site_config')['site_logo_2'])!!}"> -->

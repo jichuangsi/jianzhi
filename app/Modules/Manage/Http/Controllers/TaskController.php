@@ -23,6 +23,8 @@ use App\Modules\Task\Model\WorkAttachmentModel;
 use App\Modules\User\Model\UserTagsModel;
 use App\Modules\Manage\Model\ConfigModel;
 use App\Modules\Manage\Model\ManagerModel;
+use App\Modules\Manage\Model\Role;
+use App\Modules\Manage\Model\Permission;
 use App\Modules\User\Model\ChannelDistributionModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -447,7 +449,7 @@ class TaskController extends ManageController
         		$chanList = $chanList->where('cd.eid','<>','enterprise_auth.id');
         	}
         	if($request->get('isstatus') == 2){
-        		$chanList = $chanList->whereIn('cd.eid' ,null);
+        		$chanList = $chanList->whereNull('cd.eid');
         	}
         }
 		$chanList=$chanList->where('users.type','=',2)
@@ -466,18 +468,83 @@ class TaskController extends ManageController
 	/*
 	 * 渠道商分配页面
 	 */
-	public function getChannelDistributionInfo($id,Request $request){
+	public function getChannelDistributionInfo($id){
 		if(!empty($id)){
 			$entauth=EnterpriseAuthModel::where('id','=',$id)->first();
 		}
-		$managelist=ManagerModel::select('manager.*')->where('ru.role_id','=','3')
-								->leftJoin('role_user as ru', 'ru.user_id', '=', 'manager.id')->get()->toArray();
+		$rolecount=Role::count();
+		$rolelist=Role::get();
+		$rr=0;
+		$roid=0;      //角色id
+		for($i=0;$i<$rolecount;$i++){
+			$rr=Permission::select('permissions.name as pname','permissions.id','psr.role_id as roid')->where('psr.role_id','=',$rolelist[$i]['id'])
+						->leftJoin('permission_role as psr', 'psr.permission_id', '=', 'permissions.id')->get()->toArray();
+			if(count($rr)==1){
+				if($rr[0]['pname']=='channelList'){
+					$roid=$rr[0]['roid'];
+				}
+			}
+		}
+//		->where('ps.name','=','channelList')
+		$managelist=ManagerModel::select('manager.*')->where('ru.role_id','=',$roid)
+								->leftJoin('role_user as ru', 'ru.user_id', '=', 'manager.id')
+								->leftJoin('permission_role as psr', 'psr.role_id', '=', 'ru.role_id')
+								->leftJoin('permissions as ps', 'ps.id', '=', 'psr.permission_id')
+								->get()->toArray();
 		$data=[
 			'entinfo'=>$entauth,
 			'managelist'=>$managelist,
 		];
 		return $this->theme->scope('manage.channelDistributionInfo',$data)->render();
 	}
+	/*
+	 * 批量分配
+	 */
+	public function channelDistributionInfoBatch(Request $request){
+		if(empty($request->get('ckb'))){
+			return redirect()->back()->with(['error'=>'请选择至少一项']);
+		}
+		$rolecount=Role::count();
+		$rolelist=Role::get();
+		$rr=0;
+		$roid=0;      //角色id
+		for($i=0;$i<$rolecount;$i++){
+			$rr=Permission::select('permissions.name as pname','permissions.id','psr.role_id as roid')->where('psr.role_id','=',$rolelist[$i]['id'])
+						->leftJoin('permission_role as psr', 'psr.permission_id', '=', 'permissions.id')->get()->toArray();
+			if(count($rr)==1){
+				if($rr[0]['pname']=='channelList'){
+					$roid=$rr[0]['roid'];
+				}
+			}
+		}
+//		->where('ps.name','=','channelList')
+		$managelist=ManagerModel::select('manager.*')->where('ru.role_id','=',$roid)
+								->leftJoin('role_user as ru', 'ru.user_id', '=', 'manager.id')
+								->leftJoin('permission_role as psr', 'psr.role_id', '=', 'ru.role_id')
+								->leftJoin('permissions as ps', 'ps.id', '=', 'psr.permission_id')
+								->get()->toArray();
+		$authlist=EnterpriseAuthModel::whereIn('id',$request->get('ckb'))->get()->toArray();
+		$entauth;
+		$entauth['company_name']='';
+		$entauth['id']='';
+		foreach($authlist as $k=>$val){
+			if($k==0){
+				$entauth['company_name']=$val['company_name'];
+				$entauth['id']=$val['id'];
+			}else if($k>0){
+				$entauth['company_name']=$entauth['company_name'].','.$val['company_name'];
+				$entauth['id']=$entauth['id'].','.$val['id'];
+			}
+		}
+//		dump($entauth['company_name']);dump($entauth['id']);exit;
+		$data=[
+			'entinfo'=>$entauth,
+			'managelist'=>$managelist,
+		];
+//		dump($ss);exit;
+		return $this->theme->scope('manage.channelDistributionInfo',$data)->render();
+	}
+	
 	/*
 	 * 提交渠道商分配
 	 */
@@ -489,13 +556,16 @@ class TaskController extends ManageController
 		if(empty($data['mid'])){
 			return redirect()->back()->with(['error'=>'请选择销售人员']);
 		}
-		ChannelDistributionModel::where('eid','=',$data['eid'])->delete();
-		$data=[
-			'eid'=>$data['eid'],
-			'mid'=>$data['mid'],
-			'createtime'=>date('Y-m-d H:i:s', time()),
-		];
-		ChannelDistributionModel::create($data);
+		$eidarr=explode(',',$data['eid']);
+		ChannelDistributionModel::whereIn('eid',$eidarr)->delete();
+		foreach($eidarr as $k=>$va){
+			$data=[
+				'eid'=>$va,
+				'mid'=>$data['mid'],
+				'createtime'=>date('Y-m-d H:i:s', time()),
+			];
+			ChannelDistributionModel::create($data);
+		}
 		return redirect('manage/channelDistribution')->with(['message' => '分配成功']);
 		return $this->theme->scope('manage.channelDistributionInfo',$data)->render();
 	}
