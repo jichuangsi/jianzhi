@@ -228,7 +228,15 @@
 		token.name = '_token';    
 		token.value = "{{ csrf_token() }}";    
 		form.appendChild(token); 
-		$(document.body).append(form);    
+		$(document.body).append(form);   
+		if(param == 'd'){
+			if(confirm("确定要删除吗?"))
+		     {
+		     	form.submit();
+		     }else{
+			  	 return false;
+			 }	
+		}  
 		form.submit();
 		document.body.removeChild(form);
 	}

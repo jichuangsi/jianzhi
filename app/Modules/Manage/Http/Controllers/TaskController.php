@@ -24,6 +24,7 @@ use App\Modules\User\Model\UserTagsModel;
 use App\Modules\Manage\Model\ConfigModel;
 use App\Modules\Manage\Model\ManagerModel;
 use App\Modules\Manage\Model\Role;
+use App\Modules\Manage\Model\RoleUserModel;
 use App\Modules\Manage\Model\Permission;
 use App\Modules\User\Model\ChannelDistributionModel;
 use Illuminate\Http\Request;
@@ -393,6 +394,26 @@ class TaskController extends ManageController
 		$search = $request->all();
 		$chanList = UserModel::select('enterprise_auth.*','users.id as uuid','district.name as dname','ma.realname as musername','cd.createtime as cdtime');
 		$paginate = $request->get('paginate') ? $request->get('paginate') : 10;
+		
+		$roids=RoleUserModel::select('role_id')->where('user_id','=',$this->manager['id'])->get()->first();//当前登陆的角色id
+		if(!empty($roids['role_id'])){
+			$rolecount=Role::count();
+			$rolelist=Role::get();
+			$rr=0;
+			$roid=0;      //销售人员角色id
+			for($i=0;$i<$rolecount;$i++){
+				$rr=Permission::select('permissions.name as pname','permissions.id','psr.role_id as roid')->where('psr.role_id','=',$rolelist[$i]['id'])
+							->leftJoin('permission_role as psr', 'psr.permission_id', '=', 'permissions.id')->get()->toArray();
+				if(count($rr)==1){
+					if($rr[0]['pname']=='channelList'){
+						$roid=$rr[0]['roid'];
+					}
+				}
+			}
+			if($roid>0 && $roid==$roids['role_id']){
+				$chanList = $chanList->where('ma.id','=',$this->manager['id']);
+			}
+		}
 		if ($request->get('company_name')) {
             $chanList = $chanList->where('enterprise_auth.company_name','like','%'.e($request->get('company_name')).'%');
         }

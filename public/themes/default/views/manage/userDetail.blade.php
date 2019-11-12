@@ -129,6 +129,11 @@
 				<input type="number" name="mobile" id="form-field-1" disabled="disabled"  class="col-xs-10 col-sm-5" value="{!! $info['mobile'] !!}" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字">
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>		
 			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 真实姓名：</p>
+			<p class="col-sm-4">
+				<input type="text" name="realname" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('realname')) value="{!! old('realname') !!}" @else value="{!! $info['realname'] !!}" @endif datatype="*2-5" nullmsg="请输入真实姓名" errormsg="用户名长度为2到5个中文">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
 		</div>
 		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</p>
@@ -143,13 +148,13 @@
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
 		</div> -->
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<!--<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 真实姓名：</p>
 			<p class="col-sm-4">
 				<input type="text" name="realname" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('realname')) value="{!! old('realname') !!}" @else value="{!! $info['realname'] !!}" @endif datatype="*2-5" nullmsg="请输入真实姓名" errormsg="用户名长度为2到5个中文">
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
-		</div>
+		</div>-->
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证号码：</p>
 			<p class="col-sm-4">
@@ -159,13 +164,35 @@
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_number') !!}</p>
             			@endif	
 			</p>
-		</div>
-		
-		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</p>
 			<p class="col-sm-4">
 				<input type="text" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('account')) value="{!! old('account') !!}" @else value="{!! $info['account'] !!}" @endif>
 			</p>
+		</div>
+		
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密&nbsp;&nbsp;码：</p>
+			<p class="col-sm-5">
+				<input type="password" id="form-field-1"  class="col-xs-10 col-sm-5" name="password">
+				（提示：若填写则重置用户密码）
+				<!-- <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i>（提示：更改此密码不会修改用户的支付密码）</span> -->
+			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 认证状态：</p>
+			<div class="col-sm-4">
+				@if(isset($info['status']))
+					@if($info['status']===0)
+						待审核
+					@elseif($info['status']===1)
+						已认证
+					@elseif($info['status']===2)
+						已拒绝
+					@elseif($info['status']===NULL)
+						未认证
+					@else
+						未知状态
+					@endif
+				@endif
+			</div>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p  class="col-sm-1 control-label no-padding-left">所在地：</p>
@@ -201,32 +228,13 @@
 				</select>
 			</div>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 认证状态：</p>
-			<div class="col-sm-4">
-				@if(isset($info['status']))
-					@if($info['status']===0)
-						待审核
-					@elseif($info['status']===1)
-						已认证
-					@elseif($info['status']===2)
-						已拒绝
-					@elseif($info['status']===NULL)
-						未认证
-					@else
-						未知状态
-					@endif
-				@endif
-			</div>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<!--<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密&nbsp;&nbsp;码：</p>
 			<p class="col-sm-5">
 				<input type="password" id="form-field-1"  class="col-xs-10 col-sm-5" name="password">
 				（提示：若填写则重置用户密码）
-				<!-- <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i>（提示：更改此密码不会修改用户的支付密码）</span> -->
 			</p>
-		</div>
+		</div>-->
 		
 			<div class="bankAuth-bottom clearfix col-xs-12">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证正面：</label>

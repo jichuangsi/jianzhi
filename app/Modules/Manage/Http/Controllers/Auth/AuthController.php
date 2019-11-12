@@ -5,6 +5,9 @@ namespace App\Modules\Manage\Http\Controllers\Auth;
 use App\Http\Controllers\ManageController;
 use App\Modules\Manage\Http\Requests\LoginRequest;
 use App\Modules\Manage\Model\ManagerModel;
+use App\Modules\Manage\Model\Role;
+use App\Modules\Manage\Model\RoleUserModel;
+use App\Modules\Manage\Model\Permission;
 use Illuminate\Support\Facades\Session;
 use Teepluss\Theme\Facades\Theme;
 use Validator;
@@ -81,6 +84,27 @@ class AuthController extends ManageController
                 return redirect($this->loginPath)->withInput()->withErrors(array('password'=> '用户已禁用'));
         $user = ManagerModel::where('username',$request->get('username'))->first();
         ManagerModel::managerLogin($user);
+        
+        $roids=RoleUserModel::select('role_id')->where('user_id','=',$user['id'])->get()->first();//当前登陆的角色id
+		if(!empty($roids['role_id'])){
+			$rolecount=Role::count();
+			$rolelist=Role::get();
+			$rr=0;
+			$roid=0;      //销售人员角色id
+			for($i=0;$i<$rolecount;$i++){
+				$rr=Permission::select('permissions.name as pname','permissions.id','psr.role_id as roid')->where('psr.role_id','=',$rolelist[$i]['id'])
+							->leftJoin('permission_role as psr', 'psr.permission_id', '=', 'permissions.id')->get()->toArray();
+				if(count($rr)==1){
+					if($rr[0]['pname']=='channelList'){
+						$roid=$rr[0]['roid'];
+					}
+				}
+			}
+			if($roid>0 && $roid==$roids['role_id']){
+				return redirect('/manage/channelList');
+			}
+		}
+        
         return redirect($this->redirectPath);
 
     }

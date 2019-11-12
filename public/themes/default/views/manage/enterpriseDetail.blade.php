@@ -28,24 +28,89 @@
     {!! csrf_field() !!}
 	<div class="g-backrealdetails clearfix bor-border">
 		<input type="hidden" name="uid" value="{!! $info['id'] !!}">
-		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 用户名：</p>
-			<p class="col-sm-4">
-				<input type="text" disabled="disabled" id="form-field-1" class="col-xs-10 col-sm-5" value="{!! $info['name'] !!}">				
-			</p>
-		</div> -->
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册手机：</p>
 			<p class="col-sm-4">
 				<input type="number" name="mobile" disabled="disabled" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="m" nullmsg="请输入手机号码" errormsg="手机号码长度为11位数字" value="{!! $info['mobile'] !!}">
 				<span class="help-inline col-xs-12 col-sm-7"><!-- <i class="light-red ace-icon fa fa-asterisk"></i> --></span>						
 			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业名称：</p>
 			<p class="col-sm-4">
 				<input type="text" name="company_name" id="form-field-1"  class="col-xs-10 col-sm-5"   datatype="*" @if(old('company_name')) value="{!! old('company_name') !!}" @else value="{!! $info['company_name'] !!}" @endif nullmsg="请输入企业名称">
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
+		</div>
+		
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 纳税人识别号：</p>
+			<p class="col-sm-4">
+				<input type="text" name="tax_code" id="form-field-1"  class="col-xs-10 col-sm-5"  datatype="*" @if(old('tax_code')) value="{!! old('tax_code') !!}" @else value="{!! $info['tax_code'] !!}" @endif nullmsg="请输入纳税人识别号">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+						@if($errors->first('tax_code'))
+            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('tax_code') !!}</p>
+            			@endif	
+			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 开户行：</p>
+			<p class="col-sm-4">
+				<input type="text" name="bank" id="form-field-1"   class="col-xs-10 col-sm-5"  datatype="*" @if(old('bank')) value="{!! old('bank') !!}" @else value="{!! $info['bank'] !!}" @endif nullmsg="请输入开户行">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
+		</div>
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业账号：</p>
+			<p class="col-sm-4">
+				<input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5"   datatype="*" @if(old('account')) value="{!! old('account') !!}" @else value="{!! $info['account'] !!}" @endif nullmsg="请输入企业账号">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业法人：</p>
+			<p class="col-sm-4">
+				<input type="text" name="owner" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('owner')) value="{!! old('owner') !!}" @else value="{!! $info['owner'] !!}" @endif>
+			</p>
+		</div>
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业电话：</p>
+			<p class="col-sm-4">
+				<input type="number" name="phone" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('phone')) value="{!! old('phone') !!}" @else value="{!! $info['phone'] !!}" @endif>
+			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 联系人：</p>
+			<p class="col-sm-4">
+				<input type="text" name="contactor" id="form-field-1"  class="col-xs-10 col-sm-5"  datatype="*2-5" @if(old('contactor')) value="{!! old('contactor') !!}" @else value="{!! $info['contactor'] !!}" @endif nullmsg="请输入真实姓名" errormsg="用户名长度为2到5个中文">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
+		</div>
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 联系人电话：</p>
+			<p class="col-sm-4">
+				<input type="number" name="contactor_mobile" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('contactor_mobile')) value="{!! old('contactor_mobile') !!}" @else value="{!! $info['contactor_mobile'] !!}" @endif datatype="m" nullmsg="请输入联系人电话" errormsg="联系人电话输入有误">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业邮箱：</p>
+			<p class="col-sm-4">
+				<input type="text" name="company_email" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('company_email')) value="{!! old('company_email') !!}" @else value="{!! $info['company_email'] !!}" @endif>
+				<!-- <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span> -->
+			</p>
+		</div>
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">企业地址：</p>
+			<p class="col-sm-4">
+				<input type="text" name="address" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('address')) value="{!! old('address') !!}" @else value="{!! $info['address'] !!}" @endif datatype="*" nullmsg="请输入企业地址">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">认证状态：</p>
+			<p class="col-sm-4">
+				@if(isset($info['status']))
+					@if($info['status']===0)
+						待审核
+					@elseif($info['status']===1)
+						已认证
+					@elseif($info['status']===2)
+						已拒绝
+					@elseif($info['status']===NULL)
+						未认证
+					@else
+						未知状态
+					@endif
+				@endif
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
@@ -82,100 +147,6 @@
 				</select>
 			</div>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 纳税人识别号：</p>
-			<p class="col-sm-4">
-				<input type="text" name="tax_code" id="form-field-1"  class="col-xs-10 col-sm-5"  datatype="*" @if(old('tax_code')) value="{!! old('tax_code') !!}" @else value="{!! $info['tax_code'] !!}" @endif nullmsg="请输入纳税人识别号">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-						@if($errors->first('tax_code'))
-            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('tax_code') !!}</p>
-            			@endif	
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 开户行：</p>
-			<p class="col-sm-4">
-				<input type="text" name="bank" id="form-field-1"   class="col-xs-10 col-sm-5"  datatype="*" @if(old('bank')) value="{!! old('bank') !!}" @else value="{!! $info['bank'] !!}" @endif nullmsg="请输入开户行">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业账号：</p>
-			<p class="col-sm-4">
-				<input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5"   datatype="*" @if(old('account')) value="{!! old('account') !!}" @else value="{!! $info['account'] !!}" @endif nullmsg="请输入企业账号">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业法人：</p>
-			<p class="col-sm-4">
-				<input type="text" name="owner" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('owner')) value="{!! old('owner') !!}" @else value="{!! $info['owner'] !!}" @endif>
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业电话：</p>
-			<p class="col-sm-4">
-				<input type="number" name="phone" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('phone')) value="{!! old('phone') !!}" @else value="{!! $info['phone'] !!}" @endif>
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 联系人：</p>
-			<p class="col-sm-4">
-				<input type="text" name="contactor" id="form-field-1"  class="col-xs-10 col-sm-5"  datatype="*2-5" @if(old('contactor')) value="{!! old('contactor') !!}" @else value="{!! $info['contactor'] !!}" @endif nullmsg="请输入真实姓名" errormsg="用户名长度为2到5个中文">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 联系人电话：</p>
-			<p class="col-sm-4">
-				<input type="number" name="contactor_mobile" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('contactor_mobile')) value="{!! old('contactor_mobile') !!}" @else value="{!! $info['contactor_mobile'] !!}" @endif datatype="m" nullmsg="请输入联系人电话" errormsg="联系人电话输入有误">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 企业邮箱：</p>
-			<p class="col-sm-4">
-				<input type="text" name="company_email" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('company_email')) value="{!! old('company_email') !!}" @else value="{!! $info['company_email'] !!}" @endif>
-				<!-- <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span> -->
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">企业地址：</p>
-			<p class="col-sm-4">
-				<input type="text" name="address" id="form-field-1"  class="col-xs-10 col-sm-5" @if(old('address')) value="{!! old('address') !!}" @else value="{!! $info['address'] !!}" @endif datatype="*" nullmsg="请输入企业地址">
-				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
-			</p>
-		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1">认证状态：</p>
-			<p class="col-sm-4">
-				@if(isset($info['status']))
-					@if($info['status']===0)
-						待审核
-					@elseif($info['status']===1)
-						已认证
-					@elseif($info['status']===2)
-						已拒绝
-					@elseif($info['status']===NULL)
-						未认证
-					@else
-						未知状态
-					@endif
-				@endif
-			</p>
-		</div>
-		
-		<!-- <div class="bankAuth-bottom clearfix col-xs-12">
-			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 出生日期：</p>
-			<div class="col-sm-4">
-				<p class="input-group input-group-sm col-xs-10 col-sm-5">
-					<input type="text" id="datepicker" class="form-control hasDatepicker">
-					<span class="input-group-addon">
-						<i class="ace-icon fa fa-calendar"></i>
-					</span>
-				</p>
-			</div>
-		</div> -->
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密&nbsp;&nbsp;码：</p>
 			<p class="col-sm-5">
