@@ -126,7 +126,7 @@
             </tr>
             @if(isset($users))
             	@foreach($users as $item)
-            		<tr>
+            		<tr style="height: 100% !important;">
             			<td>{{$item['num']}}</td>
             			<td>{{$item[0]}}</td>
             			<td>{{$item[1]}}</td>

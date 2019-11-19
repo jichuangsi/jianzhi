@@ -42,7 +42,7 @@ class UserController extends ManageController
     public function getUserList(Request $request)
     {
         $list = UserModel::select('users.name', 'users.created_at', 'user_detail.balance', 'realname_auth.card_number', 'users.mobile', 
-                            'users.id', 'users.last_login_time', 'users.status', 'realname_auth.status as astatus', 'realname_auth.realname as realname')
+                            'users.id', 'users.last_login_time', 'users.status', 'realname_auth.status as astatus', 'realname_auth.realname as realname','user_detail.realname as rname','user_detail.card_number as dcard_number')
             ->where('users.type', 1)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
             ->leftJoin('realname_auth', 'users.id', '=', 'realname_auth.uid');
@@ -993,7 +993,7 @@ class UserController extends ManageController
     public function getUserInfo($uid){
         $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile', 'realname_auth.account',
                     'user_detail.qq', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id',
-                    'realname_auth.card_front_side','realname_auth.card_back_dside','realname_auth.status as astatus')
+                    'realname_auth.card_front_side','realname_auth.card_back_dside','realname_auth.status as astatus','user_detail.realname as rname','user_detail.card_number as dcard_number','user_detail.daccount as daccount')
                     ->where('users.id', $uid)
                     ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
                     ->leftJoin('realname_auth', 'users.id', '=', 'realname_auth.uid')

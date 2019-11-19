@@ -116,6 +116,11 @@
             transform: scale(1.5); */
             /* 放大倍数 */
         }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button{
+        	-webkit-appearance: none !important;
+        	}
+        input[type="number"]{-moz-appearance:textfield;}
     </style>
 <h3 class="header smaller lighter blue mg-top12 mg-bottom20">编辑个人用户资料</h3>
 
@@ -194,7 +199,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="bankAuth-bottom clearfix col-xs-12">
+		<div class="bankAuth-bottom clearfix col-xs-12" style="display: none;">
 			<p  class="col-sm-1 control-label no-padding-left">所在地：</p>
 			<div class="col-sm-5">
 				<div class="row">

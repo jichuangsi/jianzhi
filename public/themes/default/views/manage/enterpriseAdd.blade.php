@@ -23,6 +23,11 @@
         	/* height: 10rem; */
         	margin-right: 0.2rem;
         }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button{
+        	-webkit-appearance: none !important;
+        	}
+        input[type="number"]{-moz-appearance:textfield;}
     </style>
 <div class="well">
     <h4 >新增企业用户资料</h4>

@@ -86,9 +86,29 @@
                         </label>
                     </td>
                     <td>
-                        <a href="#">@if(!empty($item->realname)){!! $item->realname !!}@else - @endif</a>
+                        <a href="#">
+                        	@if(!empty($item->realname))
+                        		{!! $item->realname !!}
+                        	@else
+                        		@if(!empty($item->rname))
+                        	 		{!! $item->rname !!}
+                        	 	@else
+                        	 		-
+                        	 	@endif
+                        	@endif
+                       	</a>
                     </td>
-                    <td>@if(!empty($item->card_number)){!! $item->card_number !!}@else - @endif</td>
+                    <td>
+                    	@if(!empty($item->card_number))
+                    		{!! $item->card_number !!}
+                    	@else
+                    		@if(!empty($item->dcard_number))
+                    	 		{!! $item->dcard_number !!}
+                    	 	@else
+                    	 		-
+                    	 	@endif
+                    	@endif
+                    </td>
                     <td>@if(!empty($item->mobile)){!! $item->mobile !!}@else - @endif</td>
                     <td>
                     @if($item->astatus === 0)

@@ -322,6 +322,7 @@ class UserModel extends Model implements AuthenticatableContract,
                 'area' => isset($data['area'])?$data['area']:'',
                 'created_at' => date('Y-m-d H:i:s', time()),
                 'updated_at' => date('Y-m-d H:i:s', time()),
+                'daccount' => isset($data['account'])?$data['account']:'',
             ]);
             //���֤����
             

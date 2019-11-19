@@ -84,7 +84,7 @@ class AuthController extends ManageController
                 return redirect($this->loginPath)->withInput()->withErrors(array('password'=> '用户已禁用'));
         $user = ManagerModel::where('username',$request->get('username'))->first();
         ManagerModel::managerLogin($user);
-        
+	
         $roids=RoleUserModel::select('role_id')->where('user_id','=',$user['id'])->get()->first();//当前登陆的角色id
 		if(!empty($roids['role_id'])){
 			$rolecount=Role::count();

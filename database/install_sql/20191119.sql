@@ -1,0 +1,1 @@
+alter table `kppw_user_detail` add `daccount` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '银行账户';

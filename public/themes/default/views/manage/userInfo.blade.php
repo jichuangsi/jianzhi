@@ -136,19 +136,32 @@
 		<div class="bankAuth-bottom clearfix col-xs-6">
 			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 姓名：</p>
 			<p class="col-sm-9">
-				{{$info['realname']}}
+				@if(!empty($info['realname']))
+					{{$info['realname']}}
+				@else
+					{{$info['rname']}}
+				@endif
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-6">
 			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 身份证号码：</p>
 			<p class="col-sm-9">
-				{{$info['card_number']}}
+				@if(!empty($info['card_number']))
+					{{$info['card_number']}}
+				@else
+					{{$info['dcard_number']}}
+				@endif
+				
 			</p>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-6">
 			<p class="col-sm-3 control-label no-padding-left" for="form-field-1"> 银行卡号：</p>
 			<p class="col-sm-9">
-				{{$info['account']}}
+				@if(!empty($info['account']))
+					{{$info['account']}}
+				@else
+					{{$info['daccount']}}
+				@endif
 			</p>
 		</div>
 			<div class="bankAuth-bottom clearfix col-xs-6">

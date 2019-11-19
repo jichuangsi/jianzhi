@@ -98,7 +98,7 @@ class WorkModel extends Model
     
     static function findAll2($id,$data=array())
     {
-        $query = Self::select('work.*','us.name as nickname','a.avatar','us.mobile','realname_auth.card_number')
+        $query = Self::select('work.*','us.name as nickname','a.avatar','us.mobile','realname_auth.card_number','a.realname as username')
         ->where('work.task_id',$id)->where('forbidden',0);        
         
         if(isset($data['work_type'])){

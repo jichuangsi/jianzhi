@@ -130,24 +130,26 @@
 
                             <td>
                                 <div class="hidden-sm hidden-xs btn-group">
-                                        <a class="btn btn-xs btn-success" href="/manage/taskHandle/{!! $item->id !!}/pass">
+                                	@if($item->status==2)
+                                        <a class="btn btn-xs btn-success" href="/manage/taskHandle/{!! $item->id !!}/pass" style="padding: 1px !important;">
                                             <i class="ace-icon fa fa-check bigger-120">通过</i>
                                         </a>
-                                        <a class="btn btn-xs btn-danger" href="/manage/taskHandle/{!! $item->id !!}/deny">
+                                        <a class="btn btn-xs btn-danger" href="/manage/taskHandle/{!! $item->id !!}/deny" style="padding: 1px !important;">
                                             <i class="ace-icon fa fa-minus-circle bigger-120"> 拒绝</i>
                                         </a>
-									<a href="/manage/taskInfo/{{ $item->id }}" class="btn btn-xs btn-info">
-                                        <i class="fa fa-info bigger-120">详情</i>
-                                    </a>
-	                                    <a href="/manage/taskUpdate/{{ $item->id }}" class="btn btn-xs btn-info">
+                                    @endif
+										<a href="/manage/taskInfo/{{ $item->id }}" class="btn btn-xs btn-info" style="padding: 1px !important;">
+	                                        <i class="fa fa-info bigger-120">详情</i>
+	                                    </a>
+	                                    <a href="/manage/taskUpdate/{{ $item->id }}" class="btn btn-xs btn-info" style="padding: 1px !important;">
 	                                        <i class="ace-icon fa fa-edit bigger-120">编辑</i>
 	                                    </a>
-									 <a onclick="confdel(this)" data-data="/manage/taskHandle/{!! $item->id !!}/del" class="btn btn-xs btn-danger" href="javascript:void(0)">
-                                            <i class="ace-icon fa fa-trash-o bigger-120"> 删除</i>
-                                    </a>
-                                    <a class="btn btn-xs btn-danger" style="background-color: #23c6c8 !important;border: #23c6c8 !important;" href="/manage/taskVoucher/{{ $item->id }}">
-                                            <i class="ace-icon fa fa-link bigger-120"> 上传凭证</i>
-                                    </a>
+										 <a onclick="confdel(this)" data-data="/manage/taskHandle/{!! $item->id !!}/del" class="btn btn-xs btn-danger" href="javascript:void(0)" style="padding: 1px !important;">
+	                                            <i class="ace-icon fa fa-trash-o bigger-120"> 删除</i>
+	                                    </a>
+	                                    <a class="btn btn-xs btn-danger" style="background-color: #23c6c8 !important;border: #23c6c8 !important;" href="/manage/taskVoucher/{{ $item->id }}" >
+	                                            <i class="ace-icon fa fa-link bigger-120"> 上传凭证</i>
+	                                    </a>
                                 </div>
 
                             </td>

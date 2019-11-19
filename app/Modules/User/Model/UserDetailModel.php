@@ -14,7 +14,7 @@ class UserDetailModel extends Model
 
     protected $fillable = [
         'uid', 'realname', 'avatar', 'mobile', 'qq', 'wechat', 'card_number', 'province', 'city', 'area', 'address', 'sign', 'balance', 'balance_status', 'last_login_time', 'alternate_tips', 'nickname',
-        'publish_task_num', 'receive_task_num', 'employer_praise_rate', 'employee_praise_rate'
+        'publish_task_num', 'receive_task_num', 'employer_praise_rate', 'employee_praise_rate','daccount'
     ];
 
     public function tags()

@@ -118,6 +118,11 @@
         	/* height: 10rem; */
         	margin-right: 0.2rem;
         }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button{
+        	-webkit-appearance: none !important;
+        	}
+        input[type="number"]{-moz-appearance:textfield;}
     </style>
 <div class="well">
     <h4 >新增个人用户资料</h4>
@@ -168,7 +173,7 @@
                     <input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! old('account') !!}">
                 </div>
             </div>
-            <div class="form-group basic-form-bottom">
+            <div class="form-group basic-form-bottom" style="display: none;">
                 <label  class="col-sm-1 control-label no-padding-left">所在地：</label>
                 <div class="col-sm-5">
                     <div class="row">

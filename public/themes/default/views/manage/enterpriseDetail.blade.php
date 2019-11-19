@@ -18,6 +18,11 @@
             transform: scale(1.5); */
             /* 放大倍数 */
         }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button{
+        	-webkit-appearance: none !important;
+        	}
+        input[type="number"]{-moz-appearance:textfield;}
     </style>
 {{--<div class="well">
 	<h4 >编辑企业资料</h4>

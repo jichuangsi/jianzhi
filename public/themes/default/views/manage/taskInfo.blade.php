@@ -227,7 +227,7 @@
                             @if(isset($works))
                             	@foreach($works as $v)
                             	<tr>
-                            		<td>{{ $v['nickname'] }}</td>
+                            		<td>{{ $v['username'] }}</td>
                             		<td>{{ $v['card_number'] }}</td>
                             		<td>
                             		@if($v['status']==0)
