@@ -207,11 +207,18 @@ class jzAuthController extends AuthController
     
     public function ajaxSendCode(Request $request){
         $mobile = $request->get('mobile');
-        
+        $iscode = $request->get('iscode');
         if(!$mobile){
             return response()->json(['errMsg' => '缺少必要参数！']);
         }
-        
+        if($iscode){
+        	if (!UserModel::checkUser($mobile)) {
+				$error = array();
+				$error['code'] = 'not';
+				$error['msg']='手机号未注册';
+                return response()->json($error);
+            }
+        }
         $result = json_decode(\CommonClass::sendSms($mobile));
         
         return response()->json($result);

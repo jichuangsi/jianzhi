@@ -7,7 +7,7 @@
 }); */
 
 Route::group(['prefix' => 'jz'], function () {
-    //µÇÂ½×¢²áÂ·ÓÉ
+    //ï¿½ï¿½Â½×¢ï¿½ï¿½Â·ï¿½ï¿½
     Route::post('login', 'Auth\jzAuthController@postLogin');
     Route::post('wxlogin', 'Auth\jzAuthController@postWxLogin');    
     Route::post('ajaxCheckOpenid', 'Auth\jzAuthController@ajaxCheckOpenid');
@@ -23,12 +23,12 @@ Route::group(['prefix' => 'jz'], function () {
     Route::get('serviceContract', 'Auth\jzAuthController@getServiceContract');
     Route::get('dispatchContract', 'Auth\jzAuthController@getDispatchContract');
     
-    //Ê×Ò³ÃæÂ·ÓÉ
+    //ï¿½ï¿½Ò³ï¿½ï¿½Â·ï¿½ï¿½
     Route::get('home', 'jzHomeController@home');
     Route::get('task', 'jzHomeController@task');
     Route::get('my', 'jzHomeController@my');
     
-    //ÓÃ»§ÖĞĞÄÂ·ÓÉ
+    //ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
     Route::get('auth', 'jzUserCenterController@auth');
     Route::get('help', 'jzUserCenterController@help');
     Route::get('proposal', 'jzUserCenterController@proposal');
@@ -37,7 +37,7 @@ Route::group(['prefix' => 'jz'], function () {
     Route::get('skill', 'jzUserCenterController@skill');
     Route::get('comment', 'jzUserCenterController@comment');
     
-    //ÈÎÎñÏà¹ØÂ·ÓÉ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
     Route::post('/task/createTask','jzTaskController@createNewTask');
     Route::get('/task/ajaxcity','jzTaskController@ajaxcity');
     Route::get('/task/ajaxarea','jzTaskController@ajaxarea');
@@ -59,17 +59,17 @@ Route::group(['prefix' => 'jz'], function () {
     Route::post('/task/createApproval','jzTaskController@createApproval');
     Route::post('/task/ajaxSettleTask','jzTaskController@ajaxSettleTask');
     
-    //ÓÃ»§ĞÅÏ¢Ïà¹ØÂ·ÓÉ
+    //ï¿½Ã»ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Â·ï¿½ï¿½
     Route::post('/user/infoUpdate','jzUserCenterController@infoUpdate');
     Route::post('/user/einfoUpdate','jzUserCenterController@einfoUpdate');
-    //¸öÈËÊµÃûÈÏÖ¤Â·ÓÉ
+    //ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½Ö¤Â·ï¿½ï¿½
     Route::post('/user/realnameAuth', 'jzUserCenterController@createRealnameAuth');
     Route::get('/user/reAuth', 'jzUserCenterController@reAuth');
-    //¸öÈË¼¼ÄÜÂ·ÓÉ
+    //ï¿½ï¿½ï¿½Ë¼ï¿½ï¿½ï¿½Â·ï¿½ï¿½
     Route::post('/user/ajaxSaveSkills','jzUserCenterController@ajaxSaveSkills');
-    //·´À¡½¨ÒéÂ·ÓÉ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
     Route::post('/user/createFeedback','jzUserCenterController@createFeedback');
-    //ÆóÒµÊµÃûÈÏÖ¤Â·ÓÉ
+    //ï¿½ï¿½ÒµÊµï¿½ï¿½ï¿½ï¿½Ö¤Â·ï¿½ï¿½
     Route::post('/user/enterpriseAuth', 'jzUserCenterController@createEnterpriseAuth');
     
     Route::post('/user/ajaxSendCode','jzUserCenterController@ajaxSendCode');

@@ -7,7 +7,7 @@
            <span class="iconfont icon-yonghu"></span><input type="text" name="username" value="{{old('username')}}" placeholder="请输入用户名" ajaxurl="{!! url('checkUserName') !!}" datatype="*4-15" nullmsg="请输入用户名" errormsg="用户名长度为4到15位字符">
        	</div> -->
         <div class="ipt">
-           <span class="iconfont icon-shouji"></span><input type="number" name="mobile" value="{{old('mobile')}}"  placeholder="请输入手机号" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
+           <span class="iconfont icon-shouji"></span><input type="number" name="mobile" value="{{old('mobile')}}"  placeholder="请输入手机号" style="font-size: 16px;" ajaxurl="{!! url('checkMobile') !!}" datatype="m" nullmsg="请输入手机号" errormsg="手机号格式不对！">
         </div>
         {{-- <div class="ipt">
            <span class="iconfont icon-mima"></span><input type="password" name="password" placeholder="请输入密码" datatype="*6-16" nullmsg="请输入密码" errormsg="密码长度为6-16位字符">
@@ -18,7 +18,7 @@
         <div class="ipt">                      
            <span class="iconfont icon-dunpai1">
            </span>           
-           <input type="number" name="code" placeholder="请输入验证码"><em onclick="yzm(this)">获取验证码</em>           		
+           <input type="number" name="code" placeholder="请输入验证码" style="font-size: 16px;"><em onclick="yzm(this)">获取验证码</em>           		
         </div>
         <div class="bs">
             <div class="ipt" onclick="jn()">

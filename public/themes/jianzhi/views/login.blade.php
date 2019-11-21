@@ -11,7 +11,7 @@
         </div> -->
         <div class="ipt">
            <span class="iconfont icon-shouji">           		           
-           </span><input type="text" name="username" placeholder="请输入手机号" onkeydown='clearError(this)' value="{{old('username')}}">           		
+           </span><input type="text" name="username" placeholder="请输入手机号" onkeydown='clearError(this)' value="{{old('username')}}" style="font-size: 16px;">           		
         </div>
         <div class="ipt">
            {{-- <span class="iconfont icon-mima">
@@ -20,7 +20,7 @@
            
            <span class="iconfont icon-dunpai1">
            </span>           
-           <input type="number" name="code" placeholder="请输入验证码" onkeydown='clearError(this)'><em onclick="yzm(this)">获取验证码</em>
+           <input type="number" name="code" placeholder="请输入验证码" style="font-size: 16px;" onkeydown='clearError(this)'><em onclick="yzm(this)">获取验证码</em>
            		
         </div>
         <input type="hidden" name="wx_openid" value="{{old('wx_openid')}}">
@@ -227,12 +227,14 @@
 				return;
             }
         	var url = '/jz/ajaxSendCode';
-			var data = {'_token': '{{ csrf_token() }}','mobile': $("input[name='username']").val()};
+			var data = {'_token': '{{ csrf_token() }}','mobile': $("input[name='username']").val(),'iscode':1};
 			$.post(url,data,function(ret,status,xhr){
 				console.log(ret);
                 console.log(status);
                 if(ret&&ret.Code==="OK"){
                 	popUpMessage('验证码发送成功！');
+                }else if(ret['code']==="not"){
+                	popUpMessage(ret.msg);
                 }else{
                 	popUpMessage('验证码发送失败！');
                 }
