@@ -150,9 +150,6 @@
                     <img alt="营业执副本" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                 
                 </div>
             </div> 
-		
-		
-		
 		<div class="col-xs-12">
 			<div class="clearfix row bg-backf5 padding20 mg-margin12">
 				<div class="col-xs-12">

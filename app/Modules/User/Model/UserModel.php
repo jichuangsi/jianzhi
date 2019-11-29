@@ -239,8 +239,7 @@ class UserModel extends Model implements AuthenticatableContract,
                         'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
                 } */
-                
-                UserDetailModel::where('uid', $data['uid'])->update([
+                $userdetaildata=[
                     'realname' => $data['realname'],
                     'qq' => isset($data['qq'])?$data['qq']:'',
                     'mobile' => isset($data['mobile'])?$data['mobile']:'',
@@ -249,7 +248,11 @@ class UserModel extends Model implements AuthenticatableContract,
                     'city' => $data['city'],
                     'area' => $data['area'],
                     'updated_at' => date('Y-m-d H:i:s', time()),
-                ]);
+                ];
+                if(isset($data['created_at'])&&!empty($data['created_at'])){                    
+                    $userdetaildata['created_at'] = $data['created_at'];
+                }
+                UserDetailModel::where('uid', $data['uid'])->update($userdetaildata);
                 
                 //���֤����
                 $update = [
@@ -540,7 +543,9 @@ class UserModel extends Model implements AuthenticatableContract,
                 'company_email' => $data['company_email'],                
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ];            
-            
+            if(isset($data['created_at'])&&!empty($data['created_at'])){
+            	$update['created_at'] = $data['created_at'];
+            }
             if(isset($data['business_license'])&&!empty($data['business_license'])){
                 $update['business_license'] = $data['business_license'];
             }

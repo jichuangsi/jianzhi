@@ -965,6 +965,7 @@ class UserController extends ManageController
             'contactor_mobile' => $request->get('contactor_mobile'),
             'company_email' => $request->get('company_email'),
             'address' => $request->get('address'),
+            'created_at' =>date('Y-m-d H:i:s', strtotime($request->get('created_at'))),
         ];
         
         if(!empty($request->get('password'))){
@@ -1019,7 +1020,7 @@ class UserController extends ManageController
     public function getUserEdit($uid)
     {
         $info = UserModel::select('users.name', 'realname_auth.realname', 'realname_auth.card_number', 'users.mobile', 'realname_auth.card_front_side' , 'realname_auth.card_back_dside','realname_auth.status',
-                            'realname_auth.account', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id')
+                            'realname_auth.account', 'users.email', 'user_detail.province', 'user_detail.city', 'user_detail.area', 'users.id' ,'user_detail.created_at as created_at')
             ->where('users.id', $uid)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
             ->leftJoin('realname_auth', 'users.id', '=', 'realname_auth.uid')
@@ -1108,6 +1109,7 @@ class UserController extends ManageController
             'city' => $request->get('city'),
             'area' => $request->get('area'),
             'skill' => $request->get('skill'),
+            'created_at' =>date('Y-m-d H:i:s', strtotime($request->get('created_at'))),
         ];
         
         if(!empty($request->get('password'))){
@@ -1115,7 +1117,6 @@ class UserController extends ManageController
             $data['password'] = UserModel::encryptPassword($request->get('password'), $salt);
             $data['salt'] = $salt;
         }
-        
         if(!empty($realnameInfo['card_front_side'])){
             $data['card_front_side'] = $realnameInfo['card_front_side'];
         }

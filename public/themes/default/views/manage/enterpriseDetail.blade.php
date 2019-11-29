@@ -155,7 +155,8 @@
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册时间：</p>
 			<p class="col-sm-4">
-				<input type="datetime" id="form-field-1"  class="col-xs-10 col-sm-5" name="created_at" value="{!! $info['created_at'] !!}">
+				<input type="date" id="form-field-1"  class="col-xs-10 col-sm-5" name="created_at" value="{!! date('Y-m-d',strtotime($info['created_at'])) !!}" datatype="*" nullmsg="注册时间不能为空!">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密&nbsp;&nbsp;码：</p>
 			<p class="col-sm-5">

@@ -199,6 +199,13 @@
 				@endif
 			</div>
 		</div>
+		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册时间：</p>
+			<p class="col-sm-4">
+				<input type="date" id="form-field-1"  class="col-xs-10 col-sm-5" name="created_at" value="{!! date('Y-m-d',strtotime($info['created_at'])) !!}" datatype="*" nullmsg="注册时间不能为空!">
+				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+			</p>
+		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12" style="display: none;">
 			<p  class="col-sm-1 control-label no-padding-left">所在地：</p>
 			<div class="col-sm-5">
