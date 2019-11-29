@@ -158,7 +158,7 @@
 				<div class="col-xs-12">
 					<div class="col-md-1 text-right"></div>
 					<div class="col-md-10">
-						<button class="btn btn-primary btn-sm" onclick="toEdit('{{$info['uid']}}')">修改</button>
+						<button class="btn btn-primary btn-sm" onclick="toEdit('{{$info['id']}}')">修改</button>
 						<div class="btn btn-primary btn-sm" style="margin-left: 50px" onclick="window.location.href = '{!! url('manage/enterpriseList') !!}'">返回</div>
 					</div>
 				</div>

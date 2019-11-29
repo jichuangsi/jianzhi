@@ -151,8 +151,7 @@
             <!-- /.ace-settings-container -->
             <div class="page-content-area">
                 {!! Theme::content() !!}
-            </div>
-            <!-- /.page-content-area -->
+            </div><!-- /.page-content-area -->
         </div><!-- /.page-content -->
 
     </div><!-- /.main-content -->

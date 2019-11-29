@@ -153,6 +153,10 @@
 			</div>
 		</div>
 		<div class="bankAuth-bottom clearfix col-xs-12">
+			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册时间：</p>
+			<p class="col-sm-4">
+				<input type="datetime" id="form-field-1"  class="col-xs-10 col-sm-5" name="created_at" value="{!! $info['created_at'] !!}">
+			</p>
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密&nbsp;&nbsp;码：</p>
 			<p class="col-sm-5">
 				<input type="password" id="form-field-1"  class="col-xs-10 col-sm-5" name="password">

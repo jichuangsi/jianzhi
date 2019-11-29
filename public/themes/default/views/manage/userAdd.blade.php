@@ -152,27 +152,36 @@
                     <input type="text" name="realname" id="form-field-1"  class="col-xs-10 col-sm-5" datatype="*2-5" nullmsg="请输入真实姓名" errormsg="名字长度为2到5个中文" value="{!! old('realname') !!}">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
-            </div>
-            <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证号码：</label>
                 <div class="col-sm-4">
                     <input type="number" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkIDCard') !!}" datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符"  value="{!! old('card_number') !!}">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
             </div>
+            <!--<div class="form-group basic-form-bottom">
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证号码：</label>
+                <div class="col-sm-4">
+                    <input type="number" name="card_number" id="form-field-1"  class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkIDCard') !!}" datatype="*15-18" nullmsg="请输入身份证号码" errormsg="身份证号码长度为15-18位字符"  value="{!! old('card_number') !!}">
+                    <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
+                </div>
+            </div>-->
             <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 手机号码：</label>
                 <div class="col-sm-4">
                     <input type="number" name="mobile" id="form-field-1"   class="col-xs-10 col-sm-5" ajaxurl="{!! url('manage/checkMobile') !!}"  datatype="m" nullmsg="请输入手机号码" errormsg="手机号码输入有误" value="{!! old('mobile') !!}">
                     <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
                 </div>
-            </div>
-            <div class="form-group basic-form-bottom">
                 <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</label>
                 <div class="col-sm-4">
                     <input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! old('account') !!}">
                 </div>
             </div>
+            <!--<div class="form-group basic-form-bottom">
+                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 银行卡号：</label>
+                <div class="col-sm-4">
+                    <input type="number" name="account" id="form-field-1"  class="col-xs-10 col-sm-5" value="{!! old('account') !!}">
+                </div>
+            </div>-->
             <div class="form-group basic-form-bottom" style="display: none;">
                 <label  class="col-sm-1 control-label no-padding-left">所在地：</label>
                 <div class="col-sm-5">
@@ -228,10 +237,7 @@
                 	@if($errors->first('card_front_side'))
         				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_front_side') !!}</p>
         			@endif
-            </div>
-            
-            <div class="form-group basic-form-bottom">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证反面：</label>
+        		<label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 身份证反面：</label>
                 <div class="col-sm-4 zs_img">
                 	<img alt="身份证反面"  id="img" src="/themes/jianzhi/assets/images/fm.jpg"  onclick="bigimg(this)">
                     <input type="file" name="card_back_dside" id="card_back_dside" datatype="*" onchange="imgfile(this)">
@@ -239,7 +245,7 @@
                 </div>
                 		@if($errors->first('card_back_dside'))
             				<p class="Validform_checktip Validform_wrong">{!! $errors->first('card_back_dside') !!}</p>
-            			@endif
+            			@endif	
             </div>
             
             <div class="jnbox">
