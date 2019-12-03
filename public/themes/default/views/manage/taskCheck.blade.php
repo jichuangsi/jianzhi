@@ -159,7 +159,30 @@
             </div>
             <div class="space-10 col-xs-12"></div>
             <div class="col-xs-12">
-                <div class="dataTables_paginate paging_simple_numbers row" id="dynamic-table_paginate">
+            	<div class="col-xs-4 " id="">
+                	@if($listArr['current_page']!=$listArr['last_page'])
+					    显示第 &nbsp;{{ $listArr['per_page']*($listArr['current_page']-1)+1 }}&nbsp;到第
+					    &nbsp;{{ $listArr['per_page']*$listArr['current_page'] }}&nbsp;条记录
+					@elseif($listArr['current_page']==$listArr['last_page'] && $listArr['per_page']*($listArr['current_page']-1)+1!=$listArr['total'])
+					    显示第&nbsp;{{ $listArr['per_page']*($listArr['current_page']-1)+1 }}&nbsp;到第
+					    &nbsp;{{ $listArr['total'] }}&nbsp;条记录
+					@else
+					    显示第&nbsp;{{ $listArr['total'] }}&nbsp;条记录
+					@endif
+					总共&nbsp; {{ $listArr['total'] }} &nbsp;条记录&nbsp;&nbsp;
+					每页显示 
+					<div class="btn-group dropup">
+						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button" style="background-color: #fff !important;color: #333 !important;border-color: #ccc !important;border: 1px solid;">{{ $listArr['per_page'] }}<span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="/manage/taskCheck?paginate=10">10</a></li>
+							<li><a href="/manage/taskCheck?paginate=20">20</a></li>
+							<li><a href="/manage/taskCheck?paginate=30">30</a></li>
+							<li><a href="/manage/taskCheck?paginate=50">50</a></li>
+						</ul>
+					</div>
+					条
+                </div>
+                <div class="col-xs-8 dataTables_paginate paging_simple_numbers row" id="dynamic-table_paginate">
                     {!! $work->appends($merge)->render() !!}
                 </div>
             </div>

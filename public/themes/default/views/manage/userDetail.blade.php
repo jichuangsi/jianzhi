@@ -122,7 +122,7 @@
         	}
         input[type="number"]{-moz-appearance:textfield;}
     </style>
-<h3 class="header smaller lighter blue mg-top12 mg-bottom20">编辑个人用户资料</h3>
+<h3 class="header smaller lighter blue mg-top12 mg-bottom20">编辑个人用户资料ss</h3>
 
 <form class="form-horizontal registerform" role="form" action="{!! url('manage/userEdit') !!}" method="post" enctype="multipart/form-data" onsubmit="return validate()">
     {!! csrf_field() !!}
@@ -202,7 +202,7 @@
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册时间：</p>
 			<p class="col-sm-4">
-				<input type="date" id="form-field-1"  class="col-xs-10 col-sm-5" name="created_at" value="{!! date('Y-m-d',strtotime($info['created_at'])) !!}" datatype="*" nullmsg="注册时间不能为空!">
+				<input type="text" id="created_at"  class="col-xs-10 col-sm-5" name="created_at" value="{!! date('Y-m-d',strtotime($info['created_at'])) !!}" datatype="*" nullmsg="注册时间不能为空!">	
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
 		</div>
@@ -350,6 +350,20 @@
     </div>
 	<script>
 		$(function(){
+			//初始任务开始时间
+			var begin_at = "{!! $info['created_at'] !!}";
+			if(begin_at){
+				var d = new Date()
+				d.setTime(Date.parse(begin_at));
+				console.log(d);
+			}else{
+			    begin_at = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate() + " " + (today.getHours()<10?("0"+today.getHours()):today.getHours()) + ":" + (today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes()) + ":" + (today.getSeconds()<10?('0'+today.getSeconds()):today.getSeconds());
+			}
+		    laydate.render({ 
+		    	elem: '#created_at',
+		    	type: 'datetime',
+		    	value: begin_at
+		    });
 			var skills = $(".jn_box").children();
 			if(skills.length>0){
 				$(skills[0]).find(".text").addClass('text_check');
@@ -425,6 +439,7 @@
 {!! Theme::asset()->container('specific-js')->usePath()->add('validform-js', 'plugins/jquery/validform/js/Validform_v5.3.2_min.js') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('datepicker-css', 'plugins/ace/css/datepicker.css') !!}
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
+{!! Theme::asset()->container('specific-js')->usePath()->add('laydate-js', 'layDate-v5.0.9/laydate/laydate.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userManage-js', 'js/userManage.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/main.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('tools-js', 'js/tools.js') !!}

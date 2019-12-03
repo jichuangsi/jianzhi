@@ -121,7 +121,7 @@
 			<p class="col-sm-9">
 				@if(isset($info['status']))
     				@if($info['status']!=0)
-    					{!! Theme::get('manager') !!}({!! $info['auth_time'] !!})		
+    					{{-- Theme::get('manager') --}}{!! $info['mrealname'] !!}({!! $info['examine_time'] !!})		
     				@endif		
 				@endif
 			</p>

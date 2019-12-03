@@ -4,6 +4,11 @@
         </h3>
     </div><!-- /.page-header -->--}}
     <h3 class="header smaller lighter blue mg-top12 mg-bottom20">企业管理</h3>
+    <style>
+    	.search-list{
+    		padding-right:12px !important;
+    	}
+    </style>
 <div class="row">
     <div class="col-xs-12">
         <div class="clearfix  well">
@@ -25,13 +30,7 @@
                     <label for="">注册手机　</label>
                     <input type="text" name="mobile" @if(isset($mobile))value="{!! $mobile !!}" @endif/>
                 </div>
-                <div class="form-group">
-                    <button class="btn btn-primary btn-sm">搜索</button>
-                </div>
-            </div>
-            <div class="space"></div>
-            <div class="">
-                <div class="form-group search-list width285">
+                <div class="form-group search-list">
                     <label>认证状态　</label>
                     <select class="" name="status">
                         <option value="-1">全部</option>
@@ -41,7 +40,14 @@
                         <option @if(isset($status) && $status == 4)selected="selected"@endif value="4">已拒绝</option>
                     </select>
                 </div>
-                <div class="form-group search-list">
+                <div class="form-group">
+                    <button class="btn btn-primary btn-sm">搜索</button>
+                </div>
+            </div>
+           </form>
+            <div class="space" style="display: none;"></div>
+            <div class="">
+                <div class="form-group search-list" style="display: none;">
                     <label class="">注册时间　</label>
                     <div class="input-daterange input-group">
                         <input type="text" name="start" class="input-sm form-control" @if(isset($search['start']))value="{!! $search['start'] !!}" @endif>
@@ -50,7 +56,7 @@
                     </div>
                 </div>
             </div>
-        </form>
+        
     </div>
 
     <!-- <div class="table-responsive"> -->
@@ -178,8 +184,32 @@
                 </button>
             </div>
             <a href="/manage/userAdd" target="_blank">添加</a> -->
+            <div class="space-10 col-xs-12"></div>
             <div class="col-md-12">
-                <div class="dataTables_paginate paging_bootstrap text-right row">
+            	<div class="col-xs-4 " id="">
+                	@if($listArr['current_page']!=$listArr['last_page'])
+					    显示第 &nbsp;{{ $listArr['per_page']*($listArr['current_page']-1)+1 }}&nbsp;到第
+					    &nbsp;{{ $listArr['per_page']*$listArr['current_page'] }}&nbsp;条记录
+					@elseif($listArr['current_page']==$listArr['last_page'] && $listArr['per_page']*($listArr['current_page']-1)+1!=$listArr['total'])
+					    显示第&nbsp;{{ $listArr['per_page']*($listArr['current_page']-1)+1 }}&nbsp;到第
+					    &nbsp;{{ $listArr['total'] }}&nbsp;条记录
+					@else
+					    显示第&nbsp;{{ $listArr['total'] }}&nbsp;条记录
+					@endif
+					总共&nbsp; {{ $listArr['total'] }} &nbsp;条记录&nbsp;&nbsp;
+					每页显示 
+					<div class="btn-group dropup">
+						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button" style="background-color: #fff !important;color: #333 !important;border-color: #ccc !important;border: 1px solid;">{{ $listArr['per_page'] }}<span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="/manage/enterpriseList?paginate=10">10</a></li>
+							<li><a href="/manage/enterpriseList?paginate=20">20</a></li>
+							<li><a href="/manage/enterpriseList?paginate=30">30</a></li>
+							<li><a href="/manage/enterpriseList?paginate=50">50</a></li>
+						</ul>
+					</div>
+					条
+                </div>
+                <div class="col-xs-8 dataTables_paginate paging_bootstrap text-right row">
                     <!-- 分页列表 -->
                     {!! $list->appends($search)->render() !!}
                 </div>

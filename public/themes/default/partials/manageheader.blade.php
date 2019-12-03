@@ -237,7 +237,7 @@
                 <img class="nav-user-photo" src="{!! Theme::asset()->url('images/default_avatar.png') !!}"  alt="Jason's Photo" />
 								<span class="user-info">
 									<small>Welcome,</small>
-                                    {!! Theme::get('manager') !!}
+                                    {!! Theme::get('realname') !!}
 								</span>
 
                 <i class="ace-icon fa fa-caret-down"></i>

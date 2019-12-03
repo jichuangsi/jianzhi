@@ -442,6 +442,7 @@ class TaskController extends ManageController
 		$data = [
             'chan' => $chanList,
         ]; 
+        $data['listArr'] = $chanList->toArray();
         $data['merge'] = $search;
         $data['company_name'] = $request->get('company_name');
         return $this->theme->scope('manage.channelList',$data)->render();
@@ -482,6 +483,7 @@ class TaskController extends ManageController
 		$data = [
             'chan' => $chanList,
         ]; 
+        $data['listArr'] = $chanList->toArray();
         $data['merge'] = $search;
         $data['company_name'] = $request->get('company_name');
         return $this->theme->scope('manage.channelDistribution',$data)->render();
@@ -2130,6 +2132,7 @@ class TaskController extends ManageController
                         $comment = \CommonClass::removeXss($v[23]);
                     }
                     $update['delivered_at'] = date('Y-m-d H:i:s', time());
+                    $update['desc'] = '通过验收导入自动创建';
                     $work_id = WorkModel::select('id')->where('task_id',$v[0])->where('uid',$uid->id)->first();
                     
                     if(!$work_id){
@@ -2174,7 +2177,8 @@ class TaskController extends ManageController
                             'work_id' => $work_id->id,
                             'update' => $update,
                             'win_check' => $win_check,
-                            'worker_num' => $worker_num
+                            'worker_num' => $worker_num,
+                            
                         ];
                         
                         if(isset($comment)&&!empty($comment)){

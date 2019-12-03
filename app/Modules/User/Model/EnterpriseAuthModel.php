@@ -214,10 +214,10 @@ class EnterpriseAuthModel extends Model
         return is_null($status) ? true : $status;
     }
 
-    static function EnterpriseAuthPassByUid($uid)
+    static function EnterpriseAuthPassByUid($uid,$mid=0)
     {
-        $status = DB::transaction(function () use ($uid) {
-            EnterpriseAuthModel::where('uid', $uid)->update(array('status' => 1, 'auth_time' => date('Y-m-d H:i:s')));
+        $status = DB::transaction(function () use ($uid,$mid) {
+            EnterpriseAuthModel::where('uid', $uid)->update(array('status' => 1, 'mid' => $mid,'examine_time' => date('Y-m-d H:i:s'),'auth_time' => date('Y-m-d H:i:s')));
             AuthRecordModel::where('uid', $uid)
             ->where('auth_code', 'enterprise')->orderby('id', 'desc')->first()
             ->update(array('status' => 1, 'auth_time' => date('Y-m-d H:i:s')));
@@ -227,10 +227,10 @@ class EnterpriseAuthModel extends Model
     }
     
     
-    static function EnterpriseAuthDenyByUid($uid)
+    static function EnterpriseAuthDenyByUid($uid,$mid=0)
     {
-        $status = DB::transaction(function () use ($uid) {
-            EnterpriseAuthModel::where('uid', $uid)->update(array('status' => 2));
+        $status = DB::transaction(function () use ($uid,$mid) {
+            EnterpriseAuthModel::where('uid', $uid)->update(array('status' => 2, 'mid' => $mid,'examine_time' => date('Y-m-d H:i:s')));
             AuthRecordModel::where('uid', $uid)
             ->where('auth_code', 'enterprise')->orderby('id', 'desc')->first()
             ->update(array('status' => 2));

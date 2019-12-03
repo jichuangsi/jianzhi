@@ -36,7 +36,7 @@ class ManageController extends BasicController
             $this->breadcrumb = $this->theme->breadcrumb();
             $this->manager = ManagerModel::getManager();
             $this->theme->setManager($this->manager->username);
-
+			$this->theme->setRealname($this->manager->realname);
             //初始化后台菜单
             $manageMenu = MenuModel::getMenuPermission();
             $this->theme->set('manageMenu', $manageMenu);

@@ -1,27 +1,46 @@
 
 <h3 class="header smaller lighter blue mg-top12 mg-bottom20">任务派单</h3>
+<style>
+    	.search-list{
+    		padding-right:8px !important;
+    	}
+    </style>
 <div class="row">
     <div class="col-xs-12">
         <div class="clearfix  well">
             <div class="form-inline search-group">
                 <form  role="form" action="/manage/taskDispatch" method="get">
                     <div class="form-group search-list">
-                        <label for="name">任务名称　</label>
+                        <label for="name">任务名称</label>
                         <input type="text" class="form-control" id="task_title" name="task_title" placeholder="请输入任务标题" @if(isset($merge['task_title']))value="{!! $merge['task_title'] !!}"@endif>
                     </div>
                     <div class="form-group search-list">
-                        <label for="namee">用户名　　</label>
+                        <label for="namee">用户名 </label>
                         <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名" @if(isset($merge['username']))value="{!! $merge['username'] !!}"@endif>
                     </div>
                     <div class="form-group search-list">
-                        <label for="namee">企业名称　　</label>
+                        <label for="namee">企业名称 </label>
                         <input type="text" class="form-control" id="company_name" name="company_name" placeholder="请输入企业名称" @if(isset($merge['company_name']))value="{!! $merge['company_name'] !!}"@endif>
                     </div>
+                    <div class="form-group search-list">
+                            <select class="" name="time_type">
+                                <option value="task.created_at" @if(isset($merge['time_type']) && $merge['time_type'] == 'task.created_at')selected="selected"@endif>发布时间</option>
+                                <option value="task.verified_at" @if(isset($merge['time_type']) && $merge['time_type'] == 'task.verified_at')selected="selected"@endif>审核时间</option>
+                                <option value="task.begin_at" @if(isset($merge['time_type']) && $merge['time_type'] == 'task.begin_at')selected="selected"@endif>服务开始时间</option>
+                                <option value="task.end_at" @if(isset($merge['time_type']) && $merge['time_type'] == 'task.end_at')selected="selected"@endif>服务结束时间</option>
+                            </select>
+                            <div class="input-daterange input-group">
+                                <input type="text" name="start" class="input-sm form-control" value="@if(isset($merge['start'])){!! $merge['start'] !!}@endif">
+                                <span class="input-group-addon"><i class="fa fa-exchange"></i></span>
+                                <input type="text" name="end" class="input-sm form-control" value="@if(isset($merge['end'])){!! $merge['end'] !!}@endif">
+                            </div>
+                        </div>
                     <div class="form-group">
                     	<button type="submit" class="btn btn-primary btn-sm">搜索</button>
                     </div>
-                    <div class="space"></div>
-                    <div class="form-inline search-group" >
+                     </form>
+                    <div class="space" style="display: none;"></div>
+                    <div class="form-inline search-group" style="display: none;">
                         <div class="form-group search-list">
                             <select class="" name="time_type">
                                 <option value="task.created_at" @if(isset($merge['time_type']) && $merge['time_type'] == 'task.created_at')selected="selected"@endif>发布时间</option>
@@ -35,21 +54,9 @@
                                 <input type="text" name="end" class="input-sm form-control" value="@if(isset($merge['end'])){!! $merge['end'] !!}@endif">
                             </div>
                         </div>
-                        <!-- <div class="form-group search-list width285">
-                            <label class="">状态　</label>
-                            <select name="status">
-                                <option value="0">全部</option>
-                                <option value="1" @if(isset($merge['status']) && $merge['status'] == '1')selected="selected"@endif>未发布</option>
-                                <option value="2" @if(isset($merge['status']) && $merge['status'] == '2')selected="selected"@endif>待审核</option>
-                                <option value="3" @if(isset($merge['status']) && $merge['status'] == '3')selected="selected"@endif>进行中</option>
-                                <option value="4" @if(isset($merge['status']) && $merge['status'] == '4')selected="selected"@endif>已结束</option>
-                                <option value="5" @if(isset($merge['status']) && $merge['status'] == '5')selected="selected"@endif>失败</option>
-                                <option value="6" @if(isset($merge['status']) && $merge['status'] == '6')selected="selected"@endif>维权</option>
-                            </select>
-                        </div> -->
                     </div>
 
-                </form>
+               
             </div>
         </div>
         <div>
@@ -120,7 +127,30 @@
             </div>
             <div class="space-10 col-xs-12"></div>
             <div class="col-xs-12">
-                <div class="dataTables_paginate paging_simple_numbers row" id="dynamic-table_paginate">
+            	<div class="col-xs-4 " id="">
+                	@if($listArr['current_page']!=$listArr['last_page'])
+					    显示第 &nbsp;{{ $listArr['per_page']*($listArr['current_page']-1)+1 }}&nbsp;到第
+					    &nbsp;{{ $listArr['per_page']*$listArr['current_page'] }}&nbsp;条记录
+					@elseif($listArr['current_page']==$listArr['last_page'] && $listArr['per_page']*($listArr['current_page']-1)+1!=$listArr['total'])
+					    显示第&nbsp;{{ $listArr['per_page']*($listArr['current_page']-1)+1 }}&nbsp;到第
+					    &nbsp;{{ $listArr['total'] }}&nbsp;条记录
+					@else
+					    显示第&nbsp;{{ $listArr['total'] }}&nbsp;条记录
+					@endif
+					总共&nbsp; {{ $listArr['total'] }} &nbsp;条记录&nbsp;&nbsp;
+					每页显示 
+					<div class="btn-group dropup">
+						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button" style="background-color: #fff !important;color: #333 !important;border-color: #ccc !important;border: 1px solid;">{{ $listArr['per_page'] }}<span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="/manage/taskDispatch?paginate=10">10</a></li>
+							<li><a href="/manage/taskDispatch?paginate=20">20</a></li>
+							<li><a href="/manage/taskDispatch?paginate=30">30</a></li>
+							<li><a href="/manage/taskDispatch?paginate=50">50</a></li>
+						</ul>
+					</div>
+					条
+                </div>
+                <div class="col-xs-8 dataTables_paginate paging_simple_numbers row" id="dynamic-table_paginate">
                     {!! $task->appends($merge)->render() !!}
                 </div>
             </div>

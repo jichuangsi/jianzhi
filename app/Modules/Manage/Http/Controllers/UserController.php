@@ -846,6 +846,10 @@ class UserController extends ManageController
                 'phone' => $v[12],
                 'astatus' => $astatus,
             ];
+            if($astatus==1 || $astatus==3){
+            	$param['mid']=$this->manager['id'];
+            	$param['examine_time'] = date('Y-m-d H:i:s', time());
+            }
             //dump($param);
             $status = UserModel::addEnterprise($param);
             
@@ -876,13 +880,14 @@ class UserController extends ManageController
      * @return mixed
      */
     public function getEnterpriseInfo($uid){
-        $info = UserModel::select('users.id as uid', 'users.name', 'users.mobile','users.created_at as u_created_at', 'enterprise_auth.*', 'users.id', 'province.name as province_name','city.name as city_name','area.name as area_name')
+        $info = UserModel::select('users.id as uid', 'users.name', 'users.mobile','users.created_at as u_created_at', 'enterprise_auth.*', 'users.id', 'province.name as province_name','city.name as city_name','area.name as area_name','manager.realname as mrealname')
                 ->where('users.id', $uid)
                 ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
                 ->leftJoin('enterprise_auth', 'users.id', '=', 'enterprise_auth.uid')
                 ->leftjoin('district as province','province.id','=','enterprise_auth.province')
                 ->leftjoin('district as city','city.id','=','enterprise_auth.city')
                 ->leftjoin('district as area','area.id','=','enterprise_auth.area')
+                ->leftjoin('manager','manager.id','=','enterprise_auth.mid')
                 ->first()->toArray();
         
         
@@ -900,7 +905,7 @@ class UserController extends ManageController
      */
     public function getEnterpriseEdit($uid)
     {
-        $info = UserModel::select('users.name', 'users.mobile', 'enterprise_auth.*', 'users.id')
+        $info = UserModel::select('users.name', 'users.mobile', 'enterprise_auth.*', 'users.id','users.created_at as u_created_at')
             ->where('users.id', $uid)
             ->leftJoin('user_detail', 'users.id', '=', 'user_detail.uid')
             ->leftJoin('enterprise_auth', 'users.id', '=', 'enterprise_auth.uid')
@@ -1406,7 +1411,7 @@ class UserController extends ManageController
             return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
         }
         $status = DB::transaction(function () use ($uid) {
-            EnterpriseAuthModel::EnterpriseAuthPassByUid($uid);
+            EnterpriseAuthModel::EnterpriseAuthPassByUid($uid,$this->manager['id']);
         });
             if(is_null($status))
             {
@@ -1445,7 +1450,7 @@ class UserController extends ManageController
             return  redirect('manage/enterpriseList')->with(array('message' => '操作失败'));
         }
         $status = DB::transaction(function () use ($uid) {
-            EnterpriseAuthModel::EnterpriseAuthDenyByUid($uid);
+            EnterpriseAuthModel::EnterpriseAuthDenyByUid($uid,$this->manager['id']);
         });
             if(is_null($status))
             {
@@ -1496,7 +1501,7 @@ class UserController extends ManageController
         }
         $status = DB::transaction(function () use ($data) {
             foreach ($data['chk'] as $id) {
-                EnterpriseAuthModel::EnterpriseAuthPassByUid($id);
+                EnterpriseAuthModel::EnterpriseAuthPassByUid($id,$this->manager['id']);
             }
         });
             if(is_null($status))
@@ -1548,7 +1553,7 @@ class UserController extends ManageController
         }
         $status = DB::transaction(function () use ($data) {
             foreach ($data['chk'] as $id) {
-                EnterpriseAuthModel::EnterpriseAuthDenyByUid($id);
+                EnterpriseAuthModel::EnterpriseAuthDenyByUid($id,$this->manager['id']);
             }
         });
             if(is_null($status))

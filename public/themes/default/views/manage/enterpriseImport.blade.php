@@ -127,7 +127,7 @@
             </tr>
             @if(isset($enterprises))
             	@foreach($enterprises as $item)
-            		<tr>
+            		<tr style="height: 100%;">
             			<td>{{$item[0]}}</td>
             			<td>{{$item[1]}}</td>
             			<td>{{$item[2]}}</td>

@@ -453,6 +453,8 @@ class UserModel extends Model implements AuthenticatableContract,
                         'business_license' => $data['business_license'],
                         'created_at' => date('Y-m-d H:i:s', time()),
                         'updated_at' => date('Y-m-d H:i:s', time()),
+                        'mid' => isset($data['mid'])?$data['mid']:'',
+                        'examine_time' => isset($data['examine_time'])?$data['examine_time']:'',
                     ]);
                     
                     AuthRecordModel::create([
@@ -483,6 +485,8 @@ class UserModel extends Model implements AuthenticatableContract,
                         'business_license' => $data['business_license'],
                         'created_at' => date('Y-m-d H:i:s', time()),
                         'updated_at' => date('Y-m-d H:i:s', time()),
+                        'mid' => isset($data['mid'])?$data['mid']:'',
+                        'examine_time' => isset($data['examine_time'])?$data['examine_time']:'',
                     ]);
                     
                     AuthRecordModel::create([
@@ -502,13 +506,23 @@ class UserModel extends Model implements AuthenticatableContract,
     {
         $status = DB::transaction(function () use ($data){
             if(isset($data['password'])&&!empty($data['password'])){
-                UserModel::where('id', $data['uid'])->update([
+            	$userupdate=[
                     //'email' => $data['email'],
                     'password' => $data['password'],
                     'salt' => $data['salt'],
                     'updated_at' => date('Y-m-d H:i:s', time()),
+                ];
+                if(isset($data['created_at'])&&!empty($data['created_at'])){
+	            	$userupdate['created_at'] = $data['created_at'];
+	            }
+                UserModel::where('id', $data['uid'])->update($userupdate);
+            }else if(isset($data['created_at'])&&!empty($data['created_at'])){
+            	UserModel::where('id', $data['uid'])->update([
+                'created_at' => $data['created_at'],
+                'updated_at' => date('Y-m-d H:i:s', time()),
                 ]);
-            }/* else{
+            }
+            /* else{
                 UserModel::where('id', $data['uid'])->update([
                 'mobile' => $data['mobile'],
                 'updated_at' => date('Y-m-d H:i:s', time()),

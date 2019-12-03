@@ -155,7 +155,7 @@
 		<div class="bankAuth-bottom clearfix col-xs-12">
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 注册时间：</p>
 			<p class="col-sm-4">
-				<input type="date" id="form-field-1"  class="col-xs-10 col-sm-5" name="created_at" value="{!! date('Y-m-d',strtotime($info['created_at'])) !!}" datatype="*" nullmsg="注册时间不能为空!">
+				<input type="text" id="created_at"  class="col-xs-10 col-sm-5" name="created_at" value="{!! date('Y-m-d',strtotime($info['u_created_at'])) !!}" datatype="*" nullmsg="注册时间不能为空!">	
 				<span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i></span>
 			</p>
 			<p class="col-sm-1 control-label no-padding-left" for="form-field-1"> 密&nbsp;&nbsp;码：</p>
@@ -165,20 +165,19 @@
 				<!-- <span class="help-inline col-xs-12 col-sm-7"><i class="light-red ace-icon fa fa-asterisk"></i>（提示：更改此密码不会修改用户的支付密码）</span> -->
 			</p>
 		</div>
-		
-			<div class="bankAuth-bottom clearfix col-xs-12">
-                <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 营业执副本：</label>
-                <div class="col-sm-5">
-                	<img alt="营业执副本" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                    
-                </div>
-                <div class="col-sm-5">
-                	<input type="file" name="business_license" id="business_license" onchange="imgfile(this)">                    
-                </div>
-                <div class="col-sm-5"></div>
-                		@if($errors->first('business_license'))
-            				<p class="Validform_checktip Validform_wrong">{!! $errors->first('business_license') !!}</p>
-            			@endif
-            </div> 
+		<div class="bankAuth-bottom clearfix col-xs-12">
+            <label class="col-sm-1 control-label no-padding-left" for="form-field-1"> 营业执副本：</label>
+            <div class="col-sm-5">
+            	<img alt="营业执副本" src="{!! url($info['business_license']) !!}"  onclick="bigimg(this)">                    
+            </div>
+            <div class="col-sm-5">
+            	<input type="file" name="business_license" id="business_license" onchange="imgfile(this)">                    
+            </div>
+            <div class="col-sm-5"></div>
+            		@if($errors->first('business_license'))
+        				<p class="Validform_checktip Validform_wrong">{!! $errors->first('business_license') !!}</p>
+        			@endif
+        </div> 
 			          
 		
 		{{--<div class="form-group text-center">
@@ -222,6 +221,22 @@
         <img src="" alt="">
     </div>
 	<script>
+		$(function(){
+			//初始任务开始时间
+			var begin_at = "{!! $info['u_created_at'] !!}";
+			if(begin_at){
+				var d = new Date()
+				d.setTime(Date.parse(begin_at));
+				console.log(d);
+			}else{
+			    begin_at = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate() + " " + (today.getHours()<10?("0"+today.getHours()):today.getHours()) + ":" + (today.getMinutes()<10?('0'+today.getMinutes()):today.getMinutes()) + ":" + (today.getSeconds()<10?('0'+today.getSeconds()):today.getSeconds());
+			}
+		    laydate.render({ 
+		    	elem: '#created_at',
+		    	type: 'datetime',
+		    	value: begin_at
+		    });
+		});
 	function validate(){
 		/* if($("input[name='account']").val()){
 			if(luhnCheck($("input[name='account']").val())){
@@ -251,6 +266,7 @@
 {!! Theme::asset()->container('specific-js')->usePath()->add('validform-js', 'plugins/jquery/validform/js/Validform_v5.3.2_min.js') !!}
 {!! Theme::asset()->container('specific-css')->usePath()->add('datepicker-css', 'plugins/ace/css/datepicker.css') !!}
 {!! Theme::asset()->container('specific-js')->usePath()->add('datepicker-js', 'plugins/ace/js/date-time/bootstrap-datepicker.min.js') !!}
+{!! Theme::asset()->container('specific-js')->usePath()->add('laydate-js', 'layDate-v5.0.9/laydate/laydate.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('userManage-js', 'js/userManage.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('main-js', 'js/main.js') !!}
 {!! Theme::asset()->container('custom-js')->usePath()->add('tools-js', 'js/tools.js') !!}
