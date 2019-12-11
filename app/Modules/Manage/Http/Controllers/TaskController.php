@@ -433,7 +433,14 @@ class TaskController extends ManageController
 				  	->paginate($paginate);
 		foreach($chanList as $k=>$v){
 			if($v['uid']!=null){
-				$chanList[$k]['sumbou']=TaskModel::where('uid', $v['uid'])->where('status','=','9')->sum('bounty');
+				$sum=0;
+				$tasklistss=TaskModel::where('uid',$v['uid'])->get()->toArray();
+				foreach($tasklistss as $ks=>$val){
+					$pay=WorkModel::where('task_id', $val['id'])->where('status','=','5')->sum('payment');
+					$sum=$sum+$pay;
+				}
+				$chanList[$k]['sumbou']=$sum;
+//				$chanList[$k]['sumbou']=TaskModel::where('uid', $v['uid'])->where('status','=','9')->sum('bounty');
 			}else{
 				$chanList[$k]['sumbou']=0;
 			}
