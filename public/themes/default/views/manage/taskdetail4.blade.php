@@ -283,7 +283,11 @@
                                                 	<label class="col-sm-1 control-label no-padding-right" for="form-field-1"> 提交图片： </label>
                                                 	<div class="col-sm-9">
                                                         @foreach($w_attachment as $k=>$v)
-                                                            <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">                                                  
+	                                                        @if(@getimagesize(url($v['url'])))
+	                                                        	 <img alt="150x150" src="{!! url($v['url']) !!}" style="width: 10rem;height: 10rem;" onclick="bigimg(this)">  
+	                                                        @else
+	                                                        	<a href="{!! url($v['url']) !!}" target="view_window" style="margin: 0 20px;"> 下载文件</a>
+	                                                        @endif
                                                         @endforeach
                                                     </div>
                                                 </div> 
