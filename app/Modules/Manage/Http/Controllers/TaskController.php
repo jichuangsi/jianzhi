@@ -1132,10 +1132,12 @@ class TaskController extends ManageController
             return redirect()->back()->with(['error'=>'缺少必要参数！']);
         }
         
-        if(!isset($param['users_id'])){
+        if(!isset($param['users_id']) ||empty($param['users_id']) ){
             return redirect()->back()->with(['error'=>'请选择接单人员！']);
         }
-        
+//      if(empty($param['users_id'])){
+//      	return redirect()->back()->with(['error'=>'请选择接单人员！']);
+//      }
         $msg = array();
         
         //创建一个新的稿件

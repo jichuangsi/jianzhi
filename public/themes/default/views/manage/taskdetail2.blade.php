@@ -117,7 +117,7 @@
         }  
 </style>
 {{-- <div class="well">
-    <h4 >任务详情</h4>
+    <h4 >任务详情ss</h4>
 </div> --}}
 {{--<div class="row">
     <div class="col-xs-12 widget-container-col ui-sortable">
@@ -325,13 +325,19 @@
                                                     <div class="col-xs-12">
                                                         <div class="col-sm-1 text-right"></div>
                                                         <div class="col-sm-10">
-                                                        <button class="btn btn-sm btn-primary" type="submit">提交</button>                                                       
+                                                        	@if(isset($type))
+						                                    	@if($type==='dispatch')
+						                                    		<button class="btn btn-sm btn-primary" type="submit">提交</button>     
+						                                    	@endif
+						                                    @endif
+                                                                                                          
                                                         <div class="btn btn-sm btn-primary" style="margin-left: 50px" onclick="toBack()">返回</div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                            {{-- <div class="space-10"></div>
+                                           
                                             <div class="clearfix form-actions">
                                                 <div class="col-md-offset-3 col-md-9 ">
                                                     <div class="row">
