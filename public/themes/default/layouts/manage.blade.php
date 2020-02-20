@@ -165,7 +165,7 @@
             <div class="footer-content" style="z-index:2">
 						<span class="bigger-120">
 							<!--{!! config('kppw.kppw_powered_by') !!}{!! config('kppw.kppw_version') !!}-->
-                            <!--{!! Theme::get('site_config')['copyright'] !!}-->Copyright 2020 广州网金创纪信息技术有限公司 All rights reserved<a href="http://www.miitbeian.gov.cn/"> 粤ICP备19125254号-1</a>
+                            <!--{!! Theme::get('site_config')['copyright'] !!}-->Copyright 2020 广州网金创纪信息技术有限公司 All rights reserved<a href="http://www.beian.miit.gov.cn"> 粤ICP备19125254号-1</a>
 						</span>
 
                 {{--&nbsp; &nbsp;

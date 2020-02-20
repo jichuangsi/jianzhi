@@ -52,7 +52,7 @@
     </div>
     <div style="font-size: 15px;line-height: 15px; display: block;">
 				 <span>
-				 	Copyright 2020 广州网金创纪信息技术有限公司 All rights reserved <a style="color: blue;text-decoration: underline;" href="http://www.miitbeian.gov.cn/"> 粤ICP备19125254号-1</a>
+				 	Copyright 2020 广州网金创纪信息技术有限公司 All rights reserved <a style="color: blue;text-decoration: underline;" href="http://www.beian.miit.gov.cn"> 粤ICP备19125254号-1</a>
 				</span>
 			</div>
     <div class="foot">
