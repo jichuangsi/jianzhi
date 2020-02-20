@@ -52,6 +52,11 @@
         </div>
         <div class="btn" onclick="outlogin()">退出登录</div>
     </div>
+    <div style="font-size: 15px;line-height: 15px;margin-top: 10px;">
+		 <span>
+		 	Copyright 2020 广州网金创纪信息技术有限公司 All rights reserved <a style="color: blue;text-decoration: underline;" href="http://www.miitbeian.gov.cn/"> 粤ICP备19125254号-1</a>
+		</span>
+	</div>
     <div class="foot">
         <div onclick="window.location.href = '{!! url('jz/home') !!}'">
             <span class="iconfont icon-emizhifeiji"></span>
