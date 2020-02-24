@@ -129,7 +129,7 @@
             </div>
             <button class="btn" type="submit">任务提交</button>
     	</form>
-    	<div style="font-size: 15px;line-height: 15px;">
+    	<div style="padding-left: 5px;font-size: 10px;line-height: 12px; display: block;background: #fff;">
     		 <span>
     		 	Copyright 2020 广州网金创纪信息技术有限公司 All rights reserved <a style="color: blue;text-decoration: underline;" href="http://www.beian.miit.gov.cn"> 粤ICP备19125254号-1</a>
 			</span>
